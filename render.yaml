@@ -1,0 +1,62 @@
+# Blueprint Render — Immobilier CI
+# Déploiement en un clic : https://dashboard.render.com/blueprints
+# Crée automatiquement le service web (PHP/Apache via Docker) et la base
+# MySQL privée, et relie les deux par variables d'environnement.
+
+services:
+  # ---------------------------------------------------------
+  # Service web : l'application PHP
+  # ---------------------------------------------------------
+  - type: web
+    name: immobilier-ci
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    envVars:
+      - key: DB_HOST
+        fromService:
+          type: pserv
+          name: immobilier-ci-db
+          property: host
+      - key: DB_PORT
+        value: "3306"
+      - key: DB_NAME
+        value: immobilier_ci
+      - key: DB_USER
+        value: root
+      - key: DB_PASS
+        fromService:
+          type: pserv
+          name: immobilier-ci-db
+          envVarKey: MYSQL_ROOT_PASSWORD
+      - key: SITE_NAME
+        value: Immobilier CI
+      - key: SITE_URL
+        value: https://immobilier-ci.onrender.com
+      # Stockage persistant des photos (voir README section 3) — à renseigner manuellement
+      # dans le dashboard Render après création du service, avec vos identifiants Cloudinary.
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+
+  # ---------------------------------------------------------
+  # Service privé : la base de données MySQL
+  # (non accessible depuis Internet, uniquement par le service web ci-dessus)
+  # ---------------------------------------------------------
+  - type: pserv
+    name: immobilier-ci-db
+    runtime: docker
+    dockerfilePath: ./mysql.Dockerfile
+    plan: starter
+    envVars:
+      - key: MYSQL_ROOT_PASSWORD
+        generateValue: true
+      - key: MYSQL_DATABASE
+        value: immobilier_ci
+    disk:
+      name: immobilier-ci-mysql-data
+      mountPath: /var/lib/mysql
+      sizeGB: 1

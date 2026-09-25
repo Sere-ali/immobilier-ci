@@ -1,0 +1,505 @@
+/* =========================================================
+   Immobilier CI — Styles publics
+   Palette : lagune (#0F3D3E), latérite (#C87F2A), sable (#E8DCC8)
+   Typo : Fraunces (display) / Inter (texte) / IBM Plex Mono (data)
+   ========================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap');
+
+:root{
+  --lagune: #0F3D3E;
+  --lagune-dark: #0A2C2C;
+  --laterite: #C87F2A;
+  --laterite-dark: #A8661E;
+  --sable: #E8DCC8;
+  --bg: #F7F5F1;
+  --card: #FFFFFF;
+  --ink: #1B1B18;
+  --ink-soft: #6B6B63;
+  --border: #E4DECF;
+  --success: #1E6B34;
+  --danger: #A12622;
+  --radius: 12px;
+  --shadow: 0 10px 30px rgba(15,61,62,.08);
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;overflow-x:hidden;width:100%}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:'Inter',sans-serif;
+  line-height:1.55;
+  overflow-x:hidden;
+  width:100%;
+  position:relative;
+}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+.container{max-width:1180px;margin:0 auto;padding:0 24px;width:100%}
+h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;line-height:1.15;margin:0 0 .5em}
+.mono{font-family:'IBM Plex Mono',monospace}
+
+/* ---------- Header ---------- */
+.site-header{
+  position:sticky;top:0;z-index:50;
+  background:rgba(247,245,241,.92);
+  backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--border);
+}
+.site-header .container{display:flex;align-items:center;justify-content:space-between;height:76px}
+.logo{font-family:'Fraunces',serif;font-weight:700;font-size:1.4rem;color:var(--lagune);display:flex;align-items:center;gap:8px;white-space:nowrap}
+.logo span{color:var(--laterite)}
+.main-nav{display:flex;align-items:center;gap:32px}
+.main-nav a{font-weight:500;font-size:.95rem;color:var(--ink);position:relative;padding:4px 0}
+.main-nav a:hover{color:var(--lagune)}
+.nav-cta{background:var(--lagune);color:#fff !important;padding:10px 20px;border-radius:8px;font-weight:600}
+.nav-cta:hover{background:var(--lagune-dark)}
+.nav-toggle{display:none;background:none;border:none;font-size:1.5rem;cursor:pointer;color:var(--lagune);padding:4px 8px}
+
+/* ---------- Hero ---------- */
+.hero{
+  position:relative;overflow:hidden;
+  background:var(--lagune);
+  color:#fff;
+  padding:70px 0 60px;
+}
+.hero .skyline{
+  position:absolute;inset:auto 0 0 0;height:120px;
+  background:
+    linear-gradient(var(--lagune-dark),var(--lagune-dark)) 0 100%/6% 55% no-repeat,
+    linear-gradient(var(--lagune-dark),var(--lagune-dark)) 8% 100%/4% 80% no-repeat,
+    linear-gradient(var(--lagune-dark),var(--lagune-dark)) 14% 100%/7% 40% no-repeat,
+    linear-gradient(var(--lagune-dark),var(--lagune-dark)) 24% 100%/5% 95% no-repeat,
+    linear-gradient(var(--lagune-dark),var(--lagune-dark)) 32% 100%/8% 60% no-repeat,
+    linear-gradient(var(--lagune-dark),var(--lagune-dark)) 43% 100%/4% 35% no-repeat,
+    linear-gradient(var(--lagune-dark),var(--lagune-dark)) 50% 100%/9% 100% no-repeat,
+    linear-gradient(var(--lagune-dark),var(--lagune-dark)) 62% 100%/5% 50% no-repeat,
+    linear-gradient(var(--lagune-dark),var(--lagune-dark)) 70% 100%/7% 70% no-repeat,
+    linear-gradient(var(--lagune-dark),var(--lagune-dark)) 80% 100%/4% 45% no-repeat,
+    linear-gradient(var(--lagune-dark),var(--lagune-dark)) 87% 100%/6% 85% no-repeat,
+    linear-gradient(var(--lagune-dark),var(--lagune-dark)) 96% 100%/4% 30% no-repeat;
+  opacity:.5;
+}
+.hero-inner{position:relative;z-index:2;text-align:center;max-width:760px;margin:0 auto}
+.hero .eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:'IBM Plex Mono',monospace;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);
+  padding:6px 14px;border-radius:999px;margin-bottom:22px;color:var(--sable);
+}
+.hero h1{font-size:clamp(1.7rem,5vw,3.4rem);color:#fff}
+.hero h1 em{font-style:italic;color:var(--laterite)}
+.hero p{font-size:clamp(.95rem,2vw,1.1rem);color:rgba(255,255,255,.8);max-width:560px;margin:14px auto 36px}
+
+/* Barre de recherche */
+.search-bar{
+  background:#fff;border-radius:14px;padding:14px;
+  display:grid;grid-template-columns:1.3fr 1fr 1fr auto;gap:10px;
+  box-shadow:0 20px 50px rgba(0,0,0,.25);text-align:left;
+}
+.search-bar select, .search-bar input{
+  border:1px solid var(--border);border-radius:8px;padding:11px 12px;font-family:inherit;font-size:.9rem;color:var(--ink);background:#fdfcfa;
+  width:100%;min-width:0;
+}
+.search-bar button{
+  background:var(--laterite);color:#fff;border:none;border-radius:8px;padding:11px 22px;font-weight:600;cursor:pointer;font-size:.9rem;
+}
+.search-bar button:hover{background:var(--laterite-dark)}
+
+/* Bande de villes rapides */
+.cities-strip{background:var(--lagune-dark);padding:14px 0}
+.cities-strip .container{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.cities-strip .container::-webkit-scrollbar{display:none}
+.cities-strip a{
+  flex:0 0 auto;font-family:'IBM Plex Mono',monospace;font-size:.78rem;color:var(--sable);
+  border:1px solid rgba(255,255,255,.15);padding:7px 14px;border-radius:999px;white-space:nowrap;
+}
+.cities-strip a:hover{background:rgba(255,255,255,.08);color:#fff}
+
+/* ---------- Sections génériques ---------- */
+.section{padding:70px 0}
+.section-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:34px;gap:20px;flex-wrap:wrap}
+.section-head .eyebrow-label{font-family:'IBM Plex Mono',monospace;font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--laterite);margin-bottom:8px;display:block}
+.section-head h2{font-size:clamp(1.5rem,3vw,2rem);margin:0}
+.section-head p{color:var(--ink-soft);margin:6px 0 0;max-width:480px}
+.link-all{font-weight:600;color:var(--lagune);white-space:nowrap;border-bottom:2px solid var(--laterite);padding-bottom:2px}
+
+/* ---------- Grille de biens ---------- */
+.property-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
+.property-card{
+  background:var(--card);border-radius:var(--radius);overflow:hidden;
+  box-shadow:var(--shadow);border:1px solid var(--border);
+  transition:transform .2s ease, box-shadow .2s ease;
+}
+.property-card:hover{transform:translateY(-4px);box-shadow:0 16px 40px rgba(15,61,62,.14)}
+.property-media{position:relative;aspect-ratio:4/3;background:var(--sable) center/cover no-repeat}
+.property-media .badge{
+  position:absolute;top:12px;left:12px;background:var(--lagune);color:#fff;
+  font-size:.72rem;font-weight:600;padding:5px 10px;border-radius:6px;text-transform:uppercase;letter-spacing:.03em;
+}
+.property-media .badge.location{background:var(--laterite)}
+.property-media .price-tag{
+  position:absolute;bottom:12px;left:12px;background:rgba(255,255,255,.95);
+  font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:.82rem;
+  padding:6px 12px;border-radius:8px;color:var(--lagune);max-width:calc(100% - 24px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.property-body{padding:18px 20px 20px}
+.property-body .ref{font-family:'IBM Plex Mono',monospace;font-size:.7rem;color:var(--ink-soft);letter-spacing:.04em}
+.property-body h3{font-size:1.1rem;margin:6px 0 4px}
+.property-body .location-line{color:var(--ink-soft);font-size:.88rem;margin-bottom:14px}
+.property-specs{display:flex;gap:16px;border-top:1px solid var(--border);padding-top:14px;font-size:.82rem;color:var(--ink-soft);flex-wrap:wrap}
+.property-specs strong{color:var(--ink);font-family:'IBM Plex Mono',monospace}
+
+/* ---------- Catégories ---------- */
+.category-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:16px}
+.category-card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:22px 16px;text-align:center;transition:.2s;
+}
+.category-card:hover{border-color:var(--laterite);transform:translateY(-3px)}
+.category-card .icon{font-size:1.6rem;margin-bottom:10px}
+.category-card .name{font-weight:600;font-size:.88rem}
+
+/* ---------- Bandeau chiffres ---------- */
+.stats-band{background:var(--sable);padding:38px 0}
+.stats-band .container{display:flex;justify-content:space-between;flex-wrap:wrap;gap:22px}
+.stat-item{flex:1 1 120px;min-width:120px}
+.stat-item .num{font-family:'Fraunces',serif;font-size:clamp(1.8rem,4vw,2.4rem);font-weight:700;color:var(--lagune)}
+.stat-item .label{font-family:'IBM Plex Mono',monospace;font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-soft)}
+
+/* ---------- CTA ---------- */
+.cta-band{background:var(--lagune);color:#fff;border-radius:20px;padding:clamp(30px,6vw,52px);text-align:center;margin:0 24px}
+.cta-band h2{color:#fff}
+.cta-band p{color:rgba(255,255,255,.75);max-width:480px;margin:10px auto 26px}
+.btn{display:inline-block;padding:13px 26px;border-radius:8px;font-weight:600;font-size:.95rem;cursor:pointer;border:none}
+.btn-primary{background:var(--laterite);color:#fff}
+.btn-primary:hover{background:var(--laterite-dark)}
+.btn-outline{background:transparent;border:1px solid rgba(255,255,255,.4);color:#fff}
+.btn-outline:hover{background:rgba(255,255,255,.1)}
+
+/* ---------- Footer ---------- */
+.site-footer{background:var(--lagune-dark);color:rgba(255,255,255,.65);padding:60px 0 24px;margin-top:70px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px}
+.footer-grid h4{color:#fff;font-family:'Inter',sans-serif;font-size:.85rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:16px}
+.footer-grid a{display:block;font-size:.88rem;color:rgba(255,255,255,.65);margin-bottom:10px;word-break:break-word}
+.footer-grid a:hover{color:#fff}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.12);padding-top:22px;font-size:.8rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+
+/* ---------- Pages listing / détail ---------- */
+.page-hero{background:var(--lagune);color:#fff;padding:40px 0}
+.page-hero h1{color:#fff;font-size:clamp(1.5rem,3.5vw,2rem)}
+.breadcrumb{font-family:'IBM Plex Mono',monospace;font-size:.72rem;color:var(--sable);margin-bottom:10px;overflow-x:auto;white-space:nowrap}
+.breadcrumb a{color:var(--sable)}
+
+.listing-layout{display:grid;grid-template-columns:280px 1fr;gap:30px;padding:44px 0}
+.filters-box{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;align-self:start;position:sticky;top:96px}
+.filters-box h3{font-size:1rem;margin-bottom:16px}
+.filter-group{margin-bottom:18px}
+.filter-group label{display:block;font-size:.8rem;font-weight:600;margin-bottom:6px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.03em}
+.filter-group select, .filter-group input{width:100%;padding:9px 10px;border:1px solid var(--border);border-radius:7px;font-size:.88rem;font-family:inherit}
+.filter-group .row{display:flex;gap:8px}
+.filter-group .row input{min-width:0}
+.filters-box button{width:100%;background:var(--lagune);color:#fff;border:none;padding:11px;border-radius:8px;font-weight:600;cursor:pointer;margin-top:6px}
+.filters-box button:hover{background:var(--lagune-dark)}
+.results-meta{margin-bottom:20px;color:var(--ink-soft);font-size:.9rem}
+.empty-state{text-align:center;padding:70px 20px;color:var(--ink-soft)}
+.empty-state .icon{font-size:2.4rem;margin-bottom:14px}
+
+/* Détail annonce */
+.detail-layout{display:grid;grid-template-columns:1.6fr 1fr;gap:40px;padding:44px 0}
+.gallery-main{border-radius:var(--radius);overflow:hidden;aspect-ratio:16/10;background:var(--sable) center/cover no-repeat;margin-bottom:10px}
+.gallery-thumbs{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.gallery-thumbs .thumb{aspect-ratio:1;border-radius:8px;background:var(--sable) center/cover no-repeat;cursor:pointer;border:2px solid transparent}
+.gallery-thumbs .thumb.active{border-color:var(--laterite)}
+.detail-title-row{display:flex;justify-content:space-between;align-items:flex-start;margin:26px 0 10px;gap:20px;flex-wrap:wrap}
+.detail-price{font-family:'IBM Plex Mono',monospace;font-size:clamp(1.2rem,3vw,1.6rem);font-weight:600;color:var(--lagune);white-space:nowrap}
+.detail-specs{display:flex;gap:24px;padding:18px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin:20px 0;flex-wrap:wrap}
+.detail-specs .spec b{display:block;font-family:'IBM Plex Mono',monospace;font-size:1.1rem}
+.detail-specs .spec span{font-size:.78rem;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.03em}
+.contact-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;align-self:start;position:sticky;top:96px}
+.contact-card h3{font-size:1.1rem;margin-bottom:16px}
+.contact-card .field{margin-bottom:12px}
+.contact-card label{display:block;font-size:.78rem;font-weight:600;margin-bottom:5px;color:var(--ink-soft)}
+.contact-card input, .contact-card textarea{width:100%;padding:10px 11px;border:1px solid var(--border);border-radius:7px;font-family:inherit;font-size:.88rem}
+.contact-card button{width:100%;background:var(--laterite);color:#fff;border:none;padding:12px;border-radius:8px;font-weight:600;cursor:pointer;margin-top:6px}
+.contact-card button:hover{background:var(--laterite-dark)}
+
+/* Formulaires génériques (contact, login) */
+.form-page{max-width:560px;margin:0 auto;padding:60px 24px}
+.form-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:36px;box-shadow:var(--shadow)}
+.alert{padding:12px 16px;border-radius:8px;font-size:.88rem;margin-bottom:18px}
+.alert-success{background:#eaf6ec;color:var(--success)}
+.alert-error{background:#fdecea;color:var(--danger)}
+
+@media (max-width: 960px){
+  .property-grid{grid-template-columns:repeat(2,1fr)}
+  .category-grid{grid-template-columns:repeat(3,1fr)}
+  .footer-grid{grid-template-columns:1fr 1fr}
+  .detail-layout{grid-template-columns:1fr}
+  .listing-layout{grid-template-columns:1fr}
+  .filters-box{position:static}
+  .search-bar{grid-template-columns:1fr 1fr}
+  .contact-card{position:static}
+}
+@media (max-width: 640px){
+  .site-header .container{height:64px}
+  .main-nav{position:fixed;top:64px;right:0;bottom:0;left:0;width:100%;height:calc(100vh - 64px);background:var(--bg);flex-direction:column;padding:30px;gap:22px;transform:translateX(100%);transition:.25s;z-index:40;align-items:flex-start;overflow-y:auto}
+  .main-nav.open{transform:translateX(0)}
+  .nav-toggle{display:block}
+  .hero{padding:50px 0 40px}
+  .property-grid{grid-template-columns:1fr}
+  .category-grid{grid-template-columns:repeat(2,1fr)}
+  .footer-grid{grid-template-columns:1fr}
+  .search-bar{grid-template-columns:1fr;padding:12px}
+  .stats-band .container{justify-content:flex-start;gap:28px}
+  .section{padding:44px 0}
+  .cta-band{margin:0 16px;padding:30px 20px}
+  .gallery-thumbs{grid-template-columns:repeat(4,1fr)}
+  .detail-price{white-space:normal}
+  .form-card{padding:24px 20px}
+  .container{padding:0 16px}
+}
+@media (max-width: 400px){
+  .category-grid{grid-template-columns:1fr 1fr}
+  .gallery-thumbs{grid-template-columns:repeat(3,1fr)}
+  .stat-item{flex:1 1 45%}
+}
+
+/* =========================================================
+   Animations — apparitions au scroll, compteurs, micro-interactions
+   ========================================================= */
+
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(22px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes fadeIn{
+  from{opacity:0}
+  to{opacity:1}
+}
+@keyframes softPulse{
+  0%,100%{opacity:.5}
+  50%{opacity:.85}
+}
+@keyframes shimmerSweep{
+  0%{background-position:-200% 0}
+  100%{background-position:200% 0}
+}
+
+/* Entrée du hero au chargement (pas besoin de scroll, c'est au-dessus de la ligne de flottaison) */
+.hero .eyebrow{animation:fadeUp .7s cubic-bezier(.2,.8,.2,1) both}
+.hero h1{animation:fadeUp .8s cubic-bezier(.2,.8,.2,1) .08s both}
+.hero p{animation:fadeUp .8s cubic-bezier(.2,.8,.2,1) .16s both}
+.hero .search-bar{animation:fadeUp .8s cubic-bezier(.2,.8,.2,1) .24s both}
+.hero .skyline{animation:softPulse 6s ease-in-out infinite}
+
+/* Reveal au scroll : géré en JS (ajoute .in-view). Ne s'active que si JS a chargé (html.js),
+   pour que le contenu reste visible par défaut si JS échoue. */
+html.js [data-reveal]{opacity:0;transform:translateY(24px);transition:opacity .7s cubic-bezier(.2,.8,.2,1), transform .7s cubic-bezier(.2,.8,.2,1)}
+html.js [data-reveal].in-view{opacity:1;transform:translateY(0)}
+html.js [data-reveal-group] > *{opacity:0;transform:translateY(20px);transition:opacity .6s cubic-bezier(.2,.8,.2,1), transform .6s cubic-bezier(.2,.8,.2,1)}
+html.js [data-reveal-group].in-view > *{opacity:1;transform:translateY(0)}
+html.js [data-reveal-group].in-view > *:nth-child(1){transition-delay:.03s}
+html.js [data-reveal-group].in-view > *:nth-child(2){transition-delay:.09s}
+html.js [data-reveal-group].in-view > *:nth-child(3){transition-delay:.15s}
+html.js [data-reveal-group].in-view > *:nth-child(4){transition-delay:.21s}
+html.js [data-reveal-group].in-view > *:nth-child(5){transition-delay:.27s}
+html.js [data-reveal-group].in-view > *:nth-child(6){transition-delay:.33s}
+
+/* Cartes de biens : zoom photo au survol + ombre progressive */
+.property-media{overflow:hidden;background-size:cover !important}
+.property-card{transition:transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s cubic-bezier(.2,.8,.2,1)}
+.property-card:hover{transform:translateY(-6px)}
+.property-card .property-media{transition:transform .5s cubic-bezier(.2,.8,.2,1)}
+.property-card:hover .property-media{transform:scale(1.07)}
+.property-card:hover .price-tag{transform:translateY(-2px)}
+.price-tag{transition:transform .3s ease}
+
+/* Cartes catégories : icône qui réagit au survol */
+.category-card{transition:transform .3s cubic-bezier(.2,.8,.2,1), border-color .3s ease, box-shadow .3s ease}
+.category-card .icon{display:inline-block;transition:transform .35s cubic-bezier(.34,1.56,.64,1)}
+.category-card:hover{box-shadow:0 12px 28px rgba(15,61,62,.1)}
+.category-card:hover .icon{transform:scale(1.18) rotate(-4deg)}
+
+/* Liens de navigation : soulignement animé */
+.main-nav a:not(.nav-cta){position:relative}
+.main-nav a:not(.nav-cta)::after{
+  content:'';position:absolute;left:0;right:100%;bottom:-4px;height:2px;background:var(--laterite);
+  transition:right .3s cubic-bezier(.2,.8,.2,1);
+}
+.main-nav a:not(.nav-cta):hover::after{right:0}
+
+/* Boutons : transition douce + micro-interaction au clic */
+.btn, .search-bar button, .nav-cta, .filters-box button, .contact-card button{
+  transition:background-color .25s ease, transform .15s ease, box-shadow .25s ease;
+}
+.btn:active, .search-bar button:active, .nav-cta:active, .filters-box button:active, .contact-card button:active{
+  transform:scale(.97);
+}
+.btn-primary:hover{box-shadow:0 10px 24px rgba(200,127,42,.35)}
+.nav-cta:hover{box-shadow:0 8px 20px rgba(15,61,62,.28)}
+
+/* Villes rapides : légère élévation au survol */
+.cities-strip a{transition:background-color .25s ease, transform .2s ease, border-color .25s ease}
+.cities-strip a:hover{transform:translateY(-2px)}
+
+/* Menu mobile : entrée en cascade des liens */
+html.js .main-nav a{opacity:0;transform:translateX(16px);transition:opacity .35s ease, transform .35s ease}
+html.js .main-nav.open a{opacity:1;transform:translateX(0)}
+html.js .main-nav.open a:nth-child(1){transition-delay:.05s}
+html.js .main-nav.open a:nth-child(2){transition-delay:.1s}
+html.js .main-nav.open a:nth-child(3){transition-delay:.15s}
+html.js .main-nav.open a:nth-child(4){transition-delay:.2s}
+html.js .main-nav.open a:nth-child(5){transition-delay:.25s}
+html.js .main-nav.open a:nth-child(6){transition-delay:.3s}
+@media (min-width:641px){
+  html.js .main-nav a{opacity:1;transform:none;transition:none}
+}
+
+/* Galerie fiche détail : fondu enchaîné */
+.gallery-main{transition:opacity .25s ease}
+.gallery-main.is-swapping{opacity:0}
+.gallery-thumbs .thumb{transition:transform .2s ease, border-color .2s ease}
+.gallery-thumbs .thumb:hover{transform:translateY(-2px)}
+
+/* Empêche tout scintillement au chargement pour les images de fond */
+.property-media, .gallery-main{background-color:var(--sable)}
+
+/* Accessibilité : réduit fortement les animations si l'utilisateur le demande */
+@media (prefers-reduced-motion: reduce){
+  *, *::before, *::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important;scroll-behavior:auto !important}
+  html.js [data-reveal], html.js [data-reveal-group] > *{opacity:1 !important;transform:none !important}
+}
+
+/* =========================================================
+   Page Contact — layout dédié
+   ========================================================= */
+.contact-hero-sub{color:rgba(255,255,255,.75);max-width:520px;margin-top:8px;font-size:1rem}
+
+.contact-layout{
+  display:grid;grid-template-columns:.85fr 1.15fr;gap:28px;
+  padding:50px 0 80px;align-items:start;
+}
+
+/* ---- Colonne coordonnées ---- */
+.contact-info-card{
+  position:relative;overflow:hidden;
+  background:var(--lagune);color:#fff;
+  border-radius:20px;padding:38px 32px;
+  box-shadow:0 20px 50px rgba(15,61,62,.22);
+}
+.contact-info-glow{
+  position:absolute;top:-60px;right:-60px;width:220px;height:220px;border-radius:50%;
+  background:radial-gradient(circle, rgba(200,127,42,.35), transparent 70%);
+  pointer-events:none;
+}
+.contact-status{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:'IBM Plex Mono',monospace;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+  padding:6px 12px;border-radius:999px;margin-bottom:20px;
+}
+.contact-status .dot{
+  width:7px;height:7px;border-radius:50%;background:#6fd88a;
+  box-shadow:0 0 0 0 rgba(111,216,138,.6);
+  animation:statusPulse 2s ease-out infinite;
+}
+@keyframes statusPulse{
+  0%{box-shadow:0 0 0 0 rgba(111,216,138,.6)}
+  70%{box-shadow:0 0 0 8px rgba(111,216,138,0)}
+  100%{box-shadow:0 0 0 0 rgba(111,216,138,0)}
+}
+.contact-info-card h2{color:#fff;font-size:1.5rem;margin-bottom:10px}
+.contact-info-lead{color:rgba(255,255,255,.7);font-size:.92rem;margin-bottom:28px;max-width:360px}
+
+.contact-info-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:20px;position:relative;z-index:1}
+.contact-info-list li{display:flex;align-items:flex-start;gap:14px}
+.contact-info-icon{
+  flex:0 0 auto;width:42px;height:42px;border-radius:11px;
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);
+  display:flex;align-items:center;justify-content:center;font-size:1.1rem;
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1), background-color .25s ease;
+}
+.contact-info-list li:hover .contact-info-icon{transform:scale(1.1) rotate(-4deg);background:rgba(255,255,255,.18)}
+.contact-info-label{display:block;font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:rgba(255,255,255,.5);margin-bottom:3px}
+.contact-info-list a, .contact-info-list span{color:#fff;font-weight:500;font-size:.95rem;word-break:break-word}
+.contact-info-list a{border-bottom:1px solid transparent;transition:border-color .2s ease}
+.contact-info-list a:hover{border-color:var(--laterite)}
+
+/* ---- Colonne formulaire ---- */
+.contact-form-card{
+  background:var(--card);border:1px solid var(--border);border-radius:20px;
+  padding:38px 36px;box-shadow:var(--shadow);
+}
+.contact-form-card h2{font-size:1.4rem;margin-bottom:22px}
+
+.contact-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
+.contact-form .field{margin-bottom:18px}
+.contact-form label{display:block;font-size:.82rem;font-weight:600;margin-bottom:7px;color:var(--ink)}
+.contact-form input, .contact-form textarea{
+  width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:9px;
+  font-family:inherit;font-size:.92rem;background:#fdfcfa;
+  transition:border-color .2s ease, box-shadow .2s ease, background-color .2s ease;
+}
+.contact-form input:focus, .contact-form textarea:focus{
+  outline:none;border-color:var(--laterite);background:#fff;
+  box-shadow:0 0 0 4px rgba(200,127,42,.12);
+}
+.contact-form textarea{resize:vertical;min-height:130px}
+
+.contact-submit{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--laterite);color:#fff;border:none;
+  padding:14px 28px;border-radius:9px;font-weight:600;font-size:.95rem;cursor:pointer;
+  transition:background-color .25s ease, transform .15s ease, box-shadow .25s ease;
+}
+.contact-submit:hover{background:var(--laterite-dark);box-shadow:0 10px 24px rgba(200,127,42,.32)}
+.contact-submit:active{transform:scale(.97)}
+.contact-submit .arrow{display:inline-block;transition:transform .25s ease}
+.contact-submit:hover .arrow{transform:translateX(4px)}
+
+/* ---- État succès ---- */
+.contact-success{text-align:center;padding:30px 10px}
+.contact-success-icon{
+  width:64px;height:64px;border-radius:50%;background:var(--success-bg,#eaf6ec);color:var(--success);
+  display:flex;align-items:center;justify-content:center;font-size:1.8rem;font-weight:700;
+  margin:0 auto 20px;animation:successPop .5s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes successPop{
+  0%{transform:scale(0);opacity:0}
+  60%{transform:scale(1.15);opacity:1}
+  100%{transform:scale(1)}
+}
+.contact-success h3{font-size:1.3rem;margin-bottom:8px}
+.contact-success p{color:var(--ink-soft);margin-bottom:22px}
+
+@media (max-width: 960px){
+  .contact-layout{grid-template-columns:1fr;padding:36px 0 60px}
+  .contact-info-card{padding:30px 26px}
+}
+@media (max-width: 560px){
+  .contact-form-grid{grid-template-columns:1fr}
+  .contact-form-card{padding:26px 22px}
+  .contact-info-card{padding:26px 22px}
+}
+
+/* =========================================================
+   Bouton WhatsApp
+   ========================================================= */
+.btn-whatsapp{
+  display:inline-flex;align-items:center;gap:10px;
+  background:#25D366;color:#fff;
+  padding:13px 22px;border-radius:9px;font-weight:600;font-size:.95rem;
+  width:100%;justify-content:center;
+  transition:background-color .25s ease, transform .15s ease, box-shadow .25s ease;
+  animation:whatsappPop .5s cubic-bezier(.34,1.56,.64,1) .1s both;
+}
+.btn-whatsapp:hover{background:#1ebe57;box-shadow:0 10px 24px rgba(37,211,102,.35)}
+.btn-whatsapp:active{transform:scale(.97)}
+.btn-whatsapp-icon{font-size:1.15rem}
+@keyframes whatsappPop{
+  0%{opacity:0;transform:scale(.85) translateY(6px)}
+  100%{opacity:1;transform:scale(1) translateY(0)}
+}
