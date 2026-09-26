@@ -12,12 +12,24 @@ $scopeSql = $isSuper ? '' : 'WHERE created_by = ' . (int)$user['id'];
 $totalMine = (int)$pdo->query("SELECT COUNT(*) n FROM properties $scopeSql")->fetch()['n'];
 $dispoMine = (int)$pdo->query("SELECT COUNT(*) n FROM properties " . ($scopeSql ? $scopeSql . " AND status='disponible'" : "WHERE status='disponible'"))->fetch()['n'];
 $soldMine  = (int)$pdo->query("SELECT COUNT(*) n FROM properties " . ($scopeSql ? $scopeSql . " AND status IN ('vendu','loue')" : "WHERE status IN ('vendu','loue')"))->fetch()['n'];
-$newMsg    = (int)$pdo->query("SELECT COUNT(*) n FROM messages WHERE status='nouveau'")->fetch()['n'];
+
+// Cloisonnement : un admin ne voit que les messages liés à ses propres annonces
+// (les messages généraux, non liés à une annonce, sont réservés au Super Admin).
+if ($isSuper) {
+    $newMsg = (int)$pdo->query("SELECT COUNT(*) n FROM messages WHERE status='nouveau'")->fetch()['n'];
+    $recentMessages = $pdo->query("SELECT m.*, p.title AS property_title FROM messages m LEFT JOIN properties p ON p.id = m.property_id ORDER BY m.created_at DESC LIMIT 5")->fetchAll();
+} else {
+    $stmtMsg = $pdo->prepare("SELECT COUNT(*) n FROM messages m JOIN properties p ON p.id = m.property_id WHERE p.created_by = ? AND m.status = 'nouveau'");
+    $stmtMsg->execute([$user['id']]);
+    $newMsg = (int)$stmtMsg->fetch()['n'];
+
+    $stmtRecent = $pdo->prepare("SELECT m.*, p.title AS property_title FROM messages m JOIN properties p ON p.id = m.property_id WHERE p.created_by = ? ORDER BY m.created_at DESC LIMIT 5");
+    $stmtRecent->execute([$user['id']]);
+    $recentMessages = $stmtRecent->fetchAll();
+}
 
 $recentProperties = $pdo->query("SELECT p.*, (SELECT image_path FROM property_images WHERE property_id=p.id ORDER BY is_primary DESC LIMIT 1) image
                                   FROM properties p " . $scopeSql . " ORDER BY created_at DESC LIMIT 5")->fetchAll();
-
-$recentMessages = $pdo->query("SELECT m.*, p.title AS property_title FROM messages m LEFT JOIN properties p ON p.id = m.property_id ORDER BY m.created_at DESC LIMIT 5")->fetchAll();
 
 $pageTitle = 'Tableau de bord';
 $pageSubtitle = 'Bienvenue, ' . $user['full_name'];
