@@ -5,13 +5,19 @@ require_once __DIR__ . '/../includes/auth.php';
 requireLogin();
 $pdo = getPDO();
 $user = currentUser();
+$isSuper = isSuperAdmin();
 
 if (isset($_GET['id'])) {
     $mid = (int)$_GET['id'];
-    $stmt = $pdo->prepare('SELECT m.*, p.title AS property_title, p.slug FROM messages m LEFT JOIN properties p ON p.id = m.property_id WHERE m.id = ?');
+    $stmt = $pdo->prepare('SELECT m.*, p.title AS property_title, p.slug, p.created_by AS property_owner FROM messages m LEFT JOIN properties p ON p.id = m.property_id WHERE m.id = ?');
     $stmt->execute([$mid]);
     $message = $stmt->fetch();
-    if (!$message) { flash('error', 'Message introuvable.'); redirect('messages.php'); }
+
+    // Cloisonnement : un admin ne voit que les messages liés à ses propres annonces.
+    // Les messages généraux (non liés à une annonce) sont réservés au Super Admin.
+    $canView = $message && ($isSuper || (int)($message['property_owner'] ?? 0) === (int)$user['id']);
+
+    if (!$canView) { flash('error', 'Message introuvable.'); redirect('messages.php'); }
 
     if (isset($_GET['mark'])) {
         $pdo->prepare('UPDATE messages SET status = ? WHERE id = ?')->execute([$_GET['mark'], $mid]);
@@ -59,6 +65,7 @@ if (isset($_GET['id'])) {
 $filterStatus = $_GET['status'] ?? '';
 $where = [];
 $params = [];
+if (!$isSuper) { $where[] = 'p.created_by = ?'; $params[] = $user['id']; }
 if ($filterStatus && in_array($filterStatus, ['nouveau','lu','traite'])) { $where[] = 'm.status = ?'; $params[] = $filterStatus; }
 $sql = "SELECT m.*, p.title AS property_title FROM messages m LEFT JOIN properties p ON p.id = m.property_id";
 if ($where) $sql .= ' WHERE ' . implode(' AND ', $where);
@@ -68,7 +75,7 @@ $stmt->execute($params);
 $messages = $stmt->fetchAll();
 
 $pageTitle = 'Messages';
-$pageSubtitle = count($messages) . ' message(s)';
+$pageSubtitle = count($messages) . ' message(s)' . (!$isSuper ? ' — liés à vos annonces' : '');
 require_once __DIR__ . '/../includes/admin_header.php';
 ?>
 
