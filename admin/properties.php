@@ -26,7 +26,7 @@ $search = trim($_GET['q'] ?? '');
 $where = [];
 $params = [];
 if (!$isSuper) { $where[] = 'created_by = ?'; $params[] = $user['id']; }
-if ($filterStatus && array_key_exists($filterStatus, propertyStatuses())) { $where[] = 'status = ?'; $params[] = $filterStatus; }
+if ($filterStatus && array_key_exists($filterStatus, propertyStatuses())) { $where[] = 'p.status = ?'; $params[] = $filterStatus; }
 if ($search !== '') { $where[] = '(title LIKE ? OR reference LIKE ? OR city LIKE ?)'; $params[] = "%$search%"; $params[] = "%$search%"; $params[] = "%$search%"; }
 
 $sql = "SELECT p.*, (SELECT image_path FROM property_images WHERE property_id=p.id ORDER BY is_primary DESC LIMIT 1) image, u.full_name AS owner_name
