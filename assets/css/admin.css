@@ -1,7 +1,8 @@
 /* =========================================================
    Immobilier CI — Espace Admin / Super Admin
    ========================================================= */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap');
+/* Police chargée via <link> dans le <head> (includes/admin_header.php et login.php),
+   pas en @import : un @import dans le CSS bloque le rendu de la page. */
 
 :root{
   --lagune:#0F3D3E; --lagune-dark:#0A2C2C; --laterite:#C87F2A; --laterite-dark:#A8661E;

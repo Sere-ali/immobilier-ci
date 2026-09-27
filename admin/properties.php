@@ -17,7 +17,7 @@ if (isset($_GET['toggle_status'], $_GET['id'])) {
         $pdo->prepare('UPDATE properties SET status = ? WHERE id = ?')->execute([$newStatus, $prop['id']]);
         flash('success', 'Statut mis à jour.');
     }
-    redirect('properties.php');
+    redirect('properties');
 }
 
 $filterStatus = $_GET['status'] ?? '';
@@ -45,7 +45,7 @@ require_once __DIR__ . '/../includes/admin_header.php';
 <div class="panel">
   <div class="panel-head">
     <h2>Gestion des annonces</h2>
-    <a href="property_form.php" class="btn btn-accent btn-sm">+ Nouvelle annonce</a>
+    <a href="property_form" class="btn btn-accent btn-sm">+ Nouvelle annonce</a>
   </div>
   <div class="panel-body">
     <form method="get" style="display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap">
@@ -82,9 +82,9 @@ require_once __DIR__ . '/../includes/admin_header.php';
           </td>
           <td class="mono"><?= (int)$p['views'] ?></td>
           <td class="actions-cell" style="justify-content:flex-end">
-            <a href="../annonce.php?slug=<?= e($p['slug']) ?>" target="_blank" class="btn btn-outline btn-sm">Voir</a>
-            <a href="property_form.php?id=<?= $p['id'] ?>" class="btn btn-outline btn-sm">Modifier</a>
-            <a href="property_delete.php?id=<?= $p['id'] ?>" class="btn btn-danger btn-sm" data-confirm="Supprimer définitivement cette annonce ?">Suppr.</a>
+            <a href="../annonce?slug=<?= e($p['slug']) ?>" target="_blank" class="btn btn-outline btn-sm">Voir</a>
+            <a href="property_form?id=<?= $p['id'] ?>" class="btn btn-outline btn-sm">Modifier</a>
+            <a href="property_delete?id=<?= $p['id'] ?>" class="btn btn-danger btn-sm" data-confirm="Supprimer définitivement cette annonce ?">Suppr.</a>
           </td>
         </tr>
       <?php endforeach; ?>

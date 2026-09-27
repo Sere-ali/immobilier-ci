@@ -12,7 +12,7 @@ if ($id) {
     $stmt = $pdo->prepare('SELECT * FROM users WHERE id = ?');
     $stmt->execute([$id]);
     $editUser = $stmt->fetch();
-    if (!$editUser) { flash('error', 'Utilisateur introuvable.'); redirect('users.php'); }
+    if (!$editUser) { flash('error', 'Utilisateur introuvable.'); redirect('users'); }
 }
 
 $errors = [];
@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && csrfVerify()) {
             logActivity($pdo, $currentAdmin['id'], "Création du compte $email ($role)");
             flash('success', 'Administrateur créé avec succès.');
         }
-        redirect('users.php');
+        redirect('users');
     }
 }
 
@@ -97,7 +97,7 @@ require_once __DIR__ . '/../includes/admin_header.php';
       </div>
       <div class="form-actions">
         <button type="submit" class="btn btn-primary"><?= $editUser ? 'Enregistrer' : 'Créer le compte' ?></button>
-        <a href="users.php" class="btn btn-outline">Annuler</a>
+        <a href="users" class="btn btn-outline">Annuler</a>
       </div>
     </form>
   </div>

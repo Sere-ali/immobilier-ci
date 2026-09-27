@@ -33,7 +33,7 @@ function isSuperAdmin(): bool
 function requireLogin(): void
 {
     if (!isLoggedIn()) {
-        redirect(rootPath() . 'login.php');
+        redirect(rootPath() . 'login');
     }
 }
 

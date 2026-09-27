@@ -20,6 +20,9 @@ function navActive(string $file, string $current): string
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title><?= e($pageTitle ?? 'Administration') ?> — Immobilier CI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
 <link rel="stylesheet" href="<?= e($root) ?>assets/css/admin.css">
 </head>
 <body>
@@ -29,24 +32,24 @@ function navActive(string $file, string $current): string
     <div class="role-tag"><?= $user['role'] === 'superadmin' ? 'Super Administrateur' : 'Administrateur' ?></div>
     <nav>
       <span class="group-label">Gestion</span>
-      <a href="<?= e($root) ?>admin/dashboard.php" class="<?= navActive('dashboard.php', $currentScript) === 'active' && !$inSuperAdmin ? 'active' : '' ?>">📊 Tableau de bord</a>
-      <a href="<?= e($root) ?>admin/properties.php" class="<?= in_array($currentScript, ['properties.php','property_form.php']) && !$inSuperAdmin ? 'active' : '' ?>">🏠 Annonces</a>
-      <a href="<?= e($root) ?>admin/messages.php" class="<?= navActive('messages.php', $currentScript) === 'active' && !$inSuperAdmin ? 'active' : '' ?>">✉️ Messages</a>
-      <a href="<?= e($root) ?>admin/profile.php" class="<?= navActive('profile.php', $currentScript) === 'active' ? 'active' : '' ?>">👤 Mon profil</a>
+      <a href="<?= e($root) ?>admin/dashboard" class="<?= navActive('dashboard.php', $currentScript) === 'active' && !$inSuperAdmin ? 'active' : '' ?>">📊 Tableau de bord</a>
+      <a href="<?= e($root) ?>admin/properties" class="<?= in_array($currentScript, ['properties.php','property_form.php']) && !$inSuperAdmin ? 'active' : '' ?>">🏠 Annonces</a>
+      <a href="<?= e($root) ?>admin/messages" class="<?= navActive('messages.php', $currentScript) === 'active' && !$inSuperAdmin ? 'active' : '' ?>">✉️ Messages</a>
+      <a href="<?= e($root) ?>admin/profile" class="<?= navActive('profile.php', $currentScript) === 'active' ? 'active' : '' ?>">👤 Mon profil</a>
 
       <?php if ($user['role'] === 'superadmin'): ?>
         <span class="group-label">Super Admin</span>
-        <a href="<?= e($root) ?>superadmin/dashboard.php" class="<?= navActive('dashboard.php', $currentScript) === 'active' && $inSuperAdmin ? 'active' : '' ?>">🧭 Vue globale</a>
-        <a href="<?= e($root) ?>superadmin/users.php" class="<?= in_array($currentScript, ['users.php','user_form.php']) ? 'active' : '' ?>">🛡️ Administrateurs</a>
-        <a href="<?= e($root) ?>superadmin/settings.php" class="<?= navActive('settings.php', $currentScript) === 'active' ? 'active' : '' ?>">⚙️ Paramètres du site</a>
-        <a href="<?= e($root) ?>superadmin/activity_log.php" class="<?= navActive('activity_log.php', $currentScript) === 'active' ? 'active' : '' ?>">📜 Journal d'activité</a>
+        <a href="<?= e($root) ?>superadmin/dashboard" class="<?= navActive('dashboard.php', $currentScript) === 'active' && $inSuperAdmin ? 'active' : '' ?>">🧭 Vue globale</a>
+        <a href="<?= e($root) ?>superadmin/users" class="<?= in_array($currentScript, ['users.php','user_form.php']) ? 'active' : '' ?>">🛡️ Administrateurs</a>
+        <a href="<?= e($root) ?>superadmin/settings" class="<?= navActive('settings.php', $currentScript) === 'active' ? 'active' : '' ?>">⚙️ Paramètres du site</a>
+        <a href="<?= e($root) ?>superadmin/activity_log" class="<?= navActive('activity_log.php', $currentScript) === 'active' ? 'active' : '' ?>">📜 Journal d'activité</a>
       <?php endif; ?>
     </nav>
     <div class="user-box">
       <div class="name"><?= e($user['full_name']) ?></div>
       <div class="email"><?= e($user['email']) ?></div>
-      <a href="<?= e($root) ?>index.php">← Voir le site public</a>
-      <a href="<?= e($root) ?>admin/logout.php">Déconnexion</a>
+      <a href="<?= e($root) ?>index">← Voir le site public</a>
+      <a href="<?= e($root) ?>admin/logout">Déconnexion</a>
     </div>
   </aside>
 

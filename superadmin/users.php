@@ -21,7 +21,7 @@ if (isset($_GET['toggle'], $_GET['id'])) {
     } else {
         flash('error', 'Vous ne pouvez pas désactiver votre propre compte.');
     }
-    redirect('users.php');
+    redirect('users');
 }
 
 $list = $pdo->query("SELECT u.*, (SELECT COUNT(*) FROM properties WHERE created_by = u.id) AS nb_properties
@@ -35,7 +35,7 @@ require_once __DIR__ . '/../includes/admin_header.php';
 <div class="panel">
   <div class="panel-head">
     <h2>Comptes Admin &amp; Super Admin</h2>
-    <a href="user_form.php" class="btn btn-accent btn-sm">+ Nouvel administrateur</a>
+    <a href="user_form" class="btn btn-accent btn-sm">+ Nouvel administrateur</a>
   </div>
   <div class="panel-body" style="padding:0">
     <table class="data-table">
@@ -50,10 +50,10 @@ require_once __DIR__ . '/../includes/admin_header.php';
           <td><span class="badge badge-<?= $u['status']==='actif'?'success':'danger' ?>"><?= ucfirst($u['status']) ?></span></td>
           <td class="mono" style="font-size:.8rem"><?= $u['last_login'] ? date('d/m/Y H:i', strtotime($u['last_login'])) : '—' ?></td>
           <td class="actions-cell" style="justify-content:flex-end">
-            <a href="user_form.php?id=<?= $u['id'] ?>" class="btn btn-outline btn-sm">Modifier</a>
+            <a href="user_form?id=<?= $u['id'] ?>" class="btn btn-outline btn-sm">Modifier</a>
             <?php if ($u['id'] != $user['id']): ?>
               <a href="?toggle=1&id=<?= $u['id'] ?>" class="btn btn-outline btn-sm" data-confirm="<?= $u['status']==='actif' ? 'Désactiver' : 'Activer' ?> ce compte ?"><?= $u['status']==='actif' ? 'Désactiver' : 'Activer' ?></a>
-              <a href="user_delete.php?id=<?= $u['id'] ?>" class="btn btn-danger btn-sm" data-confirm="Supprimer définitivement ce compte ? Ses annonces resteront visibles mais sans propriétaire.">Suppr.</a>
+              <a href="user_delete?id=<?= $u['id'] ?>" class="btn btn-danger btn-sm" data-confirm="Supprimer définitivement ce compte ? Ses annonces resteront visibles mais sans propriétaire.">Suppr.</a>
             <?php endif; ?>
           </td>
         </tr>

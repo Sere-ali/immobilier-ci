@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 <section class="page-hero contact-hero">
   <div class="container">
-    <div class="breadcrumb"><a href="index.php">Accueil</a> / Contact</div>
+    <div class="breadcrumb"><a href="index">Accueil</a> / Contact</div>
     <h1 data-reveal>Parlons de votre projet immobilier</h1>
     <p class="contact-hero-sub" data-reveal>Une question, une annonce à publier, une visite à organiser ? Notre équipe vous répond rapidement.</p>
   </div>
@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <div class="contact-info-glow"></div>
       <span class="contact-status"><span class="dot"></span> Disponible aujourd'hui</span>
       <h2>Nos coordonnées</h2>
-      <p class="contact-info-lead">Contactez-nous directement, ou passez par le formulaire — nous revenons vers vous sous 24h ouvrées.</p>
+      <p class="contact-info-lead">Contactez-nous directement, ou passez par le formulaire : nous revenons vers vous sous 24h ouvrées.</p>
 
       <ul class="contact-info-list" data-reveal-group>
         <li>
@@ -109,7 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               <span class="btn-whatsapp-icon">💬</span> Continuer sur WhatsApp
             </a>
           <?php endif; ?>
-          <a href="index.php" class="btn btn-primary">Retour à l'accueil</a>
+          <a href="index" class="btn btn-primary">Retour à l'accueil</a>
         </div>
       <?php else: ?>
         <h2>Envoyez-nous un message</h2>

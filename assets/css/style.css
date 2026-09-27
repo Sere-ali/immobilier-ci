@@ -4,7 +4,9 @@
    Typo : Fraunces (display) / Inter (texte) / IBM Plex Mono (data)
    ========================================================= */
 
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap');
+/* Police chargée via <link> dans le <head> (includes/header.php), pas en @import :
+   un @import dans le CSS bloque le rendu (le navigateur doit lire ce fichier,
+   découvrir l'import, puis le télécharger avant d'afficher quoi que ce soit). */
 
 :root{
   --lagune: #0F3D3E;
@@ -134,7 +136,8 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;line-height:1.15;margin
   transition:transform .2s ease, box-shadow .2s ease;
 }
 .property-card:hover{transform:translateY(-4px);box-shadow:0 16px 40px rgba(15,61,62,.14)}
-.property-media{position:relative;aspect-ratio:4/3;background:var(--sable) center/cover no-repeat}
+.property-media{position:relative;aspect-ratio:4/3;background:var(--sable)}
+.property-media img{width:100%;height:100%;object-fit:cover;display:block}
 .property-media .badge{
   position:absolute;top:12px;left:12px;background:var(--lagune);color:#fff;
   font-size:.72rem;font-weight:600;padding:5px 10px;border-radius:6px;text-transform:uppercase;letter-spacing:.03em;
@@ -193,16 +196,22 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;line-height:1.15;margin
 .breadcrumb{font-family:'IBM Plex Mono',monospace;font-size:.72rem;color:var(--sable);margin-bottom:10px;overflow-x:auto;white-space:nowrap}
 .breadcrumb a{color:var(--sable)}
 
-.listing-layout{display:grid;grid-template-columns:280px 1fr;gap:30px;padding:44px 0}
-.filters-box{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;align-self:start;position:sticky;top:96px}
-.filters-box h3{font-size:1rem;margin-bottom:16px}
-.filter-group{margin-bottom:18px}
-.filter-group label{display:block;font-size:.8rem;font-weight:600;margin-bottom:6px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.03em}
+/* Barre de filtres horizontale, au-dessus des résultats */
+.filters-bar{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:20px 22px;margin:38px 0 26px;display:flex;flex-wrap:wrap;align-items:flex-end;gap:16px 18px;
+}
+.filter-group{flex:1 1 150px;min-width:130px;margin-bottom:0}
+.filter-group.budget{flex:1 1 220px}
+.filter-group label{display:block;font-size:.72rem;font-weight:600;margin-bottom:6px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.03em}
 .filter-group select, .filter-group input{width:100%;padding:9px 10px;border:1px solid var(--border);border-radius:7px;font-size:.88rem;font-family:inherit}
 .filter-group .row{display:flex;gap:8px}
 .filter-group .row input{min-width:0}
-.filters-box button{width:100%;background:var(--lagune);color:#fff;border:none;padding:11px;border-radius:8px;font-weight:600;cursor:pointer;margin-top:6px}
-.filters-box button:hover{background:var(--lagune-dark)}
+.filters-bar button{
+  flex:0 0 auto;background:var(--lagune);color:#fff;border:none;padding:11px 26px;
+  border-radius:8px;font-weight:600;cursor:pointer;white-space:nowrap;align-self:stretch;
+}
+.filters-bar button:hover{background:var(--lagune-dark)}
 .results-meta{margin-bottom:20px;color:var(--ink-soft);font-size:.9rem}
 .empty-state{text-align:center;padding:70px 20px;color:var(--ink-soft)}
 .empty-state .icon{font-size:2.4rem;margin-bottom:14px}
@@ -238,8 +247,9 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;line-height:1.15;margin
   .category-grid{grid-template-columns:repeat(3,1fr)}
   .footer-grid{grid-template-columns:1fr 1fr}
   .detail-layout{grid-template-columns:1fr}
-  .listing-layout{grid-template-columns:1fr}
-  .filters-box{position:static}
+  .filters-bar{flex-direction:column;align-items:stretch}
+  .filters-bar .filter-group{flex:1 1 auto}
+  .filters-bar button{width:100%}
   .search-bar{grid-template-columns:1fr 1fr}
   .contact-card{position:static}
 }
@@ -309,11 +319,11 @@ html.js [data-reveal-group].in-view > *:nth-child(5){transition-delay:.27s}
 html.js [data-reveal-group].in-view > *:nth-child(6){transition-delay:.33s}
 
 /* Cartes de biens : zoom photo au survol + ombre progressive */
-.property-media{overflow:hidden;background-size:cover !important}
+.property-media{overflow:hidden}
 .property-card{transition:transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s cubic-bezier(.2,.8,.2,1)}
 .property-card:hover{transform:translateY(-6px)}
-.property-card .property-media{transition:transform .5s cubic-bezier(.2,.8,.2,1)}
-.property-card:hover .property-media{transform:scale(1.07)}
+.property-card .property-media img{transition:transform .5s cubic-bezier(.2,.8,.2,1)}
+.property-card:hover .property-media img{transform:scale(1.07)}
 .property-card:hover .price-tag{transform:translateY(-2px)}
 .price-tag{transition:transform .3s ease}
 
@@ -332,10 +342,10 @@ html.js [data-reveal-group].in-view > *:nth-child(6){transition-delay:.33s}
 .main-nav a:not(.nav-cta):hover::after{right:0}
 
 /* Boutons : transition douce + micro-interaction au clic */
-.btn, .search-bar button, .nav-cta, .filters-box button, .contact-card button{
+.btn, .search-bar button, .nav-cta, .filters-bar button, .contact-card button{
   transition:background-color .25s ease, transform .15s ease, box-shadow .25s ease;
 }
-.btn:active, .search-bar button:active, .nav-cta:active, .filters-box button:active, .contact-card button:active{
+.btn:active, .search-bar button:active, .nav-cta:active, .filters-bar button:active, .contact-card button:active{
   transform:scale(.97);
 }
 .btn-primary:hover{box-shadow:0 10px 24px rgba(200,127,42,.35)}

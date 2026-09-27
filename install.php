@@ -106,6 +106,9 @@ if ($installAllowed && $_SERVER['REQUEST_METHOD'] === 'POST' && !$alreadyInstall
 <meta charset="UTF-8">
 <title>Installation — Immobilier CI</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
 <link rel="stylesheet" href="assets/css/style.css">
 <style>
 .install-wrap{max-width:560px;margin:60px auto;padding:0 20px}
@@ -132,9 +135,9 @@ if ($installAllowed && $_SERVER['REQUEST_METHOD'] === 'POST' && !$alreadyInstall
     <?php if (!$installAllowed): ?>
       <div class="msg-error">L'installateur a été désactivé (variable d'environnement <code>ALLOW_INSTALL=false</code>). Retirez ou changez cette variable pour le réactiver temporairement.</div>
     <?php elseif ($alreadyInstalled): ?>
-      <div class="msg-success">L'application est déjà installée. Rendez-vous sur <a href="login.php">la page de connexion</a>.<br><strong>Pensez à supprimer install.php du serveur pour des raisons de sécurité.</strong></div>
+      <div class="msg-success">L'application est déjà installée. Rendez-vous sur <a href="login">la page de connexion</a>.<br><strong>Pensez à supprimer install.php du serveur pour des raisons de sécurité.</strong></div>
     <?php elseif ($success): ?>
-      <div class="msg-success">Installation réussie ! Vous pouvez maintenant vous <a href="login.php">connecter</a> avec le compte Super Admin créé.<br><strong>Pensez à supprimer install.php du serveur maintenant.</strong></div>
+      <div class="msg-success">Installation réussie ! Vous pouvez maintenant vous <a href="login">connecter</a> avec le compte Super Admin créé.<br><strong>Pensez à supprimer install.php du serveur maintenant.</strong></div>
     <?php else: ?>
       <?php foreach ($errors as $err): ?>
         <div class="msg-error"><?= e($err) ?></div>

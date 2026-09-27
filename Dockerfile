@@ -9,8 +9,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends libcurl4-openss
 # Relève les limites d'upload PHP (par défaut 2 Mo, trop bas pour des photos de smartphone)
 COPY docker/uploads.ini /usr/local/etc/php/conf.d/uploads.ini
 
-# Apache : autorise les .htaccess et active mod_rewrite (non indispensable ici mais inoffensif)
-RUN a2enmod rewrite
+# Apache : URLs sans .php (rewrite) + compression et cache navigateur pour les fichiers statiques (performance)
+RUN a2enmod rewrite deflate expires headers
+COPY docker/apache-overrides.conf /etc/apache2/conf-available/apache-overrides.conf
+RUN a2enconf apache-overrides
 
 # Copie du code source de l'application
 COPY . /var/www/html/

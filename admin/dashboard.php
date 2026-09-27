@@ -46,7 +46,7 @@ require_once __DIR__ . '/../includes/admin_header.php';
 <div class="panel">
   <div class="panel-head">
     <h2>Dernières annonces</h2>
-    <a href="property_form.php" class="btn btn-accent btn-sm">+ Nouvelle annonce</a>
+    <a href="property_form" class="btn btn-accent btn-sm">+ Nouvelle annonce</a>
   </div>
   <div class="panel-body" style="padding:0">
     <?php if (empty($recentProperties)): ?>
@@ -62,7 +62,7 @@ require_once __DIR__ . '/../includes/admin_header.php';
           <td><?= e($p['city']) ?></td>
           <td class="mono"><?= formatPrice($p['price']) ?></td>
           <td><span class="badge badge-<?= $p['status']==='disponible'?'success':($p['status']==='reserve'?'warning':'neutral') ?>"><?= propertyStatuses()[$p['status']] ?></span></td>
-          <td class="actions-cell"><a href="property_form.php?id=<?= $p['id'] ?>" class="btn btn-outline btn-sm">Modifier</a></td>
+          <td class="actions-cell"><a href="property_form?id=<?= $p['id'] ?>" class="btn btn-outline btn-sm">Modifier</a></td>
         </tr>
       <?php endforeach; ?>
       </tbody>
@@ -72,7 +72,7 @@ require_once __DIR__ . '/../includes/admin_header.php';
 </div>
 
 <div class="panel">
-  <div class="panel-head"><h2>Derniers messages</h2><a href="messages.php" class="btn btn-outline btn-sm">Voir tout</a></div>
+  <div class="panel-head"><h2>Derniers messages</h2><a href="messages" class="btn btn-outline btn-sm">Voir tout</a></div>
   <div class="panel-body" style="padding:0">
     <?php if (empty($recentMessages)): ?>
       <div class="empty-state"><div class="icon">✉️</div><p>Aucun message reçu.</p></div>
@@ -86,7 +86,7 @@ require_once __DIR__ . '/../includes/admin_header.php';
           <td><?= e($m['property_title'] ?? 'Message général') ?></td>
           <td class="mono" style="font-size:.8rem"><?= date('d/m/Y H:i', strtotime($m['created_at'])) ?></td>
           <td><span class="badge badge-<?= $m['status']==='nouveau'?'warning':($m['status']==='lu'?'neutral':'success') ?>"><?= ucfirst($m['status']) ?></span></td>
-          <td class="actions-cell"><a href="messages.php?id=<?= $m['id'] ?>" class="btn btn-outline btn-sm">Voir</a></td>
+          <td class="actions-cell"><a href="messages?id=<?= $m['id'] ?>" class="btn btn-outline btn-sm">Voir</a></td>
         </tr>
       <?php endforeach; ?>
       </tbody>

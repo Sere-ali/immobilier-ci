@@ -42,7 +42,7 @@ require_once __DIR__ . '/../includes/admin_header.php';
 <div class="panel">
   <div class="panel-head">
     <h2>Performance par administrateur</h2>
-    <a href="users.php" class="btn btn-outline btn-sm">Gérer les administrateurs</a>
+    <a href="users" class="btn btn-outline btn-sm">Gérer les administrateurs</a>
   </div>
   <div class="panel-body" style="padding:0">
     <?php if (empty($byAdmin)): ?>

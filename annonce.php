@@ -13,7 +13,7 @@ if (!$property) {
     http_response_code(404);
     $pageTitle = 'Bien introuvable';
     require_once __DIR__ . '/includes/header.php';
-    echo '<div class="section container"><div class="empty-state"><div class="icon">🚫</div><p>Cette annonce n\'existe pas ou a été retirée.</p><a href="annonces.php" class="btn btn-primary" style="margin-top:16px">Voir les annonces</a></div></div>';
+    echo '<div class="section container"><div class="empty-state"><div class="icon">🚫</div><p>Cette annonce n\'existe pas ou a été retirée.</p><a href="annonces" class="btn btn-primary" style="margin-top:16px">Voir les annonces</a></div></div>';
     require_once __DIR__ . '/includes/footer.php';
     exit;
 }
@@ -68,7 +68,7 @@ $mainImg = !empty($images) ? imageUrl($images[0]['image_path']) : 'https://place
 ?>
 <section class="page-hero" style="padding:30px 0">
   <div class="container">
-    <div class="breadcrumb"><a href="index.php">Accueil</a> / <a href="annonces.php">Annonces</a> / <?= e($property['title']) ?></div>
+    <div class="breadcrumb"><a href="index">Accueil</a> / <a href="annonces">Annonces</a> / <?= e($property['title']) ?></div>
   </div>
 </section>
 

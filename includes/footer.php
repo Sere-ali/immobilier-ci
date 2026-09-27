@@ -7,15 +7,15 @@
       </div>
       <div>
         <h4>Navigation</h4>
-        <a href="index.php">Accueil</a>
-        <a href="annonces.php">Toutes les annonces</a>
-        <a href="contact.php">Contact</a>
+        <a href="index">Accueil</a>
+        <a href="annonces">Toutes les annonces</a>
+        <a href="contact">Contact</a>
       </div>
       <div>
         <h4>Catégories</h4>
-        <a href="annonces.php?category=villa">Villas</a>
-        <a href="annonces.php?category=appartement">Appartements</a>
-        <a href="annonces.php?category=terrain">Terrains</a>
+        <a href="annonces?category=villa">Villas</a>
+        <a href="annonces?category=appartement">Appartements</a>
+        <a href="annonces?category=terrain">Terrains</a>
       </div>
       <div>
         <h4>Contact</h4>
@@ -30,6 +30,6 @@
     </div>
   </div>
 </footer>
-<script src="assets/js/main.js"></script>
+<script src="assets/js/main.js" defer></script>
 </body>
 </html>

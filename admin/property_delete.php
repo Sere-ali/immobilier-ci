@@ -13,7 +13,7 @@ $property = $stmt->fetch();
 
 if (!$property || (!isSuperAdmin() && $property['created_by'] != $user['id'])) {
     flash('error', "Vous n'avez pas le droit de supprimer cette annonce.");
-    redirect('properties.php');
+    redirect('properties');
 }
 
 $imgStmt = $pdo->prepare('SELECT image_path FROM property_images WHERE property_id = ?');
@@ -30,4 +30,4 @@ $pdo->prepare('DELETE FROM properties WHERE id = ?')->execute([$id]);
 logActivity($pdo, $user['id'], "Suppression de l'annonce #$id ({$property['title']})");
 
 flash('success', 'Annonce supprimée.');
-redirect('properties.php');
+redirect('properties');

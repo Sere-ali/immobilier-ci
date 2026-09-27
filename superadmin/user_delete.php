@@ -10,7 +10,7 @@ $id = (int)($_GET['id'] ?? 0);
 
 if ($id === (int)$currentAdmin['id']) {
     flash('error', 'Vous ne pouvez pas supprimer votre propre compte.');
-    redirect('users.php');
+    redirect('users');
 }
 
 $stmt = $pdo->prepare('SELECT * FROM users WHERE id = ?');
@@ -25,4 +25,4 @@ if ($target) {
     flash('error', 'Compte introuvable.');
 }
 
-redirect('users.php');
+redirect('users');

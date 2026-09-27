@@ -17,11 +17,11 @@ if (isset($_GET['id'])) {
     // Les messages généraux (non liés à une annonce) sont réservés au Super Admin.
     $canView = $message && ($isSuper || (int)($message['property_owner'] ?? 0) === (int)$user['id']);
 
-    if (!$canView) { flash('error', 'Message introuvable.'); redirect('messages.php'); }
+    if (!$canView) { flash('error', 'Message introuvable.'); redirect('messages'); }
 
     if (isset($_GET['mark'])) {
         $pdo->prepare('UPDATE messages SET status = ? WHERE id = ?')->execute([$_GET['mark'], $mid]);
-        redirect('messages.php?id=' . $mid);
+        redirect('messages?id=' . $mid);
     }
     if ($message['status'] === 'nouveau') {
         $pdo->prepare("UPDATE messages SET status = 'lu' WHERE id = ?")->execute([$mid]);
@@ -34,13 +34,13 @@ if (isset($_GET['id'])) {
     <div class="panel">
       <div class="panel-head">
         <h2><?= e($message['subject'] ?: 'Message') ?></h2>
-        <a href="messages.php" class="btn btn-outline btn-sm">← Retour à la liste</a>
+        <a href="messages" class="btn btn-outline btn-sm">← Retour à la liste</a>
       </div>
       <div class="panel-body">
         <p><strong>De :</strong> <?= e($message['full_name']) ?> — <a href="mailto:<?= e($message['email']) ?>"><?= e($message['email']) ?></a><?= $message['phone'] ? ' — WhatsApp : ' . e($message['phone']) : '' ?></p>
         <p><strong>Reçu le :</strong> <?= date('d/m/Y à H:i', strtotime($message['created_at'])) ?></p>
         <?php if ($message['property_title']): ?>
-          <p><strong>Concerne :</strong> <a href="../annonce.php?slug=<?= e($message['slug']) ?>" target="_blank"><?= e($message['property_title']) ?></a></p>
+          <p><strong>Concerne :</strong> <a href="../annonce?slug=<?= e($message['slug']) ?>" target="_blank"><?= e($message['property_title']) ?></a></p>
         <?php endif; ?>
         <div class="panel" style="margin-top:16px;background:#faf9f6">
           <div class="panel-body"><?= nl2br(e($message['message'])) ?></div>
@@ -80,7 +80,7 @@ require_once __DIR__ . '/../includes/admin_header.php';
 ?>
 
 <div class="pill-filters">
-  <a href="messages.php" class="<?= $filterStatus==='' ? 'active' : '' ?>">Tous</a>
+  <a href="messages" class="<?= $filterStatus==='' ? 'active' : '' ?>">Tous</a>
   <a href="?status=nouveau" class="<?= $filterStatus==='nouveau' ? 'active' : '' ?>">Nouveaux</a>
   <a href="?status=lu" class="<?= $filterStatus==='lu' ? 'active' : '' ?>">Lus</a>
   <a href="?status=traite" class="<?= $filterStatus==='traite' ? 'active' : '' ?>">Traités</a>

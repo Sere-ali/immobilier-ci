@@ -28,81 +28,74 @@ try {
 ?>
 <section class="page-hero">
   <div class="container">
-    <div class="breadcrumb"><a href="index.php">Accueil</a> / Annonces</div>
+    <div class="breadcrumb"><a href="index">Accueil</a> / Annonces</div>
     <h1>Toutes les annonces</h1>
   </div>
 </section>
 
 <div class="container">
-  <div class="listing-layout">
-    <aside class="filters-box">
-      <h3>Filtrer</h3>
-      <form method="get">
-        <div class="filter-group">
-          <label>Ville</label>
-          <select name="city">
-            <option value="">Toutes</option>
-            <?php foreach (ivoryCoastCities() as $city): ?>
-              <option value="<?= e($city) ?>" <?= gs('city') === $city ? 'selected' : '' ?>><?= e($city) ?></option>
-            <?php endforeach; ?>
-          </select>
-        </div>
-        <div class="filter-group">
-          <label>Type de bien</label>
-          <select name="category">
-            <option value="">Tous</option>
-            <?php foreach (propertyCategories() as $key => $label): ?>
-              <option value="<?= e($key) ?>" <?= gs('category') === $key ? 'selected' : '' ?>><?= e($label) ?></option>
-            <?php endforeach; ?>
-          </select>
-        </div>
-        <div class="filter-group">
-          <label>Transaction</label>
-          <select name="listing_type">
-            <option value="">Toutes</option>
-            <option value="vente" <?= gs('listing_type') === 'vente' ? 'selected' : '' ?>>Vente</option>
-            <option value="location" <?= gs('listing_type') === 'location' ? 'selected' : '' ?>>Location</option>
-          </select>
-        </div>
-        <div class="filter-group">
-          <label>Budget (FCFA)</label>
-          <div class="row">
-            <input type="number" name="min_price" placeholder="Min" value="<?= e(gs('min_price')) ?>">
-            <input type="number" name="max_price" placeholder="Max" value="<?= e(gs('max_price')) ?>">
-          </div>
-        </div>
-        <div class="filter-group">
-          <label>Chambres min.</label>
-          <select name="bedrooms">
-            <option value="">Indifférent</option>
-            <?php for ($i = 1; $i <= 5; $i++): ?>
-              <option value="<?= $i ?>" <?= gs('bedrooms') === (string)$i ? 'selected' : '' ?>><?= $i ?>+</option>
-            <?php endfor; ?>
-          </select>
-        </div>
-        <button type="submit">Appliquer les filtres</button>
-      </form>
-    </aside>
-
-    <div>
-      <?php if ($listingError): ?>
-        <div class="alert alert-error"><?= e($listingError) ?></div>
-      <?php endif; ?>
-      <div class="results-meta"><?= count($properties) ?> bien(s) trouvé(s)</div>
-      <?php if (empty($properties)): ?>
-        <div class="empty-state">
-          <div class="icon">🔍</div>
-          <p>Aucune annonce ne correspond à ces critères. Essayez d'élargir votre recherche.</p>
-        </div>
-      <?php else: ?>
-        <div class="property-grid" data-reveal-group>
-          <?php foreach ($properties as $p): ?>
-            <?php include __DIR__ . '/includes/property_card.php'; ?>
-          <?php endforeach; ?>
-        </div>
-      <?php endif; ?>
+  <form method="get" class="filters-bar">
+    <div class="filter-group">
+      <label>Ville</label>
+      <select name="city">
+        <option value="">Toutes</option>
+        <?php foreach (ivoryCoastCities() as $city): ?>
+          <option value="<?= e($city) ?>" <?= gs('city') === $city ? 'selected' : '' ?>><?= e($city) ?></option>
+        <?php endforeach; ?>
+      </select>
     </div>
-  </div>
+    <div class="filter-group">
+      <label>Type de bien</label>
+      <select name="category">
+        <option value="">Tous</option>
+        <?php foreach (propertyCategories() as $key => $label): ?>
+          <option value="<?= e($key) ?>" <?= gs('category') === $key ? 'selected' : '' ?>><?= e($label) ?></option>
+        <?php endforeach; ?>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>Transaction</label>
+      <select name="listing_type">
+        <option value="">Toutes</option>
+        <option value="vente" <?= gs('listing_type') === 'vente' ? 'selected' : '' ?>>Vente</option>
+        <option value="location" <?= gs('listing_type') === 'location' ? 'selected' : '' ?>>Location</option>
+      </select>
+    </div>
+    <div class="filter-group budget">
+      <label>Budget (FCFA)</label>
+      <div class="row">
+        <input type="number" name="min_price" placeholder="Min" value="<?= e(gs('min_price')) ?>">
+        <input type="number" name="max_price" placeholder="Max" value="<?= e(gs('max_price')) ?>">
+      </div>
+    </div>
+    <div class="filter-group">
+      <label>Chambres min.</label>
+      <select name="bedrooms">
+        <option value="">Indifférent</option>
+        <?php for ($i = 1; $i <= 5; $i++): ?>
+          <option value="<?= $i ?>" <?= gs('bedrooms') === (string)$i ? 'selected' : '' ?>><?= $i ?>+</option>
+        <?php endfor; ?>
+      </select>
+    </div>
+    <button type="submit">Appliquer les filtres</button>
+  </form>
+
+  <?php if ($listingError): ?>
+    <div class="alert alert-error"><?= e($listingError) ?></div>
+  <?php endif; ?>
+  <div class="results-meta"><?= count($properties) ?> bien(s) trouvé(s)</div>
+  <?php if (empty($properties)): ?>
+    <div class="empty-state">
+      <div class="icon">🔍</div>
+      <p>Aucune annonce ne correspond à ces critères. Essayez d'élargir votre recherche.</p>
+    </div>
+  <?php else: ?>
+    <div class="property-grid" data-reveal-group>
+      <?php foreach ($properties as $p): ?>
+        <?php include __DIR__ . '/includes/property_card.php'; ?>
+      <?php endforeach; ?>
+    </div>
+  <?php endif; ?>
 </div>
 
 <?php require_once __DIR__ . '/includes/footer.php'; ?>

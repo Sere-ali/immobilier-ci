@@ -6,7 +6,7 @@ sendSecurityHeaders();
 $pdo = getPDO();
 
 if (isLoggedIn()) {
-    redirect(isSuperAdmin() ? 'superadmin/dashboard.php' : 'admin/dashboard.php');
+    redirect(isSuperAdmin() ? 'superadmin/dashboard' : 'admin/dashboard');
 }
 
 $error = null;
@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($user) {
                 clearLoginFailures($pdo, $email);
                 logActivity($pdo, $user['id'], 'Connexion réussie');
-                redirect($user['role'] === 'superadmin' ? 'superadmin/dashboard.php' : 'admin/dashboard.php');
+                redirect($user['role'] === 'superadmin' ? 'superadmin/dashboard' : 'admin/dashboard');
             }
             if ($email !== '') {
                 recordLoginFailure($pdo, $email);
@@ -43,6 +43,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Connexion — Immobilier CI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
 <link rel="stylesheet" href="assets/css/admin.css">
 </head>
 <body>
@@ -67,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <button type="submit">Se connecter</button>
     </form>
     <?php endif; ?>
-    <a href="index.php" class="back-link">← Retour au site public</a>
+    <a href="index" class="back-link">← Retour au site public</a>
   </div>
 </div>
 </body>

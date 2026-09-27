@@ -115,13 +115,20 @@ Le site s'adapte à toutes les tailles d'écran :
 - **Site public** : menu mobile en tiroir, grilles d'annonces qui passent de 3 à 2 puis 1 colonne, barre de recherche qui s'empile, galerie photo qui réduit son nombre de colonnes
 - **Espace Admin/Super Admin** : la barre latérale devient une barre horizontale défilante sur mobile (avec le lien "Voir le site public" et "Déconnexion" toujours visibles), les tableaux de données défilent horizontalement sans casser la mise en page, les formulaires passent en une seule colonne
 
+## 6bis. URLs propres et performance
+
+- **URLs sans `.php`** : `annonces.php` s'affiche désormais `annonces`, `admin/dashboard.php` devient `admin/dashboard`, etc. Géré par le fichier `.htaccess` à la racine (réécriture Apache) — toute ancienne URL en `.php` redirige automatiquement (301) vers sa version propre. Nécessite `mod_rewrite` + `AllowOverride All`, déjà activés dans le `Dockerfile` (`docker/apache-overrides.conf`) ; sous WampServer, `mod_rewrite` est actif par défaut.
+- **Temps de chargement** : la police Google Fonts était importée via `@import` dans le CSS, ce qui bloque l'affichage de la page le temps que le navigateur découvre et télécharge cet import en cascade. Elle est maintenant chargée via une balise `<link>` (+ `preconnect`) dans le `<head>`, en parallèle du reste. Compression Gzip et mise en cache navigateur des fichiers statiques activées (`mod_deflate` / `mod_expires`). Les photos des annonces utilisent maintenant de vraies balises `<img loading="lazy">` (au lieu d'images de fond CSS) pour ne charger que les photos visibles à l'écran.
+- Le premier chargement après une période d'inactivité peut rester plus lent sur le plan gratuit de Render (le service se met en veille et redémarre à la demande) — ce n'est pas lié au code du site.
+
 ## 7. Sécurité déjà en place
 
 - Mots de passe hachés (`password_hash` / `password_verify`)
 - Requêtes SQL exclusivement préparées (PDO) — pas d'injection SQL
 - Échappement systématique des sorties HTML (`e()` = `htmlspecialchars`)
 - Contrôle d'accès par rôle sur chaque page sensible
-- Upload d'images limité aux extensions `jpg, jpeg, png, webp`
+- Upload d'images limité aux extensions `jpg, jpeg, png, webp`, avec vérification du contenu réel du fichier (`getimagesize()`), pas seulement de son extension
+- Toutes les entrées de formulaire sont nettoyées avant stockage (`sanitizeText()`, `sanitizePhoneForStorage()`), pas seulement validées — un endpoint appelé directement (hors formulaire) ne peut pas injecter de donnée brute en base
 
 ### À faire avant une mise en production réelle
 - Supprimer `install.php` du serveur après usage

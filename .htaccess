@@ -1,0 +1,28 @@
+# Immobilier CI — URLs propres (sans extension .php)
+RewriteEngine On
+
+# 1) Si quelqu'un accède encore à une URL en .php, on redirige (301, permanent)
+#    vers la version sans extension — évite le contenu dupliqué et les liens cassés.
+RewriteCond %{THE_REQUEST} \s/+(.+)\.php[\s?] [NC]
+RewriteRule ^ /%1 [R=301,L]
+
+# 2) En interne, une requête vers /chemin (sans extension) sert le fichier
+#    /chemin.php correspondant, s'il existe — invisible pour le visiteur.
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule ^(.*)$ $1.php [L]
+
+# 3) Compression et mise en cache navigateur des fichiers statiques (performance)
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/css text/javascript application/javascript application/json image/svg+xml
+</IfModule>
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    ExpiresByType image/jpeg "access plus 1 month"
+    ExpiresByType image/png "access plus 1 month"
+    ExpiresByType image/webp "access plus 1 month"
+    ExpiresByType image/svg+xml "access plus 1 month"
+</IfModule>

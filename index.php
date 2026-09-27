@@ -23,9 +23,9 @@ $categories = [
   <div class="container hero-inner">
     <span class="eyebrow">Plateforme immobilière ivoirienne</span>
     <h1>Trouvez votre bien <em>en toute confiance</em>, partout en Côte d'Ivoire</h1>
-    <p>Villas, appartements, terrains et bureaux à Abidjan et dans les grandes villes du pays — vente et location, sans intermédiaire caché.</p>
+    <p>Villas, appartements, terrains et bureaux à Abidjan et dans les grandes villes du pays, à la vente comme à la location, sans intermédiaire caché.</p>
 
-    <form action="annonces.php" method="get" class="search-bar">
+    <form action="annonces" method="get" class="search-bar">
       <select name="city">
         <option value="">Toutes les villes</option>
         <?php foreach (ivoryCoastCities() as $city): ?>
@@ -51,7 +51,7 @@ $categories = [
 <div class="cities-strip">
   <div class="container">
     <?php foreach (['Abidjan','Bouaké','Yamoussoukro','San-Pédro','Grand-Bassam','Bingerville','Korhogo','Assinie'] as $city): ?>
-      <a href="annonces.php?city=<?= urlencode($city) ?>"><?= e($city) ?></a>
+      <a href="annonces?city=<?= urlencode($city) ?>"><?= e($city) ?></a>
     <?php endforeach; ?>
   </div>
 </div>
@@ -75,7 +75,7 @@ $categories = [
     </div>
     <div class="category-grid" data-reveal-group>
       <?php foreach ($categories as $key => [$icon, $label]): ?>
-        <a href="annonces.php?category=<?= e($key) ?>" class="category-card">
+        <a href="annonces?category=<?= e($key) ?>" class="category-card">
           <div class="icon"><?= $icon ?></div>
           <div class="name"><?= e($label) ?></div>
         </a>
@@ -92,7 +92,7 @@ $categories = [
         <h2>Biens à la une</h2>
         <p>Une sélection de biens vérifiés par notre équipe, disponibles à la vente ou à la location.</p>
       </div>
-      <a href="annonces.php" class="link-all">Voir toutes les annonces →</a>
+      <a href="annonces" class="link-all">Voir toutes les annonces →</a>
     </div>
 
     <?php if (empty($featured)): ?>
@@ -114,7 +114,7 @@ $categories = [
   <div class="cta-band" data-reveal>
     <h2>Vous voulez vendre ou louer un bien ?</h2>
     <p>Contactez notre équipe pour référencer votre propriété auprès de milliers d'acheteurs et locataires potentiels.</p>
-    <a href="contact.php" class="btn btn-primary">Nous contacter</a>
+    <a href="contact" class="btn btn-primary">Nous contacter</a>
   </div>
 </section>
 

@@ -17,7 +17,7 @@ if ($id) {
     $property = $stmt->fetch();
     if (!$property || (!$isSuper && $property['created_by'] != $user['id'])) {
         flash('error', "Vous n'avez pas accès à cette annonce.");
-        redirect('properties.php');
+        redirect('properties');
     }
     $imgStmt = $pdo->prepare('SELECT * FROM property_images WHERE property_id = ? ORDER BY is_primary DESC, sort_order ASC');
     $imgStmt->execute([$id]);
@@ -138,7 +138,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && csrfVerify() && empty($errors)) {
         } else {
             flash('success', $property ? 'Annonce mise à jour avec succès.' : 'Annonce créée avec succès.');
         }
-        redirect('properties.php');
+        redirect('properties');
     }
 }
 
@@ -239,7 +239,7 @@ require_once __DIR__ . '/../includes/admin_header.php';
 
       <div class="form-actions">
         <button type="submit" class="btn btn-primary"><?= $property ? 'Enregistrer les modifications' : 'Créer l\'annonce' ?></button>
-        <a href="properties.php" class="btn btn-outline">Annuler</a>
+        <a href="properties" class="btn btn-outline">Annuler</a>
       </div>
     </form>
   </div>
