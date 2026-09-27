@@ -32,4 +32,11 @@ document.addEventListener('DOMContentLoaded', function () {
       setTimeout(function () { alert.remove(); }, 400);
     }, 4500);
   });
+
+  // Champs téléphone : n'accepte que des chiffres, limité à 10 (l'indicatif +225 est ajouté automatiquement)
+  document.querySelectorAll('[data-phone-digits]').forEach(function (input) {
+    input.addEventListener('input', function () {
+      input.value = input.value.replace(/\D/g, '').slice(0, 10);
+    });
+  });
 });

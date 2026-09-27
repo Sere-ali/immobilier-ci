@@ -37,7 +37,7 @@ if (isset($_GET['id'])) {
         <a href="messages" class="btn btn-outline btn-sm">← Retour à la liste</a>
       </div>
       <div class="panel-body">
-        <p><strong>De :</strong> <?= e($message['full_name']) ?> — <a href="mailto:<?= e($message['email']) ?>"><?= e($message['email']) ?></a><?= $message['phone'] ? ' — WhatsApp : ' . e($message['phone']) : '' ?></p>
+        <p><strong>De :</strong> <?= e($message['full_name']) ?> — <a href="mailto:<?= e($message['email']) ?>"><?= e($message['email']) ?></a><?= $message['phone'] ? ' — WhatsApp : ' . e(formatIvoryCoastPhoneDisplay($message['phone'])) : '' ?></p>
         <p><strong>Reçu le :</strong> <?= date('d/m/Y à H:i', strtotime($message['created_at'])) ?></p>
         <?php if ($message['property_title']): ?>
           <p><strong>Concerne :</strong> <a href="../annonce?slug=<?= e($message['slug']) ?>" target="_blank"><?= e($message['property_title']) ?></a></p>

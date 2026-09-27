@@ -312,6 +312,60 @@ function waLink(string $number, string $message): string
     return 'https://wa.me/' . $digits . '?text=' . rawurlencode($message);
 }
 
+/** Indicatif téléphonique de la Côte d'Ivoire, ajouté automatiquement — l'utilisateur ne saisit que son numéro local */
+const IVORY_COAST_CALLING_CODE = '225';
+
+/**
+ * true si la saisie contient exactement 10 chiffres (numéro local ivoirien,
+ * sans l'indicatif +225 qui est ajouté automatiquement). Les espaces et tirets
+ * éventuellement tapés par l'utilisateur sont ignorés, mais tout le reste
+ * (lettres, symboles) rend le numéro invalide.
+ */
+function isValidLocalIvoryCoastPhone(string $raw): bool
+{
+    $digits = preg_replace('/[^0-9]/', '', $raw) ?? '';
+    return strlen($digits) === 10 && $digits === preg_replace('/[\s\-.]/', '', trim($raw));
+}
+
+/**
+ * Construit le numéro complet à stocker en base (indicatif 225 + les 10
+ * chiffres locaux saisis), à partir de l'entrée brute de l'utilisateur.
+ * À n'appeler qu'après isValidLocalIvoryCoastPhone().
+ */
+function formatIvoryCoastPhoneForStorage(string $raw): string
+{
+    $digits = preg_replace('/[^0-9]/', '', $raw) ?? '';
+    return IVORY_COAST_CALLING_CODE . substr($digits, 0, 10);
+}
+
+/**
+ * Retire l'indicatif +225 d'un numéro déjà stocké en base, pour ré-afficher
+ * uniquement les 10 chiffres locaux dans un champ de formulaire à modifier.
+ * Reste tolérant avec d'anciens numéros enregistrés dans un format différent.
+ */
+function stripIvoryCoastCountryCode(string $stored): string
+{
+    $digits = preg_replace('/[^0-9]/', '', $stored) ?? '';
+    if (strlen($digits) === 13 && substr($digits, 0, 3) === IVORY_COAST_CALLING_CODE) {
+        return substr($digits, 3);
+    }
+    if (strlen($digits) === 10) {
+        return $digits;
+    }
+    return $digits;
+}
+
+/** Formate un numéro stocké (225XXXXXXXXXX) en version lisible : +225 XX XX XX XX XX */
+function formatIvoryCoastPhoneDisplay(string $stored): string
+{
+    $digits = preg_replace('/[^0-9]/', '', $stored) ?? '';
+    if (strlen($digits) === 13 && substr($digits, 0, 3) === IVORY_COAST_CALLING_CODE) {
+        $local = substr($digits, 3);
+        return '+225 ' . implode(' ', str_split($local, 2));
+    }
+    return $stored;
+}
+
 /**
  * Nettoie une chaîne de texte libre avant stockage en base : retire les octets
  * nuls et caractères de contrôle, coupe les espaces superflus, et tronque à

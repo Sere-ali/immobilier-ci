@@ -18,14 +18,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $formError = 'Merci de remplir tous les champs obligatoires, y compris votre numéro WhatsApp.';
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $formError = 'Adresse e-mail invalide.';
-    } elseif (!isValidWhatsappNumber($phone)) {
-        $formError = 'Numéro WhatsApp invalide. Utilisez le format international, ex : +225 07 00 00 00 00.';
+    } elseif (!isValidLocalIvoryCoastPhone($phone)) {
+        $formError = 'Numéro WhatsApp invalide : saisissez vos 10 chiffres, sans l\'indicatif (ajouté automatiquement).';
     } else {
         // On stocke toujours la version nettoyée des champs, jamais le texte brut envoyé :
         // un champ peut passer la validation de format tout en contenant des caractères indésirables.
         $cleanName = sanitizeText($name, 150);
         $cleanEmail = sanitizeText($email, 190);
-        $cleanPhone = sanitizePhoneForStorage($phone);
+        $cleanPhone = formatIvoryCoastPhoneForStorage($phone);
         $cleanSubject = sanitizeText($subject !== '' ? $subject : 'Message général', 190);
         $cleanMsg = sanitizeText($msg, 2000);
         $stmt = $pdo->prepare('INSERT INTO messages (property_id, full_name, email, phone, subject, message) VALUES (NULL,?,?,?,?,?)');
@@ -127,7 +127,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <div class="field">
               <label>Numéro WhatsApp *</label>
-              <input type="text" name="phone" value="<?= e($_POST['phone'] ?? '') ?>" placeholder="+225 07 00 00 00 00" required>
+              <div class="phone-input-group">
+                <span class="phone-prefix">+225</span>
+                <input type="tel" name="phone" inputmode="numeric" pattern="[0-9]{10}" maxlength="10" data-phone-digits
+                       value="<?= e($_POST['phone'] ?? '') ?>" placeholder="07 00 00 00 00" required>
+              </div>
             </div>
             <div class="field">
               <label>Sujet</label>

@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && csrfVerify()) {
 
     if ($fullName === '' || $email === '') $errors[] = 'Le nom et l\'e-mail sont obligatoires.';
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'Adresse e-mail invalide.';
-    if ($phone !== '' && !isValidWhatsappNumber($phone)) $errors[] = 'Numéro de téléphone invalide (8 à 15 chiffres, avec ou sans indicatif +225).';
+    if ($phone !== '' && !isValidLocalIvoryCoastPhone($phone)) $errors[] = 'Numéro de téléphone invalide : 10 chiffres, sans l\'indicatif (ajouté automatiquement).';
     if (!in_array($role, ['admin','superadmin'])) $errors[] = 'Rôle invalide.';
     if (!$editUser && strlen($password) < 8) $errors[] = 'Le mot de passe doit contenir au moins 8 caractères.';
     if ($password !== '' && strlen($password) < 8) $errors[] = 'Le mot de passe doit contenir au moins 8 caractères.';
@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && csrfVerify()) {
     if (empty($errors)) {
         $fullName = sanitizeText($fullName, 150);
         $email = sanitizeText($email, 190);
-        $phone = $phone !== '' ? sanitizePhoneForStorage($phone) : '';
+        $phone = $phone !== '' ? formatIvoryCoastPhoneForStorage($phone) : '';
     }
 
     if (empty($errors)) {
@@ -81,7 +81,14 @@ require_once __DIR__ . '/../includes/admin_header.php';
       <div class="form-grid">
         <div class="field"><label>Nom complet *</label><input type="text" name="full_name" value="<?= e($editUser['full_name'] ?? $_POST['full_name'] ?? '') ?>" required></div>
         <div class="field"><label>E-mail *</label><input type="email" name="email" value="<?= e($editUser['email'] ?? $_POST['email'] ?? '') ?>" required></div>
-        <div class="field"><label>Téléphone</label><input type="text" name="phone" value="<?= e($editUser['phone'] ?? '') ?>"></div>
+        <div class="field">
+          <label>Téléphone</label>
+          <div class="phone-input-group">
+            <span class="phone-prefix">+225</span>
+            <input type="tel" name="phone" inputmode="numeric" pattern="[0-9]{10}" maxlength="10" data-phone-digits
+                   value="<?= e(stripIvoryCoastCountryCode($editUser['phone'] ?? '')) ?>" placeholder="07 00 00 00 00">
+          </div>
+        </div>
         <div class="field">
           <label>Rôle *</label>
           <select name="role" required>

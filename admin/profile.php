@@ -19,12 +19,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_info'])) {
     $whatsapp = trim($_POST['whatsapp'] ?? '');
     if ($fullName === '') {
         $errors[] = 'Le nom complet est obligatoire.';
-    } elseif ($whatsapp !== '' && !isValidWhatsappNumber($whatsapp)) {
-        $errors[] = 'Numéro WhatsApp invalide (8 à 15 chiffres, avec ou sans indicatif +225).';
+    } elseif ($phone !== '' && !isValidLocalIvoryCoastPhone($phone)) {
+        $errors[] = 'Numéro de téléphone invalide : 10 chiffres, sans l\'indicatif (ajouté automatiquement).';
+    } elseif ($whatsapp !== '' && !isValidLocalIvoryCoastPhone($whatsapp)) {
+        $errors[] = 'Numéro WhatsApp invalide : 10 chiffres, sans l\'indicatif (ajouté automatiquement).';
     } else {
         $fullName = sanitizeText($fullName, 150);
-        $phone = sanitizePhoneForStorage($phone);
-        $whatsapp = $whatsapp !== '' ? sanitizePhoneForStorage($whatsapp) : '';
+        $phone = $phone !== '' ? formatIvoryCoastPhoneForStorage($phone) : '';
+        $whatsapp = $whatsapp !== '' ? formatIvoryCoastPhoneForStorage($whatsapp) : '';
         $pdo->prepare('UPDATE users SET full_name = ?, phone = ?, whatsapp = ? WHERE id = ?')->execute([$fullName, $phone, $whatsapp, $user['id']]);
         $_SESSION['user']['full_name'] = $fullName;
         $_SESSION['user']['phone'] = $phone;
@@ -74,10 +76,21 @@ require_once __DIR__ . '/../includes/admin_header.php';
       <?= csrfField() ?>
       <div class="form-grid">
         <div class="field"><label>Nom complet</label><input type="text" name="full_name" value="<?= e($user['full_name']) ?>" required></div>
-        <div class="field"><label>Téléphone</label><input type="text" name="phone" value="<?= e($user['phone'] ?? '') ?>"></div>
+        <div class="field">
+          <label>Téléphone</label>
+          <div class="phone-input-group">
+            <span class="phone-prefix">+225</span>
+            <input type="tel" name="phone" inputmode="numeric" pattern="[0-9]{10}" maxlength="10" data-phone-digits
+                   value="<?= e(stripIvoryCoastCountryCode($user['phone'] ?? '')) ?>" placeholder="07 00 00 00 00">
+          </div>
+        </div>
         <div class="field">
           <label>Numéro WhatsApp</label>
-          <input type="text" name="whatsapp" value="<?= e($user['whatsapp'] ?? '') ?>" placeholder="+225 07 00 00 00 00">
+          <div class="phone-input-group">
+            <span class="phone-prefix">+225</span>
+            <input type="tel" name="whatsapp" inputmode="numeric" pattern="[0-9]{10}" maxlength="10" data-phone-digits
+                   value="<?= e(stripIvoryCoastCountryCode($user['whatsapp'] ?? '')) ?>" placeholder="07 00 00 00 00">
+          </div>
           <div class="hint">Utilisé pour que les visiteurs intéressés par vos annonces puissent vous écrire directement sur WhatsApp.</div>
         </div>
         <div class="field full"><label>E-mail (non modifiable)</label><input type="text" value="<?= e($user['email']) ?>" disabled></div>

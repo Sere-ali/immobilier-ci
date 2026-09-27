@@ -482,6 +482,13 @@ html.js .main-nav.open a:nth-child(6){transition-delay:.3s}
 }
 .contact-form textarea{resize:vertical;min-height:130px}
 
+/* Champ téléphone : indicatif +225 fixe, l'utilisateur ne saisit que ses 10 chiffres */
+.phone-input-group{display:flex;align-items:stretch;border:1.5px solid var(--border);border-radius:9px;overflow:hidden;background:#fdfcfa;transition:border-color .2s ease, box-shadow .2s ease}
+.phone-input-group:focus-within{border-color:var(--laterite);box-shadow:0 0 0 4px rgba(200,127,42,.12)}
+.phone-input-group .phone-prefix{display:flex;align-items:center;padding:0 12px;background:var(--sable);color:var(--ink-soft);font-family:'IBM Plex Mono',monospace;font-size:.85rem;font-weight:600;white-space:nowrap}
+.phone-input-group input{flex:1;min-width:0;border:none !important;border-radius:0 !important;background:transparent !important;box-shadow:none !important}
+.phone-input-group input:focus{outline:none}
+
 .contact-submit{
   display:inline-flex;align-items:center;gap:8px;
   background:var(--laterite);color:#fff;border:none;

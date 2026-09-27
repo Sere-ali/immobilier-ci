@@ -18,11 +18,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     foreach ($fields as $key => $label) {
         $value = trim($_POST[$key] ?? '');
         if ($key === 'site_whatsapp' || $key === 'site_phone') {
-            if ($value !== '' && !isValidWhatsappNumber($value)) {
-                $errors[] = 'Numéro ' . ($key === 'site_whatsapp' ? 'WhatsApp' : 'de téléphone') . ' invalide (8 à 15 chiffres, avec ou sans indicatif +225).';
+            if ($value !== '' && !isValidLocalIvoryCoastPhone($value)) {
+                $errors[] = 'Numéro ' . ($key === 'site_whatsapp' ? 'WhatsApp' : 'de téléphone') . ' invalide : 10 chiffres, sans l\'indicatif (ajouté automatiquement).';
                 continue;
             }
-            $value = $value !== '' ? sanitizePhoneForStorage($value) : '';
+            $value = $value !== '' ? formatIvoryCoastPhoneForStorage($value) : '';
         } elseif ($key === 'site_email') {
             if ($value !== '' && !filter_var($value, FILTER_VALIDATE_EMAIL)) {
                 $errors[] = 'Adresse e-mail de contact invalide.';
@@ -65,9 +65,15 @@ require_once __DIR__ . '/../includes/admin_header.php';
             <label><?= e($label) ?></label>
             <?php if ($key === 'site_about'): ?>
               <textarea name="<?= e($key) ?>" rows="4"><?= e($current[$key] ?? '') ?></textarea>
-            <?php else: ?>
-              <input type="text" name="<?= e($key) ?>" value="<?= e($current[$key] ?? '') ?>" <?= $key === 'site_whatsapp' ? 'placeholder="+225 07 00 00 00 00"' : '' ?>>
+            <?php elseif ($key === 'site_whatsapp' || $key === 'site_phone'): ?>
+              <div class="phone-input-group">
+                <span class="phone-prefix">+225</span>
+                <input type="tel" name="<?= e($key) ?>" inputmode="numeric" pattern="[0-9]{10}" maxlength="10" data-phone-digits
+                       value="<?= e(stripIvoryCoastCountryCode($current[$key] ?? '')) ?>" placeholder="07 00 00 00 00">
+              </div>
               <?php if ($key === 'site_whatsapp'): ?><div class="hint">Utilisé quand un administrateur n'a pas renseigné son propre numéro WhatsApp dans son profil.</div><?php endif; ?>
+            <?php else: ?>
+              <input type="text" name="<?= e($key) ?>" value="<?= e($current[$key] ?? '') ?>">
             <?php endif; ?>
           </div>
         <?php endforeach; ?>

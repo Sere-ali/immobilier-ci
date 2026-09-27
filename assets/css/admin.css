@@ -102,10 +102,17 @@ table.data-table{width:100%;border-collapse:collapse;font-size:.87rem;min-width:
 .field.full{grid-column:1/-1}
 .field label{display:block;font-size:.8rem;font-weight:600;margin-bottom:7px;color:var(--ink)}
 .field .hint{font-size:.75rem;color:var(--ink-soft);margin-top:5px}
-.field input[type=text], .field input[type=email], .field input[type=password], .field input[type=number], .field input[type=file], .field select, .field textarea{
+.field input[type=text], .field input[type=email], .field input[type=password], .field input[type=number], .field input[type=tel], .field input[type=file], .field select, .field textarea{
   width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:.88rem;background:#fff;
 }
 .field textarea{resize:vertical;min-height:110px}
+
+/* Champ téléphone : indicatif +225 fixe, l'utilisateur ne saisit que ses 10 chiffres */
+.phone-input-group{display:flex;align-items:stretch;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:#fff}
+.phone-input-group:focus-within{border-color:var(--lagune);box-shadow:0 0 0 3px rgba(15,61,62,.1)}
+.phone-input-group .phone-prefix{display:flex;align-items:center;padding:0 12px;background:var(--sable);color:var(--ink-soft);font-family:'IBM Plex Mono',monospace;font-size:.82rem;font-weight:600;white-space:nowrap}
+.phone-input-group input{flex:1;min-width:0;border:none !important;border-radius:0 !important;box-shadow:none !important}
+.phone-input-group input:focus{outline:none}
 .checkbox-row{display:flex;align-items:center;gap:8px}
 .form-actions{display:flex;gap:10px;padding-top:10px;border-top:1px solid var(--border);margin-top:10px;flex-wrap:wrap}
 
