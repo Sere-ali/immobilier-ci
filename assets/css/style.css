@@ -52,6 +52,7 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;line-height:1.15;margin
 }
 .site-header .container{display:flex;align-items:center;justify-content:space-between;height:76px}
 .logo{font-family:'Fraunces',serif;font-weight:700;font-size:1.4rem;color:var(--lagune);display:flex;align-items:center;gap:8px;white-space:nowrap}
+.logo-mark{flex-shrink:0}
 .logo span{color:var(--laterite)}
 .main-nav{display:flex;align-items:center;gap:32px}
 .main-nav a{font-weight:500;font-size:.95rem;color:var(--ink);position:relative;padding:4px 0}
@@ -222,11 +223,31 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;line-height:1.15;margin
 .gallery-thumbs{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
 .gallery-thumbs .thumb{aspect-ratio:1;border-radius:8px;background:var(--sable) center/cover no-repeat;cursor:pointer;border:2px solid transparent}
 .gallery-thumbs .thumb.active{border-color:var(--laterite)}
-.detail-title-row{display:flex;justify-content:space-between;align-items:flex-start;margin:26px 0 10px;gap:20px;flex-wrap:wrap}
-.detail-price{font-family:'IBM Plex Mono',monospace;font-size:clamp(1.2rem,3vw,1.6rem);font-weight:600;color:var(--lagune);white-space:nowrap}
-.detail-specs{display:flex;gap:24px;padding:18px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin:20px 0;flex-wrap:wrap}
-.detail-specs .spec b{display:block;font-family:'IBM Plex Mono',monospace;font-size:1.1rem}
-.detail-specs .spec span{font-size:.78rem;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.03em}
+/* En-tête de la fiche bien : titre, localisation et prix clairement hiérarchisés */
+.detail-header{margin:26px 0 18px}
+.detail-location{
+  display:flex;align-items:center;gap:6px;color:var(--ink-soft);font-size:.95rem;margin-top:6px;
+}
+.detail-price-block{
+  display:flex;align-items:baseline;gap:8px;margin-top:16px;padding:16px 20px;
+  background:var(--sable);border-radius:10px;width:fit-content;
+}
+.detail-price{font-family:'IBM Plex Mono',monospace;font-size:clamp(1.4rem,3.5vw,1.9rem);font-weight:700;color:var(--lagune)}
+.detail-price-period{font-size:.85rem;color:var(--ink-soft)}
+
+/* Bandeau des caractéristiques clés : surface, chambres, sdb, transaction — d'un coup d'œil */
+.detail-specs{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:0;
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  margin:22px 0;overflow:hidden;
+}
+.detail-specs .spec{
+  display:flex;align-items:center;gap:10px;padding:16px 18px;border-right:1px solid var(--border);
+}
+.detail-specs .spec:last-child{border-right:none}
+.detail-specs .spec-icon{font-size:1.3rem;line-height:1}
+.detail-specs .spec b{display:block;font-family:'IBM Plex Mono',monospace;font-size:1.05rem;line-height:1.2}
+.detail-specs .spec span{font-size:.74rem;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.03em}
 .contact-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;align-self:start;position:sticky;top:96px}
 .contact-card h3{font-size:1.1rem;margin-bottom:16px}
 .contact-card .field{margin-bottom:12px}
@@ -340,6 +361,8 @@ html.js [data-reveal-group].in-view > *:nth-child(6){transition-delay:.33s}
   transition:right .3s cubic-bezier(.2,.8,.2,1);
 }
 .main-nav a:not(.nav-cta):hover::after{right:0}
+.main-nav a.active{color:var(--lagune);font-weight:600}
+.main-nav a.active::after{right:0}
 
 /* Boutons : transition douce + micro-interaction au clic */
 .btn, .search-bar button, .nav-cta, .filters-bar button, .contact-card button{

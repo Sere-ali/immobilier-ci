@@ -84,20 +84,21 @@ $mainImg = !empty($images) ? imageUrl($images[0]['image_path']) : 'https://place
         </div>
       <?php endif; ?>
 
-      <div class="detail-title-row">
-        <div>
-          <div class="ref mono" style="color:var(--ink-soft);font-size:.8rem"><?= e($property['reference']) ?> · <?= e(propertyCategories()[$property['category']] ?? $property['category']) ?></div>
-          <h1 style="margin:6px 0"><?= e($property['title']) ?></h1>
-          <div style="color:var(--ink-soft)">📍 <?= e($property['commune'] ? $property['commune'] . ', ' : '') . e($property['city']) ?></div>
+      <div class="detail-header">
+        <div class="ref mono" style="color:var(--ink-soft);font-size:.8rem"><?= e($property['reference']) ?> · <?= e(propertyCategories()[$property['category']] ?? $property['category']) ?></div>
+        <h1 style="margin:6px 0"><?= e($property['title']) ?></h1>
+        <div class="detail-location">📍 <?= e($property['commune'] ? $property['commune'] . ', ' : '') . e($property['city']) ?></div>
+        <div class="detail-price-block">
+          <span class="detail-price"><?= formatPrice($property['price']) ?></span>
+          <?php if ($property['listing_type'] === 'location'): ?><span class="detail-price-period">/ mois</span><?php endif; ?>
         </div>
-        <div class="detail-price"><?= formatPrice($property['price']) ?><?= $property['listing_type'] === 'location' ? '<br><small style="font-size:.6em;color:var(--ink-soft)">par mois</small>' : '' ?></div>
       </div>
 
       <div class="detail-specs">
-        <?php if ($property['surface']): ?><div class="spec"><b class="mono"><?= (int)$property['surface'] ?> m²</b><span>Surface</span></div><?php endif; ?>
-        <?php if ($property['bedrooms']): ?><div class="spec"><b class="mono"><?= (int)$property['bedrooms'] ?></b><span>Chambres</span></div><?php endif; ?>
-        <?php if ($property['bathrooms']): ?><div class="spec"><b class="mono"><?= (int)$property['bathrooms'] ?></b><span>Salles de bain</span></div><?php endif; ?>
-        <div class="spec"><b class="mono"><?= $property['listing_type'] === 'vente' ? 'Vente' : 'Location' ?></b><span>Transaction</span></div>
+        <?php if ($property['surface']): ?><div class="spec"><span class="spec-icon">📐</span><div><b class="mono"><?= (int)$property['surface'] ?> m²</b><span>Surface</span></div></div><?php endif; ?>
+        <?php if ($property['bedrooms']): ?><div class="spec"><span class="spec-icon">🛏️</span><div><b class="mono"><?= (int)$property['bedrooms'] ?></b><span>Chambres</span></div></div><?php endif; ?>
+        <?php if ($property['bathrooms']): ?><div class="spec"><span class="spec-icon">🛁</span><div><b class="mono"><?= (int)$property['bathrooms'] ?></b><span>Salles de bain</span></div></div><?php endif; ?>
+        <div class="spec"><span class="spec-icon"><?= $property['listing_type'] === 'vente' ? '🏷️' : '🔑' ?></span><div><b class="mono"><?= $property['listing_type'] === 'vente' ? 'Vente' : 'Location' ?></b><span>Transaction</span></div></div>
       </div>
 
       <h3>Description</h3>

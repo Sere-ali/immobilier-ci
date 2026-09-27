@@ -9,6 +9,19 @@ sendSecurityHeaders();
 $pdo = getPDO();
 $siteName = getSetting($pdo, 'site_name', SITE_NAME);
 $pageTitle = $pageTitle ?? $siteName;
+
+// Détermine quel lien du menu correspond à la page actuellement affichée,
+// pour le mettre en évidence (état "actif") — y compris pour les liens
+// Vente/Location qui pointent vers la même page annonces.php avec un filtre différent.
+$currentScript = basename($_SERVER['SCRIPT_NAME'] ?? '');
+$currentListingType = is_string($_GET['listing_type'] ?? null) ? $_GET['listing_type'] : '';
+function navLinkClass(string $script, string $currentScript, ?string $listingType = null, string $currentListingType = ''): string
+{
+    if ($script !== $currentScript) return '';
+    if ($listingType !== null && $listingType !== $currentListingType) return '';
+    if ($listingType === null && $script === 'annonces.php' && $currentListingType !== '') return '';
+    return 'active';
+}
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -25,13 +38,13 @@ $pageTitle = $pageTitle ?? $siteName;
 <body>
 <header class="site-header">
   <div class="container">
-    <a href="index" class="logo">Immobilier<span>CI</span></a>
+    <a href="index" class="logo"><?= logoMark(30) ?>Immobilier<span>CI</span></a>
     <nav class="main-nav">
-      <a href="index">Accueil</a>
-      <a href="annonces">Annonces</a>
-      <a href="annonces?listing_type=vente">Vente</a>
-      <a href="annonces?listing_type=location">Location</a>
-      <a href="contact">Contact</a>
+      <a href="index" class="<?= navLinkClass('index.php', $currentScript) ?>">Accueil</a>
+      <a href="annonces" class="<?= navLinkClass('annonces.php', $currentScript, '', $currentListingType) ?> <?= navLinkClass('annonce.php', $currentScript) ?>">Annonces</a>
+      <a href="annonces?listing_type=vente" class="<?= navLinkClass('annonces.php', $currentScript, 'vente', $currentListingType) ?>">Vente</a>
+      <a href="annonces?listing_type=location" class="<?= navLinkClass('annonces.php', $currentScript, 'location', $currentListingType) ?>">Location</a>
+      <a href="contact" class="<?= navLinkClass('contact.php', $currentScript) ?>">Contact</a>
       <?php if (isLoggedIn()): ?>
         <a href="<?= isSuperAdmin() ? 'superadmin/dashboard' : 'admin/dashboard' ?>" class="nav-cta">Mon espace</a>
       <?php else: ?>

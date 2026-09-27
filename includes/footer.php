@@ -2,7 +2,7 @@
   <div class="container">
     <div class="footer-grid">
       <div>
-        <h4 style="font-family:'Fraunces',serif;font-size:1.2rem;color:#fff;text-transform:none;letter-spacing:0">Immobilier<span style="color:var(--laterite)">CI</span></h4>
+        <h4 style="font-family:'Fraunces',serif;font-size:1.2rem;color:#fff;text-transform:none;letter-spacing:0;display:flex;align-items:center;gap:8px"><?= logoMark(26) ?>Immobilier<span style="color:var(--laterite)">CI</span></h4>
         <p style="font-size:.88rem;max-width:280px;margin-top:10px"><?= e(getSetting($pdo, 'site_about', '')) ?></p>
       </div>
       <div>

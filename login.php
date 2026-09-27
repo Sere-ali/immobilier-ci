@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
 <div class="login-wrap">
   <div class="login-card">
-    <div class="brand">Immobilier<span>CI</span></div>
+    <div class="brand"><?= logoMark(36) ?>Immobilier<span>CI</span></div>
     <p class="sub">Espace Admin &amp; Super Admin</p>
 
     <?php if ($error): ?><div class="alert alert-error"><?= e($error) ?></div><?php endif; ?>

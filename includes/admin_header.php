@@ -28,7 +28,7 @@ function navActive(string $file, string $current): string
 <body>
 <div class="admin-shell">
   <aside class="sidebar">
-    <div class="brand">Immobilier<span>CI</span></div>
+    <div class="brand"><?= logoMark(28) ?>Immobilier<span>CI</span></div>
     <div class="role-tag"><?= $user['role'] === 'superadmin' ? 'Super Administrateur' : 'Administrateur' ?></div>
     <nav>
       <span class="group-label">Gestion</span>

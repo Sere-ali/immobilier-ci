@@ -22,8 +22,9 @@ a{color:inherit;text-decoration:none}
   width:var(--sidebar-w);flex-shrink:0;background:var(--lagune);color:#fff;
   padding:26px 18px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;
 }
-.sidebar .brand{font-family:'Inter',sans-serif;font-weight:700;font-size:1.15rem;margin-bottom:6px;padding:0 8px}
+.sidebar .brand{font-family:'Inter',sans-serif;font-weight:700;font-size:1.15rem;margin-bottom:6px;padding:0 8px;display:flex;align-items:center;gap:8px}
 .sidebar .brand span{color:var(--laterite)}
+.logo-mark{flex-shrink:0}
 .sidebar .role-tag{
   font-family:'IBM Plex Mono',monospace;font-size:.68rem;text-transform:uppercase;letter-spacing:.05em;
   color:var(--sable);padding:0 8px 22px;border-bottom:1px solid rgba(255,255,255,.12);margin-bottom:18px;
@@ -117,7 +118,7 @@ table.data-table{width:100%;border-collapse:collapse;font-size:.87rem;min-width:
 /* ---- Login page (admin) ---- */
 .login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--lagune);padding:20px}
 .login-card{background:#fff;border-radius:16px;padding:40px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
-.login-card .brand{font-weight:700;font-size:1.3rem;text-align:center;margin-bottom:4px;color:var(--lagune)}
+.login-card .brand{font-weight:700;font-size:1.3rem;text-align:center;margin-bottom:4px;color:var(--lagune);display:flex;align-items:center;justify-content:center;gap:8px}
 .login-card .brand span{color:var(--laterite)}
 .login-card p.sub{text-align:center;color:var(--ink-soft);font-size:.85rem;margin-bottom:26px}
 .login-card button{width:100%;background:var(--lagune);color:#fff;border:none;padding:12px;border-radius:8px;font-weight:600;cursor:pointer;margin-top:6px}
