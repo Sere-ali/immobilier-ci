@@ -124,6 +124,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && csrfVerify() && empty($errors)) {
                     $uploadWarnings[] = "« $name » a été ignorée : le fichier n'est pas une image valide.";
                     continue;
                 }
+                // Filigrane appliqué avant l'envoi (local ou Cloudinary) pour marquer
+                // toutes les photos publiées, quel que soit le stockage utilisé.
+                applyWatermark($_FILES['images']['tmp_name'][$i]);
 
                 $storedPath = null;
                 if (cloudinaryConfigured()) {

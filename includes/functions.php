@@ -461,6 +461,88 @@ function isRealImageFile(string $tmpPath): bool
     return in_array($info[2] ?? null, [IMAGETYPE_JPEG, IMAGETYPE_PNG, IMAGETYPE_WEBP], true);
 }
 
+/**
+ * Applique un filigrane "IMMOBILIER CI" répété en diagonale sur une image, en
+ * remplaçant le fichier sur place. Sert à dissuader la réutilisation des photos
+ * d'annonces ailleurs, tout en indiquant clairement leur origine. Échoue
+ * silencieusement (retourne false) si GD/FreeType ou la police ne sont pas
+ * disponibles : l'appelant doit alors simplement garder l'image d'origine.
+ */
+function applyWatermark(string $filePath): bool
+{
+    if (!function_exists('imagettftext') || !function_exists('imagecreatetruecolor')) {
+        return false;
+    }
+    $fontPath = __DIR__ . '/../assets/fonts/DejaVuSans-Bold.ttf';
+    if (!is_file($fontPath)) {
+        return false;
+    }
+
+    $info = @getimagesize($filePath);
+    if ($info === false) {
+        return false;
+    }
+    [$width, $height] = $info;
+    $mime = $info['mime'] ?? '';
+
+    switch ($mime) {
+        case 'image/jpeg':
+            $image = @imagecreatefromjpeg($filePath);
+            break;
+        case 'image/png':
+            $image = @imagecreatefrompng($filePath);
+            break;
+        case 'image/webp':
+            $image = function_exists('imagecreatefromwebp') ? @imagecreatefromwebp($filePath) : false;
+            break;
+        default:
+            return false;
+    }
+    if (!$image) {
+        return false;
+    }
+
+    imagealphablending($image, true);
+    imagesavealpha($image, true);
+
+    $text = 'IMMOBILIER CI';
+    $angle = -30;
+    $fontSize = max(12, min(30, (int) round($width / 22)));
+
+    // Ombre sombre + texte clair superposés : reste lisible aussi bien sur une
+    // photo sombre que sur une photo claire.
+    $shadow = imagecolorallocatealpha($image, 0, 0, 0, 100);
+    $light  = imagecolorallocatealpha($image, 255, 255, 255, 96);
+
+    $box = imagettfbbox($fontSize, $angle, $fontPath, $text);
+    $textWidth  = max(1, abs($box[4] - $box[0]));
+    $textHeight = max(1, abs($box[5] - $box[1]));
+    $stepX = $textWidth + 90;
+    $stepY = $textHeight + 70;
+
+    for ($y = -$stepY; $y < $height + $stepY; $y += $stepY) {
+        for ($x = -$stepX; $x < $width + $stepX; $x += $stepX) {
+            imagettftext($image, $fontSize, $angle, (int) $x + 1, (int) $y + 1, $shadow, $fontPath, $text);
+            imagettftext($image, $fontSize, $angle, (int) $x, (int) $y, $light, $fontPath, $text);
+        }
+    }
+
+    $ok = false;
+    switch ($mime) {
+        case 'image/jpeg':
+            $ok = imagejpeg($image, $filePath, 88);
+            break;
+        case 'image/png':
+            $ok = imagepng($image, $filePath, 6);
+            break;
+        case 'image/webp':
+            $ok = imagewebp($image, $filePath, 88);
+            break;
+    }
+    imagedestroy($image);
+    return $ok;
+}
+
 /** Valide et convertit une valeur numérique entière bornée ; retourne null si invalide */
 function validateBoundedInt($value, int $min, int $max): ?int
 {
