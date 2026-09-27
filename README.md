@@ -135,6 +135,21 @@ Le site s'adapte à toutes les tailles d'écran :
 - Ajouter une limitation des tentatives de connexion sur `login.php`
 - Sauvegardes régulières de la base de données et du dossier `uploads/`
 
+## 7bis. Scalabilité — fondations
+
+Ce projet fonctionne très bien en l'état pour un usage personnel ou un lancement modeste. Avant une commercialisation avec plus de trafic, voici ce qui a déjà été mis en place et ce qui restera à faire.
+
+**Déjà fait :**
+- **Pagination** sur les listes qui peuvent grossir sans limite : annonces publiques (`annonces.php`), biens en admin (`admin/properties.php`), messages (`admin/messages.php`), journal d'activité (`superadmin/activity_log.php`). Plus de `SELECT *` ou `LIMIT 200` figé qui ralentirait avec des milliers de lignes.
+- **Index de base de données** sur les colonnes utilisées pour filtrer/trier (ville, catégorie, type de transaction, statut, biens en vedette, propriété liée à un message, date des actions du journal). Les requêtes restent rapides même avec beaucoup de données.
+- **Correction d'une situation de concurrence** : si deux annonces étaient créées exactement en même temps, elles pouvaient recevoir la même référence. La création réessaie maintenant automatiquement avec une nouvelle référence en cas de collision.
+- **Limitation anti-spam** sur les formulaires publics (contact général et contact par annonce) : 5 messages maximum par connexion sur 15 minutes, via une nouvelle table `rate_limits`.
+
+**Hors périmètre pour cette étape (à revoir si le trafic augmente fortement)** :
+- Stockage de session partagé entre plusieurs instances du serveur (actuellement en fichiers locaux — ne fonctionne que sur un seul serveur à la fois)
+- File d'attente pour les tâches en arrière-plan (envois groupés, traitements longs)
+- Couche de cache (Redis ou équivalent) pour réduire la charge sur la base de données
+
 ## 8. Structure du projet
 
 ```

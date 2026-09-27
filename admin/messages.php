@@ -67,15 +67,20 @@ $where = [];
 $params = [];
 if (!$isSuper) { $where[] = 'p.created_by = ?'; $params[] = $user['id']; }
 if ($filterStatus && in_array($filterStatus, ['nouveau','lu','traite'])) { $where[] = 'm.status = ?'; $params[] = $filterStatus; }
-$sql = "SELECT m.*, p.title AS property_title FROM messages m LEFT JOIN properties p ON p.id = m.property_id";
-if ($where) $sql .= ' WHERE ' . implode(' AND ', $where);
-$sql .= ' ORDER BY m.created_at DESC';
+$whereSql = $where ? ' WHERE ' . implode(' AND ', $where) : '';
+
+$countStmt = $pdo->prepare("SELECT COUNT(*) n FROM messages m LEFT JOIN properties p ON p.id = m.property_id$whereSql");
+$countStmt->execute($params);
+$pagination = paginate((int)$countStmt->fetch()['n'], 20);
+
+$sql = "SELECT m.*, p.title AS property_title FROM messages m LEFT JOIN properties p ON p.id = m.property_id$whereSql
+        ORDER BY m.created_at DESC LIMIT {$pagination['perPage']} OFFSET {$pagination['offset']}";
 $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $messages = $stmt->fetchAll();
 
 $pageTitle = 'Messages';
-$pageSubtitle = count($messages) . ' message(s)' . (!$isSuper ? ' — liés à vos annonces' : '');
+$pageSubtitle = $pagination['totalItems'] . ' message(s)' . (!$isSuper ? ' — liés à vos annonces' : '');
 require_once __DIR__ . '/../includes/admin_header.php';
 ?>
 
@@ -111,6 +116,7 @@ require_once __DIR__ . '/../includes/admin_header.php';
       <?php endforeach; ?>
       </tbody>
     </table>
+    <div style="padding:16px 22px"><?= paginationLinks($pagination) ?></div>
     <?php endif; ?>
   </div>
 </div>

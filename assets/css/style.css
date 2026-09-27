@@ -214,6 +214,13 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;line-height:1.15;margin
 }
 .filters-bar button:hover{background:var(--lagune-dark)}
 .results-meta{margin-bottom:20px;color:var(--ink-soft);font-size:.9rem}
+
+/* Pagination : Précédent / Page X sur Y / Suivant */
+.pagination{display:flex;align-items:center;justify-content:center;gap:18px;margin:36px 0 10px;flex-wrap:wrap}
+.pagination .page-link{padding:9px 18px;border:1px solid var(--border);border-radius:8px;font-weight:600;font-size:.85rem;background:var(--card)}
+.pagination .page-link:hover{border-color:var(--lagune);color:var(--lagune)}
+.pagination .page-link.disabled{opacity:.4;pointer-events:none}
+.pagination .page-info{font-size:.85rem;color:var(--ink-soft)}
 .empty-state{text-align:center;padding:70px 20px;color:var(--ink-soft)}
 .empty-state .icon{font-size:2.4rem;margin-bottom:14px}
 

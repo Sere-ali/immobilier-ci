@@ -15,9 +15,16 @@ $where[] = "status = 'disponible'";
 
 $properties = [];
 $listingError = null;
+$pagination = null;
 try {
+    $whereSql = implode(' AND ', $where);
+
+    $countStmt = $pdo->prepare("SELECT COUNT(*) n FROM properties p WHERE $whereSql");
+    $countStmt->execute($params);
+    $pagination = paginate((int)$countStmt->fetch()['n'], 12);
+
     $sql = "SELECT p.*, (SELECT image_path FROM property_images WHERE property_id = p.id ORDER BY is_primary DESC, sort_order ASC LIMIT 1) AS image
-            FROM properties p WHERE " . implode(' AND ', $where) . " ORDER BY featured DESC, created_at DESC";
+            FROM properties p WHERE $whereSql ORDER BY featured DESC, created_at DESC LIMIT {$pagination['perPage']} OFFSET {$pagination['offset']}";
     $stmt = $pdo->prepare($sql);
     $stmt->execute($params);
     $properties = $stmt->fetchAll();
@@ -83,7 +90,7 @@ try {
   <?php if ($listingError): ?>
     <div class="alert alert-error"><?= e($listingError) ?></div>
   <?php endif; ?>
-  <div class="results-meta"><?= count($properties) ?> bien(s) trouvé(s)</div>
+  <div class="results-meta"><?= $pagination ? $pagination['totalItems'] : count($properties) ?> bien(s) trouvé(s)</div>
   <?php if (empty($properties)): ?>
     <div class="empty-state">
       <div class="icon">🔍</div>
@@ -95,6 +102,7 @@ try {
         <?php include __DIR__ . '/includes/property_card.php'; ?>
       <?php endforeach; ?>
     </div>
+    <?php if ($pagination): ?><?= paginationLinks($pagination) ?><?php endif; ?>
   <?php endif; ?>
 </div>
 

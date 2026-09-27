@@ -5,10 +5,13 @@ require_once __DIR__ . '/../includes/auth.php';
 requireSuperAdmin();
 $pdo = getPDO();
 
-$logs = $pdo->query("SELECT l.*, u.full_name, u.email FROM activity_log l LEFT JOIN users u ON u.id = l.user_id ORDER BY l.created_at DESC LIMIT 200")->fetchAll();
+$totalLogs = (int)$pdo->query("SELECT COUNT(*) n FROM activity_log")->fetch()['n'];
+$pagination = paginate($totalLogs, 30);
+$logs = $pdo->query("SELECT l.*, u.full_name, u.email FROM activity_log l LEFT JOIN users u ON u.id = l.user_id
+                      ORDER BY l.created_at DESC LIMIT {$pagination['perPage']} OFFSET {$pagination['offset']}")->fetchAll();
 
 $pageTitle = "Journal d'activité";
-$pageSubtitle = 'Les 200 dernières actions';
+$pageSubtitle = $totalLogs . ' action(s) au total';
 require_once __DIR__ . '/../includes/admin_header.php';
 ?>
 
@@ -29,6 +32,7 @@ require_once __DIR__ . '/../includes/admin_header.php';
       <?php endforeach; ?>
       </tbody>
     </table>
+    <div style="padding:16px 22px"><?= paginationLinks($pagination) ?></div>
     <?php endif; ?>
   </div>
 </div>

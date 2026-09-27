@@ -178,6 +178,28 @@ function clearLoginFailures(PDO $pdo, string $email): void
     $pdo->prepare('DELETE FROM login_attempts WHERE email = ?')->execute([$email]);
 }
 
+/**
+ * Limitation générique du nombre de soumissions d'un formulaire public
+ * (contact, demande sur une annonce) par IP, pour éviter le spam/flood en
+ * production — même principe que login_attempts mais réutilisable pour
+ * n'importe quel formulaire via un "bucket" nommé.
+ */
+function countRecentSubmissions(PDO $pdo, string $bucket, string $identifier, int $windowMinutes = 15): int
+{
+    $stmt = $pdo->prepare("SELECT COUNT(*) n FROM rate_limits WHERE bucket = ? AND identifier = ? AND created_at > (NOW() - INTERVAL {$windowMinutes} MINUTE)");
+    $stmt->execute([$bucket, $identifier]);
+    return (int)$stmt->fetch()['n'];
+}
+
+function recordSubmission(PDO $pdo, string $bucket, string $identifier): void
+{
+    $pdo->prepare('INSERT INTO rate_limits (bucket, identifier) VALUES (?, ?)')->execute([$bucket, $identifier]);
+    // Ménage occasionnel (1 requête sur ~50) pour ne pas laisser grossir la table indéfiniment.
+    if (random_int(1, 50) === 1) {
+        try { $pdo->exec("DELETE FROM rate_limits WHERE created_at < (NOW() - INTERVAL 1 DAY)"); } catch (Exception $e) {}
+    }
+}
+
 /** Envoie les en-têtes de sécurité HTTP recommandés. À appeler le plus tôt possible. */
 function sendSecurityHeaders(): void
 {
@@ -214,6 +236,34 @@ function ensureSchemaUpToDate(PDO $pdo): void
         try {
             $pdo->prepare("INSERT INTO settings (setting_key, setting_value) VALUES ('site_whatsapp', '') ON DUPLICATE KEY UPDATE setting_key = setting_key")->execute();
             $pdo->prepare("INSERT INTO settings (setting_key, setting_value) VALUES ('schema_version', '2') ON DUPLICATE KEY UPDATE setting_value = '2'")->execute();
+        } catch (Exception $e) {}
+    }
+
+    // v3 : index de performance (filtres/tris fréquents) + table pour limiter les
+    // soumissions de formulaires publics (anti-spam), en vue d'un usage à plus grande échelle.
+    if ($version < 3) {
+        foreach ([
+            "ALTER TABLE properties ADD INDEX idx_city (city)",
+            "ALTER TABLE properties ADD INDEX idx_category (category)",
+            "ALTER TABLE properties ADD INDEX idx_listing_type (listing_type)",
+            "ALTER TABLE properties ADD INDEX idx_status (status)",
+            "ALTER TABLE properties ADD INDEX idx_created_by (created_by)",
+            "ALTER TABLE properties ADD INDEX idx_featured_created (featured, created_at)",
+            "ALTER TABLE messages ADD INDEX idx_property_id (property_id)",
+            "ALTER TABLE messages ADD INDEX idx_status (status)",
+            "ALTER TABLE activity_log ADD INDEX idx_created_at (created_at)",
+        ] as $ddl) {
+            try { $pdo->exec($ddl); } catch (Exception $e) {} // déjà présent : on ignore
+        }
+        try {
+            $pdo->exec("CREATE TABLE IF NOT EXISTS rate_limits (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                bucket VARCHAR(50) NOT NULL,
+                identifier VARCHAR(64) NOT NULL,
+                created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                INDEX idx_bucket_identifier_time (bucket, identifier, created_at)
+            ) ENGINE=InnoDB");
+            $pdo->prepare("INSERT INTO settings (setting_key, setting_value) VALUES ('schema_version', '3') ON DUPLICATE KEY UPDATE setting_value = '3'")->execute();
         } catch (Exception $e) {}
     }
 }
@@ -435,4 +485,52 @@ function validateBoundedFloat($value, float $min, float $max): ?float
 function gs(string $key, string $default = ''): string
 {
     return isset($_GET[$key]) && is_string($_GET[$key]) ? $_GET[$key] : $default;
+}
+
+/**
+ * Calcule les paramètres de pagination (page courante, limite, offset, nombre
+ * total de pages) à partir de $_GET['page'] et du nombre total de résultats
+ * — pour ne jamais charger une liste entière en mémoire quand elle grossit.
+ */
+function paginate(int $totalItems, int $perPage = 20): array
+{
+    $rawPage = gs('page', '1');
+    $page = is_numeric($rawPage) ? max(1, (int)$rawPage) : 1;
+    $totalPages = max(1, (int)ceil($totalItems / $perPage));
+    $page = min($page, $totalPages);
+    return [
+        'page' => $page,
+        'perPage' => $perPage,
+        'offset' => ($page - 1) * $perPage,
+        'totalPages' => $totalPages,
+        'totalItems' => $totalItems,
+    ];
+}
+
+/** Génère les liens « Précédent / Page X sur Y / Suivant », en conservant les filtres déjà présents dans l'URL */
+function paginationLinks(array $pagination): string
+{
+    if ($pagination['totalPages'] <= 1) return '';
+    $params = $_GET;
+    unset($params['page']);
+
+    $buildUrl = function (int $targetPage) use ($params): string {
+        $params['page'] = $targetPage;
+        return '?' . http_build_query($params);
+    };
+
+    $html = '<nav class="pagination">';
+    if ($pagination['page'] > 1) {
+        $html .= '<a href="' . e($buildUrl($pagination['page'] - 1)) . '" class="page-link">← Précédent</a>';
+    } else {
+        $html .= '<span class="page-link disabled">← Précédent</span>';
+    }
+    $html .= '<span class="page-info">Page ' . $pagination['page'] . ' sur ' . $pagination['totalPages'] . '</span>';
+    if ($pagination['page'] < $pagination['totalPages']) {
+        $html .= '<a href="' . e($buildUrl($pagination['page'] + 1)) . '" class="page-link">Suivant →</a>';
+    } else {
+        $html .= '<span class="page-link disabled">Suivant →</span>';
+    }
+    $html .= '</nav>';
+    return $html;
 }

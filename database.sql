@@ -39,7 +39,13 @@ CREATE TABLE IF NOT EXISTS properties (
     created_by INT DEFAULT NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    CONSTRAINT fk_properties_user FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
+    CONSTRAINT fk_properties_user FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL,
+    INDEX idx_city (city),
+    INDEX idx_category (category),
+    INDEX idx_listing_type (listing_type),
+    INDEX idx_status (status),
+    INDEX idx_created_by (created_by),
+    INDEX idx_featured_created (featured, created_at)
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS property_images (
@@ -61,7 +67,9 @@ CREATE TABLE IF NOT EXISTS messages (
     message TEXT NOT NULL,
     status ENUM('nouveau','lu','traite') NOT NULL DEFAULT 'nouveau',
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_messages_property FOREIGN KEY (property_id) REFERENCES properties(id) ON DELETE SET NULL
+    CONSTRAINT fk_messages_property FOREIGN KEY (property_id) REFERENCES properties(id) ON DELETE SET NULL,
+    INDEX idx_property_id (property_id),
+    INDEX idx_status (status)
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS settings (
@@ -83,7 +91,8 @@ CREATE TABLE IF NOT EXISTS activity_log (
     user_id INT DEFAULT NULL,
     action VARCHAR(255) NOT NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_log_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+    CONSTRAINT fk_log_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL,
+    INDEX idx_created_at (created_at)
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------
@@ -110,3 +119,17 @@ CREATE TABLE IF NOT EXISTS login_attempts (
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     INDEX idx_email_time (email, created_at)
 ) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------
+-- Limitation des soumissions de formulaires publics (anti-spam)
+-- ---------------------------------------------------------
+CREATE TABLE IF NOT EXISTS rate_limits (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    bucket VARCHAR(50) NOT NULL,
+    identifier VARCHAR(64) NOT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_bucket_identifier_time (bucket, identifier, created_at)
+) ENGINE=InnoDB;
+
+INSERT INTO settings (setting_key, setting_value) VALUES ('schema_version', '3')
+ON DUPLICATE KEY UPDATE setting_value = '3';

@@ -67,10 +67,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && csrfVerify() && empty($errors)) {
             $propertyId = $property['id'];
             logActivity($pdo, $user['id'], "Modification de l'annonce #$propertyId");
         } else {
-            $reference = generateReference($pdo);
             $slug = slugify($title) . '-' . strtolower(substr(md5(uniqid()), 0, 6));
-            $stmt = $pdo->prepare('INSERT INTO properties (reference, title, slug, description, listing_type, category, city, commune, address, price, surface, bedrooms, bathrooms, status, featured, created_by) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)');
-            $stmt->execute([$reference, $title, $slug, $description, $listingType, $category, $city, $commune, $address, $price, $surface, $bedrooms, $bathrooms, $status, $featured, $user['id']]);
+            $insertStmt = $pdo->prepare('INSERT INTO properties (reference, title, slug, description, listing_type, category, city, commune, address, price, surface, bedrooms, bathrooms, status, featured, created_by) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)');
+            // generateReference() lit un compteur puis l'incrémente en PHP : deux créations
+            // simultanées peuvent calculer la même référence. La colonne reference est UNIQUE
+            // en base, donc un conflit lève une erreur qu'on rattrape ici pour régénérer et
+            // retenter, plutôt que de planter la page (important dès qu'il y a plusieurs
+            // administrateurs actifs en même temps).
+            $maxAttempts = 5;
+            for ($attempt = 1; $attempt <= $maxAttempts; $attempt++) {
+                $reference = generateReference($pdo);
+                try {
+                    $insertStmt->execute([$reference, $title, $slug, $description, $listingType, $category, $city, $commune, $address, $price, $surface, $bedrooms, $bathrooms, $status, $featured, $user['id']]);
+                    break;
+                } catch (PDOException $e) {
+                    if ($e->getCode() === '23000' && $attempt < $maxAttempts) {
+                        continue;
+                    }
+                    throw $e;
+                }
+            }
             $propertyId = (int)$pdo->lastInsertId();
             logActivity($pdo, $user['id'], "Création de l'annonce #$propertyId ($title)");
         }

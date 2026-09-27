@@ -35,6 +35,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!csrfVerify()) {
         $formError = 'Session expirée, merci de réessayer.';
+    } elseif (countRecentSubmissions($pdo, 'property_contact_form', clientIp()) >= 5) {
+        $formError = 'Trop de messages envoyés récemment depuis cette connexion. Merci de réessayer dans quelques minutes.';
     } elseif ($name === '' || $email === '' || $msg === '' || $phone === '') {
         $formError = 'Merci de remplir tous les champs obligatoires, y compris votre numéro WhatsApp.';
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -42,6 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif (!isValidLocalIvoryCoastPhone($phone)) {
         $formError = 'Numéro WhatsApp invalide : saisissez vos 10 chiffres, sans l\'indicatif (ajouté automatiquement).';
     } else {
+        recordSubmission($pdo, 'property_contact_form', clientIp());
         // On stocke toujours la version nettoyée des champs, jamais le texte brut envoyé :
         // un champ peut passer la validation de format tout en contenant des caractères indésirables.
         $cleanName = sanitizeText($name, 150);

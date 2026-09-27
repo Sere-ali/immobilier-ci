@@ -133,6 +133,13 @@ table.data-table{width:100%;border-collapse:collapse;font-size:.87rem;min-width:
 .login-card .back-link{display:block;text-align:center;margin-top:18px;font-size:.82rem;color:var(--ink-soft)}
 
 .empty-state{text-align:center;padding:60px 20px;color:var(--ink-soft)}
+
+/* Pagination : Précédent / Page X sur Y / Suivant */
+.pagination{display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap}
+.pagination .page-link{padding:7px 14px;border:1px solid var(--border);border-radius:6px;font-weight:600;font-size:.8rem;background:#fff}
+.pagination .page-link:hover{border-color:var(--lagune);color:var(--lagune)}
+.pagination .page-link.disabled{opacity:.4;pointer-events:none}
+.pagination .page-info{font-size:.8rem;color:var(--ink-soft)}
 .empty-state .icon{font-size:2rem;margin-bottom:12px}
 
 .pill-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}

@@ -29,16 +29,21 @@ if (!$isSuper) { $where[] = 'created_by = ?'; $params[] = $user['id']; }
 if ($filterStatus && array_key_exists($filterStatus, propertyStatuses())) { $where[] = 'p.status = ?'; $params[] = $filterStatus; }
 if ($search !== '') { $where[] = '(title LIKE ? OR reference LIKE ? OR city LIKE ?)'; $params[] = "%$search%"; $params[] = "%$search%"; $params[] = "%$search%"; }
 
+$whereSql = $where ? ' WHERE ' . implode(' AND ', $where) : '';
+
+$countStmt = $pdo->prepare("SELECT COUNT(*) n FROM properties p$whereSql");
+$countStmt->execute($params);
+$pagination = paginate((int)$countStmt->fetch()['n'], 20);
+
 $sql = "SELECT p.*, (SELECT image_path FROM property_images WHERE property_id=p.id ORDER BY is_primary DESC LIMIT 1) image, u.full_name AS owner_name
-        FROM properties p LEFT JOIN users u ON u.id = p.created_by";
-if ($where) $sql .= ' WHERE ' . implode(' AND ', $where);
-$sql .= ' ORDER BY created_at DESC';
+        FROM properties p LEFT JOIN users u ON u.id = p.created_by$whereSql
+        ORDER BY created_at DESC LIMIT {$pagination['perPage']} OFFSET {$pagination['offset']}";
 $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $list = $stmt->fetchAll();
 
 $pageTitle = 'Annonces';
-$pageSubtitle = count($list) . ' bien(s)';
+$pageSubtitle = $pagination['totalItems'] . ' bien(s)';
 require_once __DIR__ . '/../includes/admin_header.php';
 ?>
 
@@ -90,6 +95,7 @@ require_once __DIR__ . '/../includes/admin_header.php';
       <?php endforeach; ?>
       </tbody>
     </table>
+    <?= paginationLinks($pagination) ?>
     <?php endif; ?>
   </div>
 </div>
