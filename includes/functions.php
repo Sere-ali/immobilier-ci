@@ -300,3 +300,74 @@ function waLink(string $number, string $message): string
     $digits = cleanWhatsappNumber($number);
     return 'https://wa.me/' . $digits . '?text=' . rawurlencode($message);
 }
+
+/**
+ * Nettoie une chaîne de texte libre avant stockage en base : retire les octets
+ * nuls et caractères de contrôle, coupe les espaces superflus, et tronque à
+ * une longueur maximale. Important : la validation seule ne suffit pas — un
+ * champ peut « passer » une vérification de format tout en contenant des
+ * caractères indésirables ; c'est toujours la valeur nettoyée qu'il faut
+ * enregistrer, jamais l'entrée brute.
+ */
+function sanitizeText(string $value, int $maxLength = 255): string
+{
+    $value = trim($value);
+    $value = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F]/', '', $value) ?? '';
+    if (function_exists('mb_substr')) {
+        $value = mb_substr($value, 0, $maxLength);
+    } else {
+        $value = substr($value, 0, $maxLength);
+    }
+    return $value;
+}
+
+/**
+ * Nettoie un numéro de téléphone/WhatsApp pour le STOCKAGE en base (distinct
+ * de cleanWhatsappNumber, qui prépare un numéro pour un lien wa.me). Ne garde
+ * que les chiffres (et un éventuel + en tête), tronqué à 15 chiffres. La
+ * validation de format (isValidWhatsappNumber) ne garantit pas que la chaîne
+ * d'origine est propre : il faut toujours stocker cette version nettoyée, pas
+ * le texte brut envoyé par le visiteur.
+ */
+function sanitizePhoneForStorage(string $raw): string
+{
+    $raw = trim($raw);
+    $hasPlus = strpos($raw, '+') === 0;
+    $digits = preg_replace('/\D/', '', $raw) ?? '';
+    $digits = substr($digits, 0, 15);
+    return ($hasPlus ? '+' : '') . $digits;
+}
+
+/** Vérifie qu'un fichier téléversé est réellement une image (pas seulement son extension) */
+function isRealImageFile(string $tmpPath): bool
+{
+    $info = @getimagesize($tmpPath);
+    if ($info === false) return false;
+    return in_array($info[2] ?? null, [IMAGETYPE_JPEG, IMAGETYPE_PNG, IMAGETYPE_WEBP], true);
+}
+
+/** Valide et convertit une valeur numérique entière bornée ; retourne null si invalide */
+function validateBoundedInt($value, int $min, int $max): ?int
+{
+    if ($value === null || $value === '') return null;
+    if (!is_numeric($value)) return null;
+    $n = (int)$value;
+    if ($n < $min || $n > $max) return null;
+    return $n;
+}
+
+/** Valide et convertit une valeur numérique décimale bornée ; retourne null si invalide */
+function validateBoundedFloat($value, float $min, float $max): ?float
+{
+    if ($value === null || $value === '') return null;
+    if (!is_numeric($value)) return null;
+    $n = (float)$value;
+    if ($n < $min || $n > $max) return null;
+    return $n;
+}
+
+/** Lit un paramètre $_GET de façon sûre : renvoie toujours une chaîne (défend contre les valeurs de type tableau) */
+function gs(string $key, string $default = ''): string
+{
+    return isset($_GET[$key]) && is_string($_GET[$key]) ? $_GET[$key] : $default;
+}

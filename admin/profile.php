@@ -22,6 +22,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_info'])) {
     } elseif ($whatsapp !== '' && !isValidWhatsappNumber($whatsapp)) {
         $errors[] = 'Numéro WhatsApp invalide (8 à 15 chiffres, avec ou sans indicatif +225).';
     } else {
+        $fullName = sanitizeText($fullName, 150);
+        $phone = sanitizePhoneForStorage($phone);
+        $whatsapp = $whatsapp !== '' ? sanitizePhoneForStorage($whatsapp) : '';
         $pdo->prepare('UPDATE users SET full_name = ?, phone = ?, whatsapp = ? WHERE id = ?')->execute([$fullName, $phone, $whatsapp, $user['id']]);
         $_SESSION['user']['full_name'] = $fullName;
         $_SESSION['user']['phone'] = $phone;

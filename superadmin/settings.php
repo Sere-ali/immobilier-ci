@@ -17,9 +17,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
     foreach ($fields as $key => $label) {
         $value = trim($_POST[$key] ?? '');
-        if ($key === 'site_whatsapp' && $value !== '' && !isValidWhatsappNumber($value)) {
-            $errors[] = 'Numéro WhatsApp invalide (8 à 15 chiffres, avec ou sans indicatif +225).';
-            continue;
+        if ($key === 'site_whatsapp' || $key === 'site_phone') {
+            if ($value !== '' && !isValidWhatsappNumber($value)) {
+                $errors[] = 'Numéro ' . ($key === 'site_whatsapp' ? 'WhatsApp' : 'de téléphone') . ' invalide (8 à 15 chiffres, avec ou sans indicatif +225).';
+                continue;
+            }
+            $value = $value !== '' ? sanitizePhoneForStorage($value) : '';
+        } elseif ($key === 'site_email') {
+            if ($value !== '' && !filter_var($value, FILTER_VALIDATE_EMAIL)) {
+                $errors[] = 'Adresse e-mail de contact invalide.';
+                continue;
+            }
+            $value = sanitizeText($value, 190);
+        } elseif ($key === 'site_about') {
+            $value = sanitizeText($value, 1000);
+        } else {
+            $value = sanitizeText($value, 150);
         }
         $stmt = $pdo->prepare('INSERT INTO settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = ?');
         $stmt->execute([$key, $value, $value]);

@@ -5,19 +5,26 @@ require_once __DIR__ . '/includes/header.php';
 $where = ['1=1'];
 $params = [];
 
-if (!empty($_GET['city'])) { $where[] = 'city = ?'; $params[] = $_GET['city']; }
-if (!empty($_GET['category']) && array_key_exists($_GET['category'], propertyCategories())) { $where[] = 'category = ?'; $params[] = $_GET['category']; }
-if (!empty($_GET['listing_type']) && in_array($_GET['listing_type'], ['vente','location'])) { $where[] = 'listing_type = ?'; $params[] = $_GET['listing_type']; }
-if (!empty($_GET['min_price'])) { $where[] = 'price >= ?'; $params[] = (float)$_GET['min_price']; }
-if (!empty($_GET['max_price'])) { $where[] = 'price <= ?'; $params[] = (float)$_GET['max_price']; }
-if (!empty($_GET['bedrooms'])) { $where[] = 'bedrooms >= ?'; $params[] = (int)$_GET['bedrooms']; }
+if (!empty($_GET['city']) && is_string($_GET['city'])) { $where[] = 'city = ?'; $params[] = sanitizeText($_GET['city'], 100); }
+if (!empty($_GET['category']) && is_string($_GET['category']) && array_key_exists($_GET['category'], propertyCategories())) { $where[] = 'category = ?'; $params[] = $_GET['category']; }
+if (!empty($_GET['listing_type']) && is_string($_GET['listing_type']) && in_array($_GET['listing_type'], ['vente', 'location'], true)) { $where[] = 'listing_type = ?'; $params[] = $_GET['listing_type']; }
+if (!empty($_GET['min_price']) && is_numeric($_GET['min_price'])) { $where[] = 'price >= ?'; $params[] = (float)$_GET['min_price']; }
+if (!empty($_GET['max_price']) && is_numeric($_GET['max_price'])) { $where[] = 'price <= ?'; $params[] = (float)$_GET['max_price']; }
+if (!empty($_GET['bedrooms']) && is_numeric($_GET['bedrooms'])) { $where[] = 'bedrooms >= ?'; $params[] = (int)$_GET['bedrooms']; }
 $where[] = "status = 'disponible'";
 
-$sql = "SELECT p.*, (SELECT image_path FROM property_images WHERE property_id = p.id ORDER BY is_primary DESC, sort_order ASC LIMIT 1) AS image
-        FROM properties p WHERE " . implode(' AND ', $where) . " ORDER BY featured DESC, created_at DESC";
-$stmt = $pdo->prepare($sql);
-$stmt->execute($params);
-$properties = $stmt->fetchAll();
+$properties = [];
+$listingError = null;
+try {
+    $sql = "SELECT p.*, (SELECT image_path FROM property_images WHERE property_id = p.id ORDER BY is_primary DESC, sort_order ASC LIMIT 1) AS image
+            FROM properties p WHERE " . implode(' AND ', $where) . " ORDER BY featured DESC, created_at DESC";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
+    $properties = $stmt->fetchAll();
+} catch (Exception $e) {
+    $listingError = "Une erreur est survenue lors du chargement des annonces. Merci de réessayer ou de contacter le support si le problème persiste.";
+    error_log('annonces.php filter error: ' . $e->getMessage());
+}
 ?>
 <section class="page-hero">
   <div class="container">
@@ -36,7 +43,7 @@ $properties = $stmt->fetchAll();
           <select name="city">
             <option value="">Toutes</option>
             <?php foreach (ivoryCoastCities() as $city): ?>
-              <option value="<?= e($city) ?>" <?= ($_GET['city'] ?? '') === $city ? 'selected' : '' ?>><?= e($city) ?></option>
+              <option value="<?= e($city) ?>" <?= gs('city') === $city ? 'selected' : '' ?>><?= e($city) ?></option>
             <?php endforeach; ?>
           </select>
         </div>
@@ -45,7 +52,7 @@ $properties = $stmt->fetchAll();
           <select name="category">
             <option value="">Tous</option>
             <?php foreach (propertyCategories() as $key => $label): ?>
-              <option value="<?= e($key) ?>" <?= ($_GET['category'] ?? '') === $key ? 'selected' : '' ?>><?= e($label) ?></option>
+              <option value="<?= e($key) ?>" <?= gs('category') === $key ? 'selected' : '' ?>><?= e($label) ?></option>
             <?php endforeach; ?>
           </select>
         </div>
@@ -53,15 +60,15 @@ $properties = $stmt->fetchAll();
           <label>Transaction</label>
           <select name="listing_type">
             <option value="">Toutes</option>
-            <option value="vente" <?= ($_GET['listing_type'] ?? '') === 'vente' ? 'selected' : '' ?>>Vente</option>
-            <option value="location" <?= ($_GET['listing_type'] ?? '') === 'location' ? 'selected' : '' ?>>Location</option>
+            <option value="vente" <?= gs('listing_type') === 'vente' ? 'selected' : '' ?>>Vente</option>
+            <option value="location" <?= gs('listing_type') === 'location' ? 'selected' : '' ?>>Location</option>
           </select>
         </div>
         <div class="filter-group">
           <label>Budget (FCFA)</label>
           <div class="row">
-            <input type="number" name="min_price" placeholder="Min" value="<?= e($_GET['min_price'] ?? '') ?>">
-            <input type="number" name="max_price" placeholder="Max" value="<?= e($_GET['max_price'] ?? '') ?>">
+            <input type="number" name="min_price" placeholder="Min" value="<?= e(gs('min_price')) ?>">
+            <input type="number" name="max_price" placeholder="Max" value="<?= e(gs('max_price')) ?>">
           </div>
         </div>
         <div class="filter-group">
@@ -69,7 +76,7 @@ $properties = $stmt->fetchAll();
           <select name="bedrooms">
             <option value="">Indifférent</option>
             <?php for ($i = 1; $i <= 5; $i++): ?>
-              <option value="<?= $i ?>" <?= ($_GET['bedrooms'] ?? '') == $i ? 'selected' : '' ?>><?= $i ?>+</option>
+              <option value="<?= $i ?>" <?= gs('bedrooms') === (string)$i ? 'selected' : '' ?>><?= $i ?>+</option>
             <?php endfor; ?>
           </select>
         </div>
@@ -78,6 +85,9 @@ $properties = $stmt->fetchAll();
     </aside>
 
     <div>
+      <?php if ($listingError): ?>
+        <div class="alert alert-error"><?= e($listingError) ?></div>
+      <?php endif; ?>
       <div class="results-meta"><?= count($properties) ?> bien(s) trouvé(s)</div>
       <?php if (empty($properties)): ?>
         <div class="empty-state">

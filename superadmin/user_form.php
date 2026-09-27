@@ -30,9 +30,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && csrfVerify()) {
 
     if ($fullName === '' || $email === '') $errors[] = 'Le nom et l\'e-mail sont obligatoires.';
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'Adresse e-mail invalide.';
+    if ($phone !== '' && !isValidWhatsappNumber($phone)) $errors[] = 'Numéro de téléphone invalide (8 à 15 chiffres, avec ou sans indicatif +225).';
     if (!in_array($role, ['admin','superadmin'])) $errors[] = 'Rôle invalide.';
     if (!$editUser && strlen($password) < 8) $errors[] = 'Le mot de passe doit contenir au moins 8 caractères.';
     if ($password !== '' && strlen($password) < 8) $errors[] = 'Le mot de passe doit contenir au moins 8 caractères.';
+
+    if (empty($errors)) {
+        $fullName = sanitizeText($fullName, 150);
+        $email = sanitizeText($email, 190);
+        $phone = $phone !== '' ? sanitizePhoneForStorage($phone) : '';
+    }
 
     if (empty($errors)) {
         $check = $pdo->prepare('SELECT id FROM users WHERE email = ? AND id != ?');

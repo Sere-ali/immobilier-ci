@@ -35,25 +35,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_POST) && empty($_FILES) && 
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && csrfVerify() && empty($errors)) {
-    $title = trim($_POST['title'] ?? '');
-    $description = trim($_POST['description'] ?? '');
+    $title = sanitizeText(trim($_POST['title'] ?? ''), 190);
+    $description = sanitizeText(trim($_POST['description'] ?? ''), 5000);
     $listingType = $_POST['listing_type'] ?? 'vente';
     $category = $_POST['category'] ?? 'villa';
-    $city = trim($_POST['city'] ?? '');
-    $commune = trim($_POST['commune'] ?? '');
-    $address = trim($_POST['address'] ?? '');
-    $price = (float)($_POST['price'] ?? 0);
-    $surface = $_POST['surface'] !== '' ? (float)$_POST['surface'] : null;
-    $bedrooms = $_POST['bedrooms'] !== '' ? (int)$_POST['bedrooms'] : null;
-    $bathrooms = $_POST['bathrooms'] !== '' ? (int)$_POST['bathrooms'] : null;
+    $city = sanitizeText(trim($_POST['city'] ?? ''), 100);
+    $commune = sanitizeText(trim($_POST['commune'] ?? ''), 100);
+    $address = sanitizeText(trim($_POST['address'] ?? ''), 255);
     $status = $_POST['status'] ?? 'disponible';
     $featured = isset($_POST['featured']) ? 1 : 0;
 
-    if ($title === '' || $city === '' || $price <= 0) {
+    $price = validateBoundedFloat($_POST['price'] ?? null, 0, 999999999999);
+    $surface = ($_POST['surface'] ?? '') !== '' ? validateBoundedFloat($_POST['surface'], 0, 999999) : null;
+    $bedrooms = ($_POST['bedrooms'] ?? '') !== '' ? validateBoundedInt($_POST['bedrooms'], 0, 999) : null;
+    $bathrooms = ($_POST['bathrooms'] ?? '') !== '' ? validateBoundedInt($_POST['bathrooms'], 0, 999) : null;
+
+    if ($title === '' || $city === '' || $price === null || $price <= 0) {
         $errors[] = 'Le titre, la ville et le prix sont obligatoires.';
     }
+    if (($_POST['surface'] ?? '') !== '' && $surface === null) $errors[] = 'Surface invalide.';
+    if (($_POST['bedrooms'] ?? '') !== '' && $bedrooms === null) $errors[] = 'Nombre de chambres invalide.';
+    if (($_POST['bathrooms'] ?? '') !== '' && $bathrooms === null) $errors[] = 'Nombre de salles de bain invalide.';
     if (!array_key_exists($category, propertyCategories())) $errors[] = 'Catégorie invalide.';
     if (!in_array($listingType, ['vente', 'location'])) $errors[] = 'Type de transaction invalide.';
+    if (!array_key_exists($status, propertyStatuses())) $errors[] = 'Statut invalide.';
 
     if (empty($errors)) {
         if ($property) {
@@ -95,6 +100,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && csrfVerify() && empty($errors)) {
                 $ext = strtolower(pathinfo($name, PATHINFO_EXTENSION));
                 if (!in_array($ext, ['jpg','jpeg','png','webp'])) {
                     $uploadWarnings[] = "« $name » a été ignorée : format non autorisé (jpg, jpeg, png, webp uniquement).";
+                    continue;
+                }
+                // L'extension seule ne prouve rien : on vérifie le contenu réel du fichier
+                // pour rejeter un fichier malveillant déguisé en image (ex. un script PHP renommé .jpg).
+                if (!isRealImageFile($_FILES['images']['tmp_name'][$i])) {
+                    $uploadWarnings[] = "« $name » a été ignorée : le fichier n'est pas une image valide.";
                     continue;
                 }
 

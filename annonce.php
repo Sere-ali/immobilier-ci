@@ -42,14 +42,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif (!isValidWhatsappNumber($phone)) {
         $formError = 'Numéro WhatsApp invalide. Utilisez le format international, ex : +225 07 00 00 00 00.';
     } else {
+        // On stocke toujours la version nettoyée des champs, jamais le texte brut envoyé :
+        // un champ peut passer la validation de format tout en contenant des caractères indésirables.
+        $cleanName = sanitizeText($name, 150);
+        $cleanEmail = sanitizeText($email, 190);
+        $cleanPhone = sanitizePhoneForStorage($phone);
+        $cleanMsg = sanitizeText($msg, 2000);
         $stmt = $pdo->prepare('INSERT INTO messages (property_id, full_name, email, phone, subject, message) VALUES (?,?,?,?,?,?)');
-        $stmt->execute([$property['id'], $name, $email, $phone, 'Demande sur : ' . $property['title'], $msg]);
+        $stmt->execute([$property['id'], $cleanName, $cleanEmail, $cleanPhone, sanitizeText('Demande sur : ' . $property['title'], 190), $cleanMsg]);
         $formSuccess = true;
 
         // Numéro WhatsApp de l'administrateur propriétaire de l'annonce, avec repli sur le numéro général du site
         $destNumber = $property['owner_whatsapp'] ?: getSetting($pdo, 'site_whatsapp', '') ?: getSetting($pdo, 'site_phone', '');
         if ($destNumber && isValidWhatsappNumber($destNumber)) {
-            $waMessage = "Bonjour, je suis {$name}. Je viens de vous contacter via Immobilier CI au sujet de l'annonce « {$property['title']} » (Réf. {$property['reference']}). {$msg}";
+            $waMessage = "Bonjour, je suis {$cleanName}. Je viens de vous contacter via Immobilier CI au sujet de l'annonce « {$property['title']} » (Réf. {$property['reference']}). {$cleanMsg}";
             $whatsappLink = waLink($destNumber, $waMessage);
         }
     }
