@@ -6,7 +6,6 @@ $featured = $pdo->query("SELECT p.*, (SELECT image_path FROM property_images WHE
                           FROM properties p WHERE featured = 1 ORDER BY created_at DESC LIMIT 6")->fetchAll();
 
 $totalProperties = (int)$pdo->query("SELECT COUNT(*) AS n FROM properties")->fetch()['n'];
-$totalSold = (int)$pdo->query("SELECT COUNT(*) AS n FROM properties WHERE status IN ('vendu','loue')")->fetch()['n'];
 $totalCities = (int)$pdo->query("SELECT COUNT(DISTINCT city) AS n FROM properties")->fetch()['n'];
 
 $categories = [
@@ -59,7 +58,6 @@ $categories = [
 <div class="stats-band">
   <div class="container">
     <div class="stat-item"><div class="num mono" data-count-to="<?= (int)$totalProperties ?>" data-suffix="+">0+</div><div class="label">Biens référencés</div></div>
-    <div class="stat-item"><div class="num mono" data-count-to="<?= (int)$totalSold ?>">0</div><div class="label">Transactions conclues</div></div>
     <div class="stat-item"><div class="num mono" data-count-to="<?= (int)$totalCities ?>">0</div><div class="label">Villes couvertes</div></div>
     <div class="stat-item"><div class="num mono" data-count-to="100" data-suffix="%">0%</div><div class="label">Annonces vérifiées</div></div>
   </div>
