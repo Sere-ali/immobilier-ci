@@ -1,5 +1,7 @@
 <?php
-$pageTitle = 'Annonces';
+$listingTypeFilter = in_array($_GET['listing_type'] ?? '', ['vente', 'location'], true) ? $_GET['listing_type'] : '';
+$pageTitle = $listingTypeFilter === 'vente' ? 'Annonces à vendre' : ($listingTypeFilter === 'location' ? 'Annonces à louer' : 'Annonces');
+$pageHeading = $listingTypeFilter === 'vente' ? 'Biens à vendre' : ($listingTypeFilter === 'location' ? 'Biens à louer' : 'Toutes les annonces');
 require_once __DIR__ . '/includes/header.php';
 
 $where = ['1=1'];
@@ -35,8 +37,8 @@ try {
 ?>
 <section class="page-hero">
   <div class="container">
-    <div class="breadcrumb"><a href="index">Accueil</a> / Annonces</div>
-    <h1>Toutes les annonces</h1>
+    <div class="breadcrumb"><a href="index">Accueil</a> / <?= e($pageTitle) ?></div>
+    <h1><?= e($pageHeading) ?></h1>
   </div>
 </section>
 
