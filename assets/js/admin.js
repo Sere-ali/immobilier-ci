@@ -1,4 +1,29 @@
 document.addEventListener('DOMContentLoaded', function () {
+  // Menu de la sidebar sur mobile : tiroir plein écran (ouverture/fermeture
+  // au clic sur le bouton hamburger, sur l'arrière-plan, ou sur un lien du menu).
+  var sidebarToggle = document.querySelector('.sidebar-toggle');
+  var sidebar = document.querySelector('.sidebar');
+  var sidebarOverlay = document.querySelector('.sidebar-overlay');
+  function closeSidebar() {
+    if (sidebar) sidebar.classList.remove('open');
+    if (sidebarOverlay) sidebarOverlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  function openSidebar() {
+    if (sidebar) sidebar.classList.add('open');
+    if (sidebarOverlay) sidebarOverlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  if (sidebarToggle && sidebar) {
+    sidebarToggle.addEventListener('click', function () {
+      sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
+    });
+    if (sidebarOverlay) sidebarOverlay.addEventListener('click', closeSidebar);
+    sidebar.querySelectorAll('nav a').forEach(function (link) {
+      link.addEventListener('click', closeSidebar);
+    });
+  }
+
   document.querySelectorAll('[data-confirm]').forEach(function (el) {
     el.addEventListener('click', function (e) {
       var msg = el.getAttribute('data-confirm') || 'Confirmer cette action ?';

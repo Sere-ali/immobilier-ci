@@ -27,6 +27,7 @@ function navActive(string $file, string $current): string
 </head>
 <body>
 <div class="admin-shell">
+  <div class="sidebar-overlay"></div>
   <aside class="sidebar">
     <div class="brand"><img src="<?= e($root) ?>assets/img/logo.png?v=<?= assetVersion('assets/img/logo.png') ?>" alt="Immobilier CI" class="logo-img"></div>
     <div class="role-tag"><?= $user['role'] === 'superadmin' ? 'Super Administrateur' : 'Administrateur' ?></div>
@@ -55,6 +56,7 @@ function navActive(string $file, string $current): string
 
   <main class="admin-main">
     <div class="admin-topbar">
+      <button type="button" class="sidebar-toggle" aria-label="Ouvrir le menu">☰</button>
       <div>
         <h1><?= e($pageTitle ?? 'Administration') ?></h1>
         <?php if (!empty($pageSubtitle)): ?><div class="subtitle"><?= e($pageSubtitle) ?></div><?php endif; ?>
