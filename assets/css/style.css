@@ -184,7 +184,8 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;line-height:1.15;margin
   padding:24px 16px;text-align:center;transition:.2s;
 }
 .category-card:hover{border-color:var(--laterite);transform:translateY(-3px)}
-.category-card .icon{font-size:1.7rem;margin-bottom:12px}
+.category-card .icon{color:var(--gold-light);margin-bottom:14px;line-height:0}
+.category-card .icon svg{display:block}
 .category-card .name{font-weight:600;font-size:.92rem;font-family:'Fraunces',serif}
 
 /* ---------- Bandeau chiffres ---------- */

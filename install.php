@@ -111,11 +111,11 @@ if ($installAllowed && $_SERVER['REQUEST_METHOD'] === 'POST' && !$alreadyInstall
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700&family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap">
 <link rel="stylesheet" href="assets/css/style.css?v=<?= assetVersion('assets/css/style.css') ?>">
 <style>
 .install-wrap{max-width:560px;margin:60px auto;padding:0 20px}
-.install-card{background:#fff;border-radius:14px;padding:36px;box-shadow:0 10px 40px rgba(15,61,62,.1)}
+.install-card{background:#fff;border-radius:14px;padding:36px;box-shadow:0 10px 40px rgba(11,18,32,.1)}
 .install-card h1{font-size:1.5rem;margin-bottom:6px}
 .install-card p.lead{color:#6b6b63;margin-bottom:24px}
 .field{margin-bottom:16px}

@@ -9,12 +9,12 @@ $totalProperties = (int)$pdo->query("SELECT COUNT(*) AS n FROM properties WHERE 
 $totalCities = (int)$pdo->query("SELECT COUNT(DISTINCT city) AS n FROM properties WHERE approval_status = 'approuve'")->fetch()['n'];
 
 $categories = [
-    'villa'       => ['🏡', 'Villas'],
-    'appartement' => ['🏢', 'Appartements'],
-    'terrain'     => ['🌍', 'Terrains'],
-    'bureau'      => ['💼', 'Bureaux'],
-    'magasin'     => ['🏬', 'Magasins'],
-    'immeuble'    => ['🏗️', 'Immeubles'],
+    'villa'       => 'Villas',
+    'appartement' => 'Appartements',
+    'terrain'     => 'Terrains',
+    'bureau'      => 'Bureaux',
+    'magasin'     => 'Magasins',
+    'immeuble'    => 'Immeubles',
 ];
 ?>
 <section class="hero">
@@ -72,9 +72,9 @@ $categories = [
       </div>
     </div>
     <div class="category-grid" data-reveal-group>
-      <?php foreach ($categories as $key => [$icon, $label]): ?>
+      <?php foreach ($categories as $key => $label): ?>
         <a href="annonces?category=<?= e($key) ?>" class="category-card">
-          <div class="icon"><?= $icon ?></div>
+          <div class="icon"><?= categoryIcon($key) ?></div>
           <div class="name"><?= e($label) ?></div>
         </a>
       <?php endforeach; ?>

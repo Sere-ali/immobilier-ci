@@ -21,6 +21,55 @@ function assetVersion(string $relativePath): string
     return $mtime ? (string) $mtime : '1';
 }
 
+/**
+ * Illustration SVG réaliste (silhouette architecturale) pour chaque catégorie de bien,
+ * utilisée sur la page d'accueil à la place d'émojis génériques : une villa doit montrer
+ * une villa avec son allée, un bureau un immeuble vitré, etc. — pas une icône abstraite.
+ * Dessin au trait, couleur héritée via currentColor pour s'adapter au fond de la carte.
+ */
+function categoryIcon(string $key): string
+{
+    $common = 'width="42" height="32" viewBox="0 0 64 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"';
+    $icons = [
+        // Villa : maison basse à toit pentu, allée, palmier
+        'villa' => '<path d="M4 42h56M8 42V26l14-10 14 10v16M14 42V30h8v12" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>'
+                  . '<path d="M46 42V20c0-2 1-4 3-5 2 1 3 3 3 5v6M46 26c-3 1-5 4-5 8M52 26c3 1 5 4 5 8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>'
+                  . '<circle cx="20" cy="23" r="1.6" fill="currentColor"/>',
+        // Appartement : petit immeuble R+3 avec balcons
+        'appartement' => '<path d="M4 42h56" stroke="currentColor" stroke-width="1.6"/>'
+                  . '<rect x="16" y="8" width="26" height="34" rx="1" stroke="currentColor" stroke-width="1.6"/>'
+                  . '<path d="M16 18h26M16 26h26M16 34h26" stroke="currentColor" stroke-width="1.1"/>'
+                  . '<path d="M21 12h4v4h-4zM29 12h4v4h-4zM21 20h4v4h-4zM29 20h4v4h-4zM21 28h4v4h-4zM29 28h4v4h-4z" fill="currentColor" opacity=".85"/>',
+        // Terrain : parcelle clôturée, vide, avec un jeune arbre et un panonceau
+        'terrain' => '<path d="M4 42h56" stroke="currentColor" stroke-width="1.6"/>'
+                  . '<path d="M10 42V24M10 24l6 4M22 42V22M22 22l6 4M34 42V24M34 24l6 4M46 42V22M46 22l6 4M52 42V24" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>'
+                  . '<path d="M10 24h48M10 24l-3-2M58 24l-3-2" stroke="currentColor" stroke-width="1.1"/>'
+                  . '<path d="M40 42V33M40 33c-3.5-.5-6-3-6-6 3 0 5.5 1.6 6 4 .5-2.4 3-4 6-4 0 3-2.5 5.5-6 6z" fill="currentColor"/>',
+        // Bureau : tour vitrée, trame de fenêtres serrée, auvent d'entrée
+        'bureau' => '<path d="M4 42h56" stroke="currentColor" stroke-width="1.6"/>'
+                  . '<rect x="20" y="6" width="24" height="36" rx="1" stroke="currentColor" stroke-width="1.6"/>'
+                  . '<path d="M24 6v36M28 6v36M32 6v36M36 6v36M40 6v36" stroke="currentColor" stroke-width=".9" opacity=".8"/>'
+                  . '<path d="M20 13h24M20 20h24M20 27h24M20 34h24" stroke="currentColor" stroke-width=".9" opacity=".8"/>'
+                  . '<path d="M17 42l3-6h20l3 6" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>',
+        // Magasin : devanture avec store banne et vitrine
+        'magasin' => '<path d="M4 42h56" stroke="currentColor" stroke-width="1.6"/>'
+                  . '<path d="M12 22h40v20H12z" stroke="currentColor" stroke-width="1.6"/>'
+                  . '<path d="M10 22l4-8h36l4 8" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>'
+                  . '<path d="M12 22l4 3 4-3 4 3 4-3 4 3 4-3 4 3 4-3 4 3 4-3" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>'
+                  . '<rect x="17" y="27" width="12" height="10" stroke="currentColor" stroke-width="1.2"/>'
+                  . '<rect x="33" y="30" width="9" height="12" stroke="currentColor" stroke-width="1.2"/>',
+        // Immeuble : grande tour R+7 avec citerne sur le toit
+        'immeuble' => '<path d="M4 42h56" stroke="currentColor" stroke-width="1.6"/>'
+                  . '<rect x="18" y="4" width="22" height="38" rx="1" stroke="currentColor" stroke-width="1.6"/>'
+                  . '<path d="M18 11h22M18 17h22M18 23h22M18 29h22M18 35h22" stroke="currentColor" stroke-width=".9" opacity=".8"/>'
+                  . '<path d="M27 4v38M31 4v38" stroke="currentColor" stroke-width=".9" opacity=".8"/>'
+                  . '<rect x="24" y="0" width="8" height="4" rx="1" stroke="currentColor" stroke-width="1.2"/>'
+                  . '<path d="M44 42V25h8v17" stroke="currentColor" stroke-width="1.3"/>',
+    ];
+    $path = $icons[$key] ?? $icons['immeuble'];
+    return '<svg ' . $common . ' class="category-icon">' . $path . '</svg>';
+}
+
 /** Petit logo maison (SVG en ligne) utilisé à côté du nom du site, sur le site public et dans l'espace admin */
 function logoMark(int $size = 32): string
 {
