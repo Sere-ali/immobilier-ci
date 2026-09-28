@@ -23,6 +23,10 @@ if ($id) {
     }
 }
 
+// Un super admin qui modifie SON PROPRE compte ne doit jamais pouvoir se
+// rétrograder lui-même : son rôle reste verrouillé sur "Super Administrateur".
+$isEditingSelf = $editUser && (int)$editUser['id'] === (int)$currentAdmin['id'] && $editUser['role'] === 'superadmin';
+
 $errors = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !csrfVerify()) {
@@ -34,6 +38,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && csrfVerify()) {
     $email = trim($_POST['email'] ?? '');
     $phone = trim($_POST['phone'] ?? '');
     $role = $_POST['role'] ?? 'admin';
+    if ($isEditingSelf) {
+        // Verrou côté serveur : même si le formulaire est trafiqué, un super
+        // admin qui s'auto-modifie reste super administrateur.
+        $role = 'superadmin';
+    }
     $password = $_POST['password'] ?? '';
 
     if ($fullName === '' || $email === '') $errors[] = 'Le nom et l\'e-mail sont obligatoires.';
@@ -99,10 +108,18 @@ require_once __DIR__ . '/../includes/admin_header.php';
         </div>
         <div class="field">
           <label>Rôle *</label>
-          <select name="role" required>
-            <option value="admin" <?= (($editUser['role'] ?? 'admin') === 'admin') ? 'selected' : '' ?>>Administrateur</option>
-            <option value="superadmin" <?= (($editUser['role'] ?? '') === 'superadmin') ? 'selected' : '' ?>>Super Administrateur</option>
-          </select>
+          <?php if ($isEditingSelf): ?>
+            <select name="role" required disabled>
+              <option value="superadmin" selected>Super Administrateur</option>
+            </select>
+            <input type="hidden" name="role" value="superadmin">
+            <div class="hint">Vous ne pouvez pas modifier votre propre rôle.</div>
+          <?php else: ?>
+            <select name="role" required>
+              <option value="admin" <?= (($editUser['role'] ?? 'admin') === 'admin') ? 'selected' : '' ?>>Administrateur</option>
+              <option value="superadmin" <?= (($editUser['role'] ?? '') === 'superadmin') ? 'selected' : '' ?>>Super Administrateur</option>
+            </select>
+          <?php endif; ?>
         </div>
         <div class="field full">
           <label><?= $editUser ? 'Nouveau mot de passe (laisser vide pour ne pas changer)' : 'Mot de passe *' ?></label>
