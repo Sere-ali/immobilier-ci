@@ -11,6 +11,7 @@ if (isLoggedIn()) {
 
 $error = null;
 $locked = false;
+$flashMsg = getFlash();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!csrfVerify()) {
@@ -54,6 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="brand"><img src="assets/img/logo.png?v=<?= assetVersion('assets/img/logo.png') ?>" alt="Immobilier CI" class="logo-img-lg"></div>
     <p class="sub">Espace Admin &amp; Super Admin</p>
 
+    <?php if ($flashMsg): ?><div class="alert alert-<?= $flashMsg['type'] === 'success' ? 'success' : 'error' ?>"><?= e($flashMsg['message']) ?></div><?php endif; ?>
     <?php if ($error): ?><div class="alert alert-error"><?= e($error) ?></div><?php endif; ?>
 
     <?php if (!$locked): ?>

@@ -30,11 +30,43 @@ function isSuperAdmin(): bool
     return isLoggedIn() && $_SESSION['user']['role'] === 'superadmin';
 }
 
+/**
+ * Le rôle, le statut (actif/inactif) et les autres attributs d'un compte
+ * (ex : is_principal) sont mis en cache dans la session à la connexion. Sans
+ * revérification, un compte désactivé — ou dont le rôle change — en cours de
+ * session garderait l'accès jusqu'à sa prochaine connexion. On revalide donc
+ * ces informations depuis la base à chaque chargement de page admin : un
+ * compte désactivé est déconnecté immédiatement et ne voit plus aucune page
+ * de l'espace admin/super admin (redirection vers l'écran de connexion).
+ */
+function refreshCurrentUserFromDb(PDO $pdo): void
+{
+    if (!isset($_SESSION['user']['id'])) {
+        return;
+    }
+    $stmt = $pdo->prepare('SELECT * FROM users WHERE id = ?');
+    $stmt->execute([$_SESSION['user']['id']]);
+    $fresh = $stmt->fetch();
+
+    if (!$fresh || $fresh['status'] !== 'actif') {
+        // On retire juste l'utilisateur de la session (sans la détruire
+        // entièrement) pour que le message flash ci-dessous survive bien
+        // jusqu'à la page de connexion.
+        unset($_SESSION['user']);
+        flash('error', 'Votre compte a été désactivé. Contactez un super administrateur.');
+        redirect(rootPath() . 'login');
+    }
+
+    unset($fresh['password']);
+    $_SESSION['user'] = $fresh;
+}
+
 function requireLogin(): void
 {
     if (!isLoggedIn()) {
         redirect(rootPath() . 'login');
     }
+    refreshCurrentUserFromDb(getPDO());
 }
 
 function requireSuperAdmin(): void
