@@ -44,6 +44,9 @@ function navActive(string $file, string $current): string
         <a href="<?= e($root) ?>superadmin/users" class="<?= in_array($currentScript, ['users.php','user_form.php']) ? 'active' : '' ?>">🛡️ Administrateurs</a>
         <a href="<?= e($root) ?>superadmin/settings" class="<?= navActive('settings.php', $currentScript) === 'active' ? 'active' : '' ?>">⚙️ Paramètres du site</a>
         <a href="<?= e($root) ?>superadmin/activity_log" class="<?= navActive('activity_log.php', $currentScript) === 'active' ? 'active' : '' ?>">📜 Journal d'activité</a>
+        <?php if (getSetting(getPDO(), 'demo_listings_seeded', '') !== '1'): ?>
+          <a href="<?= e($root) ?>superadmin/seed_demo_listings" class="<?= navActive('seed_demo_listings.php', $currentScript) === 'active' ? 'active' : '' ?>">📥 Importer 50 annonces</a>
+        <?php endif; ?>
       <?php endif; ?>
     </nav>
     <div class="user-box">
