@@ -301,6 +301,80 @@ function ensureSchemaUpToDate(PDO $pdo): void
             $pdo->prepare("INSERT INTO settings (setting_key, setting_value) VALUES ('schema_version', '4') ON DUPLICATE KEY UPDATE setting_value = '4'")->execute();
         } catch (Exception $e) {}
     }
+
+    // v5 : demande ponctuelle — création du compte administrateur "Abdul Karim
+    // Barreau" et d'une annonce de terrain à Anyama (prix/surface basés sur une
+    // annonce réelle du marché local). N'insère rien si déjà présent (relance
+    // sans risque du même code à chaque déploiement tant que la version < 5).
+    if ($version < 5) {
+        try {
+            $seedEmail = 'abdulkarim.barreau@immobilier-ci.ci';
+            $stmt = $pdo->prepare('SELECT id FROM users WHERE email = ?');
+            $stmt->execute([$seedEmail]);
+            $adminId = $stmt->fetchColumn();
+
+            if (!$adminId) {
+                // Mot de passe temporaire généré à l'exécution : jamais écrit dans le code
+                // source, uniquement consultable une fois par un super admin dans le
+                // journal d'activité (à changer dès la première connexion).
+                $tempPassword = 'AK-' . bin2hex(random_bytes(4)) . '-7';
+                $ins = $pdo->prepare('INSERT INTO users (full_name, email, password, role, status) VALUES (?,?,?,?,?)');
+                $ins->execute(['Abdul Karim Barreau', $seedEmail, password_hash($tempPassword, PASSWORD_DEFAULT), 'admin', 'actif']);
+                $adminId = (int) $pdo->lastInsertId();
+                logActivity($pdo, null, "Compte administrateur créé pour Abdul Karim Barreau ($seedEmail) — mot de passe temporaire : $tempPassword — à changer dès la première connexion.");
+            } else {
+                $adminId = (int) $adminId;
+            }
+
+            $seedSlug = 'terrain-500m2-nouveau-quartier-anyama';
+            $check = $pdo->prepare('SELECT id FROM properties WHERE slug = ?');
+            $check->execute([$seedSlug]);
+            $propertyId = $check->fetchColumn();
+
+            if (!$propertyId) {
+                $reference = generateReference($pdo);
+                $title = 'Terrain de 500 m² — Nouveau quartier, Anyama';
+                $description = "Parcelle de 500 m² dans un lotissement en développement du nouveau quartier d'Anyama, accessible et constructible. Idéale pour un projet résidentiel. Prix aligné sur une offre réelle du marché local à Anyama.";
+                $ins = $pdo->prepare('INSERT INTO properties (reference, title, slug, description, listing_type, category, city, commune, address, price, surface, bedrooms, bathrooms, status, approval_status, featured, created_by) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)');
+                $ins->execute([
+                    $reference, $title, $seedSlug, $description,
+                    'vente', 'terrain', 'Anyama', 'Nouveau quartier', null,
+                    3800000, 500, null, null,
+                    'disponible', 'en_attente', 0, $adminId,
+                ]);
+                $propertyId = (int) $pdo->lastInsertId();
+                logActivity($pdo, $adminId, "Création de l'annonce #$propertyId ($title)");
+
+                // Illustration d'origine (pas une photo du terrain réel, faute de photo
+                // sous licence disponible) : passe par le même circuit que les photos
+                // envoyées via le formulaire (filigrane, puis Cloudinary ou stockage local).
+                $seedImage = __DIR__ . '/../assets/seed/terrain-anyama.jpg';
+                if (is_file($seedImage)) {
+                    $workCopy = sys_get_temp_dir() . '/seed_terrain_' . uniqid() . '.jpg';
+                    if (copy($seedImage, $workCopy)) {
+                        applyWatermark($workCopy);
+                        $stored = null;
+                        if (cloudinaryConfigured()) {
+                            $stored = uploadImageToCloudinary($workCopy, 'terrain-anyama.jpg');
+                        }
+                        if (!$stored) {
+                            if (!is_dir(UPLOAD_DIR)) @mkdir(UPLOAD_DIR, 0775, true);
+                            $newName = 'seed_terrain_anyama_' . substr(md5((string) $propertyId), 0, 8) . '.jpg';
+                            if (@copy($workCopy, UPLOAD_DIR . $newName)) $stored = $newName;
+                        }
+                        if ($stored) {
+                            $pdo->prepare('INSERT INTO property_images (property_id, image_path, is_primary, sort_order) VALUES (?,?,1,0)')->execute([$propertyId, $stored]);
+                        }
+                        @unlink($workCopy);
+                    }
+                }
+            }
+
+            $pdo->prepare("INSERT INTO settings (setting_key, setting_value) VALUES ('schema_version', '5') ON DUPLICATE KEY UPDATE setting_value = '5'")->execute();
+        } catch (Exception $e) {
+            error_log('Migration v5 (seed Anyama) error: ' . $e->getMessage());
+        }
+    }
 }
 
 /**

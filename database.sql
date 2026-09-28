@@ -133,5 +133,10 @@ CREATE TABLE IF NOT EXISTS rate_limits (
     INDEX idx_bucket_identifier_time (bucket, identifier, created_at)
 ) ENGINE=InnoDB;
 
+-- La v5 (compte "Abdul Karim Barreau" + annonce terrain à Anyama) est une
+-- demande ponctuelle pour ce site précis, injectée par la migration au premier
+-- chargement (includes/functions.php) plutôt que codée en dur ici : une
+-- installation neuve du projet ne doit pas hériter de données propres à ce
+-- déploiement. On part donc directement de la version 4 sur une base neuve.
 INSERT INTO settings (setting_key, setting_value) VALUES ('schema_version', '4')
 ON DUPLICATE KEY UPDATE setting_value = '4';
