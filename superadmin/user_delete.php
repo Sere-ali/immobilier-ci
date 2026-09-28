@@ -17,12 +17,15 @@ $stmt = $pdo->prepare('SELECT * FROM users WHERE id = ?');
 $stmt->execute([$id]);
 $target = $stmt->fetch();
 
-if ($target) {
+if (!$target) {
+    flash('error', 'Compte introuvable.');
+} elseif ($target['role'] === 'superadmin') {
+    // Un super admin ne peut pas supprimer le compte d'un autre super admin.
+    flash('error', "Vous ne pouvez pas supprimer le compte d'un autre super administrateur.");
+} else {
     $pdo->prepare('DELETE FROM users WHERE id = ?')->execute([$id]);
     logActivity($pdo, $currentAdmin['id'], "Suppression du compte {$target['email']}");
     flash('success', 'Compte supprimé.');
-} else {
-    flash('error', 'Compte introuvable.');
 }
 
 redirect('users');

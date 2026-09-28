@@ -9,10 +9,13 @@ $user = currentUser();
 if (isset($_GET['toggle'], $_GET['id'])) {
     $targetId = (int)$_GET['id'];
     if ($targetId !== (int)$user['id']) {
-        $stmt = $pdo->prepare('SELECT status FROM users WHERE id = ?');
+        $stmt = $pdo->prepare('SELECT status, role FROM users WHERE id = ?');
         $stmt->execute([$targetId]);
         $row = $stmt->fetch();
-        if ($row) {
+        if ($row && $row['role'] === 'superadmin') {
+            // Un super admin ne peut pas désactiver le compte d'un autre super admin.
+            flash('error', "Vous ne pouvez pas modifier le compte d'un autre super administrateur.");
+        } elseif ($row) {
             $newStatus = $row['status'] === 'actif' ? 'inactif' : 'actif';
             $pdo->prepare('UPDATE users SET status = ? WHERE id = ?')->execute([$newStatus, $targetId]);
             logActivity($pdo, $user['id'], "Statut de l'utilisateur #$targetId changé en $newStatus");
@@ -50,10 +53,14 @@ require_once __DIR__ . '/../includes/admin_header.php';
           <td><span class="badge badge-<?= $u['status']==='actif'?'success':'danger' ?>"><?= ucfirst($u['status']) ?></span></td>
           <td class="mono" style="font-size:.8rem"><?= $u['last_login'] ? date('d/m/Y H:i', strtotime($u['last_login'])) : '—' ?></td>
           <td class="actions-cell" style="justify-content:flex-end">
-            <a href="user_form?id=<?= $u['id'] ?>" class="btn btn-outline btn-sm">Modifier</a>
-            <?php if ($u['id'] != $user['id']): ?>
-              <a href="?toggle=1&id=<?= $u['id'] ?>" class="btn btn-outline btn-sm" data-confirm="<?= $u['status']==='actif' ? 'Désactiver' : 'Activer' ?> ce compte ?"><?= $u['status']==='actif' ? 'Désactiver' : 'Activer' ?></a>
-              <a href="user_delete?id=<?= $u['id'] ?>" class="btn btn-danger btn-sm" data-confirm="Supprimer définitivement ce compte ? Ses annonces resteront visibles mais sans propriétaire.">Suppr.</a>
+            <?php if ($u['role'] === 'superadmin' && $u['id'] != $user['id']): ?>
+              <span class="badge badge-neutral" title="Un super admin ne peut pas modifier le compte d'un autre super admin">🔒 Protégé</span>
+            <?php else: ?>
+              <a href="user_form?id=<?= $u['id'] ?>" class="btn btn-outline btn-sm">Modifier</a>
+              <?php if ($u['id'] != $user['id']): ?>
+                <a href="?toggle=1&id=<?= $u['id'] ?>" class="btn btn-outline btn-sm" data-confirm="<?= $u['status']==='actif' ? 'Désactiver' : 'Activer' ?> ce compte ?"><?= $u['status']==='actif' ? 'Désactiver' : 'Activer' ?></a>
+                <a href="user_delete?id=<?= $u['id'] ?>" class="btn btn-danger btn-sm" data-confirm="Supprimer définitivement ce compte ? Ses annonces resteront visibles mais sans propriétaire.">Suppr.</a>
+              <?php endif; ?>
             <?php endif; ?>
           </td>
         </tr>

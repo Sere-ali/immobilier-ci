@@ -13,6 +13,14 @@ if ($id) {
     $stmt->execute([$id]);
     $editUser = $stmt->fetch();
     if (!$editUser) { flash('error', 'Utilisateur introuvable.'); redirect('users'); }
+    // Un super admin ne peut pas modifier le compte d'un AUTRE super admin (ni
+    // son rôle, ni son statut, ni ses identifiants) : ça éviterait qu'un super
+    // admin nouvellement nommé ne rétrograde ou ne prenne le contrôle d'un
+    // autre compte super admin, y compris celui qui l'a créé.
+    if ($editUser['role'] === 'superadmin' && (int)$editUser['id'] !== (int)$currentAdmin['id']) {
+        flash('error', "Vous ne pouvez pas modifier le compte d'un autre super administrateur.");
+        redirect('users');
+    }
 }
 
 $errors = [];
