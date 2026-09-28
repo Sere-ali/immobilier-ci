@@ -88,10 +88,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$alreadySeeded) {
         logActivity($pdo, $user['id'], "Import de $created annonces de démonstration");
         flash('success', "$created annonces ont été ajoutées avec succès.");
         redirect('../admin/properties');
-    } catch (Exception $e) {
-        $pdo->rollBack();
+    } catch (Throwable $e) {
+        if ($pdo->inTransaction()) {
+            $pdo->rollBack();
+        }
         error_log('seed_demo_listings error: ' . $e->getMessage());
-        flash('error', "L'import a échoué, aucune annonce n'a été ajoutée. Merci de réessayer.");
+        // Le détail exact est affiché ici (réservé au super admin) car les journaux
+        // du serveur ne sont pas accessibles depuis l'environnement de développement :
+        // c'est le seul moyen de diagnostiquer un échec à distance.
+        flash('error', "L'import a échoué, aucune annonce n'a été ajoutée. Détail technique : " . $e->getMessage());
         redirect('seed_demo_listings');
     }
 }
