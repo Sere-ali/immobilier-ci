@@ -25,6 +25,8 @@ a{color:inherit;text-decoration:none}
 .sidebar .brand{font-family:'Inter',sans-serif;font-weight:700;font-size:1.15rem;margin-bottom:6px;padding:0 8px;display:flex;align-items:center;gap:8px}
 .sidebar .brand span{color:var(--laterite)}
 .logo-mark{flex-shrink:0}
+.logo-img{height:46px;width:auto;display:block}
+.logo-img-lg{height:88px;width:auto;display:block;margin:0 auto}
 .sidebar .role-tag{
   font-family:'IBM Plex Mono',monospace;font-size:.68rem;text-transform:uppercase;letter-spacing:.05em;
   color:var(--sable);padding:0 8px 22px;border-bottom:1px solid rgba(255,255,255,.12);margin-bottom:18px;

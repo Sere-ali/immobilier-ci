@@ -38,7 +38,7 @@ function navLinkClass(string $script, string $currentScript, ?string $listingTyp
 <body>
 <header class="site-header">
   <div class="container">
-    <a href="index" class="logo"><?= logoMark(30) ?>Immobilier<span>CI</span></a>
+    <a href="index" class="logo"><img src="assets/img/logo.png?v=<?= assetVersion('assets/img/logo.png') ?>" alt="Immobilier CI" class="logo-img"></a>
     <nav class="main-nav">
       <a href="index" class="<?= navLinkClass('index.php', $currentScript) ?>">Accueil</a>
       <a href="annonces" class="<?= navLinkClass('annonces.php', $currentScript, '', $currentListingType) ?> <?= navLinkClass('annonce.php', $currentScript) ?>">Annonces</a>
