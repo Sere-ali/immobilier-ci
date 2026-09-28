@@ -56,6 +56,13 @@ document.addEventListener('DOMContentLoaded', function () {
       });
     }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
     revealTargets.forEach(function (el) { revealObserver.observe(el); });
+    // Filet de sécurité : sur certains navigateurs/appareils, l'observateur peut ne jamais se
+    // déclencher (repli d'arrière-plan, bug spécifique à un navigateur mobile, etc.), ce qui
+    // laisserait le contenu invisible (opacity:0) indéfiniment. On force donc l'affichage après
+    // un court délai si ce n'est pas déjà fait, pour ne jamais bloquer du contenu essentiel.
+    window.setTimeout(function () {
+      revealTargets.forEach(function (el) { el.classList.add('in-view'); });
+    }, 1500);
   } else {
     revealTargets.forEach(function (el) { el.classList.add('in-view'); });
   }

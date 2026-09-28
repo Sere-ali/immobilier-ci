@@ -99,7 +99,7 @@ $categories = [
         <p>Aucun bien à la une pour le moment. Consultez toutes les annonces disponibles.</p>
       </div>
     <?php else: ?>
-      <div class="property-grid" data-reveal-group>
+      <div class="property-grid">
         <?php foreach ($featured as $p): ?>
           <?php include __DIR__ . '/includes/property_card.php'; ?>
         <?php endforeach; ?>
