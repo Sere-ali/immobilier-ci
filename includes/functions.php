@@ -70,6 +70,19 @@ function categoryIcon(string $key): string
     return '<svg ' . $common . ' class="category-icon">' . $path . '</svg>';
 }
 
+/**
+ * Illustration "photo" de remplacement pour une annonce qui n'a pas encore de vraie
+ * photo (import de démonstration, ou annonce créée sans image) : une scène de marque
+ * dessinée pour la catégorie du bien (villa, immeuble, etc.), avec le nom de la
+ * catégorie écrit dessus — jamais une simple vignette de couleur unie sans repère.
+ */
+function categoryPlaceholderImage(string $category): string
+{
+    $known = ['villa', 'appartement', 'terrain', 'bureau', 'magasin', 'immeuble'];
+    $key = in_array($category, $known, true) ? $category : 'immeuble';
+    return 'assets/img/categories/' . $key . '.svg';
+}
+
 /** Petit logo maison (SVG en ligne) utilisé à côté du nom du site, sur le site public et dans l'espace admin */
 function logoMark(int $size = 32): string
 {

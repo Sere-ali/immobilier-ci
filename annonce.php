@@ -78,7 +78,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $pageTitle = $property['title'];
 require_once __DIR__ . '/includes/header.php';
 
-$mainImg = !empty($images) ? imageUrl($images[0]['image_path']) : 'https://placehold.co/1000x625/F1ECDD/0B1220?text=Immobilier+CI';
+// Une vraie photo importée est toujours prioritaire ; à défaut (annonce de démonstration,
+// ou sans photo), on affiche l'illustration de la catégorie du bien.
+$mainHasRealPhoto = !empty($images) && strpos($images[0]['image_path'], 'placehold.co') === false;
+$mainImg = $mainHasRealPhoto ? imageUrl($images[0]['image_path']) : categoryPlaceholderImage($property['category']);
 ?>
 <section class="page-hero" style="padding:30px 0">
   <div class="container">

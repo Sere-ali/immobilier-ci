@@ -1,6 +1,10 @@
 <?php
 /** Fragment attendant une variable $p (ligne properties + colonne image) dans la boucle appelante */
-$img = !empty($p['image']) ? imageUrl($p['image']) : 'https://placehold.co/600x450/F1ECDD/0B1220?text=Immobilier+CI';
+/* Une vraie photo importée est toujours prioritaire ; à défaut (annonce de démonstration,
+   ou annonce créée sans photo), on affiche l'illustration de la catégorie du bien plutôt
+   qu'une vignette de couleur unie sans repère. */
+$hasRealPhoto = !empty($p['image']) && strpos($p['image'], 'placehold.co') === false;
+$img = $hasRealPhoto ? imageUrl($p['image']) : categoryPlaceholderImage($p['category']);
 ?>
 <a href="annonce?slug=<?= e($p['slug']) ?>" class="property-card">
   <div class="property-media">
