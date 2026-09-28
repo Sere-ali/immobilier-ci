@@ -139,15 +139,103 @@ table.data-table{width:100%;border-collapse:collapse;font-size:.87rem;min-width:
 .alert-error{background:var(--danger-bg);color:var(--danger)}
 .alert-warning{background:var(--warning-bg);color:var(--warning)}
 
-/* ---- Login page (admin) ---- */
-.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--lagune);padding:20px}
-.login-card{background:#fff;border-radius:16px;padding:40px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
-.login-card .brand{font-weight:700;font-size:1.3rem;text-align:center;margin-bottom:4px;color:var(--lagune);display:flex;align-items:center;justify-content:center;gap:8px}
-.login-card .brand span{color:var(--laterite)}
-.login-card p.sub{text-align:center;color:var(--ink-soft);font-size:.85rem;margin-bottom:26px}
-.login-card button{width:100%;background:var(--lagune);color:#fff;border:none;padding:12px;border-radius:8px;font-weight:600;cursor:pointer;margin-top:6px}
-.login-card button:hover{background:var(--lagune-dark)}
-.login-card .back-link{display:block;text-align:center;margin-top:18px;font-size:.82rem;color:var(--ink-soft)}
+/* ---- Login page (admin) : deux volets, visuel de marque + formulaire ---- */
+.login-wrap{
+  min-height:100vh;min-height:100dvh;display:flex;background:var(--bg);
+}
+
+/* Volet gauche : identité de marque, dégradé animé, arguments */
+.login-visual{
+  position:relative;overflow:hidden;flex:1 1 46%;display:flex;align-items:center;justify-content:center;
+  padding:60px 50px;
+  background:linear-gradient(155deg,var(--lagune) 0%,var(--lagune-dark) 100%);
+  color:#fff;
+}
+.login-blob{position:absolute;border-radius:50%;filter:blur(70px);pointer-events:none}
+.login-blob-1{width:380px;height:380px;background:var(--laterite);opacity:.28;top:-120px;left:-100px;animation:loginBlobFloat 10s ease-in-out infinite}
+.login-blob-2{width:300px;height:300px;background:var(--sable);opacity:.16;bottom:-100px;right:-80px;animation:loginBlobFloat 13s ease-in-out infinite reverse}
+@keyframes loginBlobFloat{
+  0%,100%{transform:translate(0,0) scale(1)}
+  50%{transform:translate(26px,-22px) scale(1.08)}
+}
+.login-visual-content{position:relative;z-index:1;max-width:420px}
+.login-visual-logo{height:52px;width:auto;margin-bottom:34px;filter:brightness(0) invert(1);opacity:.95}
+.login-visual-content h1{
+  font-family:'Fraunces',serif;font-weight:600;font-size:clamp(1.6rem,3vw,2.3rem);line-height:1.2;margin:0 0 16px;
+}
+.login-visual-content p{color:rgba(255,255,255,.75);font-size:.95rem;line-height:1.6;margin:0 0 32px;max-width:360px}
+.login-perks{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px}
+.login-perks li{
+  display:flex;align-items:center;gap:12px;font-size:.88rem;color:rgba(255,255,255,.92);
+  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:11px 14px;
+  animation:adminFadeUp .5s cubic-bezier(.2,.8,.2,1) both;
+}
+.login-perks li:nth-child(1){animation-delay:.15s}
+.login-perks li:nth-child(2){animation-delay:.25s}
+.login-perks li:nth-child(3){animation-delay:.35s}
+.login-perks li span{font-size:1.05rem}
+
+/* Volet droit : formulaire */
+.login-panel{flex:1 1 54%;display:flex;align-items:center;justify-content:center;padding:40px 24px}
+.login-card{width:100%;max-width:380px}
+.login-card-head{display:none}
+.login-card-title{
+  font-family:'Fraunces',serif;font-weight:600;font-size:1.7rem;color:var(--ink);margin:0 0 4px;
+  animation:adminFadeUp .5s cubic-bezier(.2,.8,.2,1) both;
+}
+.login-card p.sub{color:var(--ink-soft);font-size:.88rem;margin-bottom:28px;animation:adminFadeUp .5s cubic-bezier(.2,.8,.2,1) both .04s}
+
+.field-anim{animation:adminFadeUp .45s cubic-bezier(.2,.8,.2,1) both}
+.login-card form .field:nth-of-type(1){animation-delay:.08s}
+.login-card form .field:nth-of-type(2){animation-delay:.14s}
+.login-submit{animation-delay:.2s}
+
+/* Icônes à l'intérieur des champs (enveloppe / cadenas) */
+.input-icon{position:relative}
+.input-icon input{padding-left:42px !important}
+.input-icon::after{
+  content:'';position:absolute;left:14px;top:38px;width:18px;height:18px;
+  background-repeat:no-repeat;background-position:center;background-size:contain;opacity:.45;pointer-events:none;
+}
+.input-icon-mail::after{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230F3D3E' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='2' y='4' width='20' height='16' rx='2'/%3E%3Cpath d='m22 7-10 6L2 7'/%3E%3C/svg%3E")}
+.input-icon-lock::after{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230F3D3E' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='11' width='18' height='11' rx='2'/%3E%3Cpath d='M7 11V7a5 5 0 0 1 10 0v4'/%3E%3C/svg%3E")}
+.input-icon .password-field input{padding-left:42px !important;padding-right:42px !important}
+
+.login-card form .field input{transition:border-color .2s ease, box-shadow .2s ease}
+.login-card form .field input:focus{border-color:var(--lagune);box-shadow:0 0 0 4px rgba(15,61,62,.1);outline:none}
+
+.login-submit{
+  width:100%;display:flex;align-items:center;justify-content:center;gap:8px;
+  background:var(--lagune);color:#fff;border:none;padding:13px;border-radius:9px;font-weight:600;font-size:.95rem;cursor:pointer;margin-top:8px;
+  transition:background-color .2s ease, transform .15s ease, box-shadow .2s ease;
+}
+.login-submit .arrow{transition:transform .2s ease}
+.login-submit:hover{background:var(--lagune-dark);box-shadow:0 10px 24px rgba(15,61,62,.25);transform:translateY(-1px)}
+.login-submit:hover .arrow{transform:translateX(3px)}
+.login-submit:active{transform:scale(.97)}
+
+.login-card .back-link{
+  display:block;text-align:center;margin-top:22px;font-size:.82rem;color:var(--ink-soft);
+  transition:color .2s ease;
+}
+.login-card .back-link:hover{color:var(--lagune)}
+
+@media (max-width:860px){
+  .login-wrap{flex-direction:column}
+  .login-visual{flex:none;padding:0}
+  .login-visual .login-visual-content{display:none}
+  .login-visual{
+    height:8px;background:linear-gradient(90deg,var(--laterite),var(--lagune) 60%);
+  }
+  .login-blob{display:none}
+  .login-panel{padding:36px 20px 50px}
+  .login-card-head{display:flex;justify-content:center;margin-bottom:22px}
+  .login-card-head img{height:44px;width:auto}
+}
+@media (max-width:420px){
+  .login-panel{padding:28px 16px 40px}
+  .login-card-title{font-size:1.4rem}
+}
 
 .empty-state{text-align:center;padding:60px 20px;color:var(--ink-soft)}
 
@@ -192,7 +280,6 @@ table.data-table{width:100%;border-collapse:collapse;font-size:.87rem;min-width:
 }
 @media (max-width: 480px){
   .kpi-grid{grid-template-columns:1fr}
-  .login-card{padding:28px 22px}
   .panel-head, .panel-body{padding:16px}
   .admin-content{padding:16px 12px 32px}
 }
@@ -230,8 +317,6 @@ table.data-table{width:100%;border-collapse:collapse;font-size:.87rem;min-width:
 
 .badge{transition:transform .15s ease}
 a.badge:hover{transform:translateY(-1px)}
-
-.login-card{animation:adminFadeUp .5s cubic-bezier(.2,.8,.2,1) both}
 
 @media (prefers-reduced-motion: reduce){
   *, *::before, *::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important}

@@ -46,34 +46,56 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <title>Connexion — Immobilier CI</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
 <link rel="stylesheet" href="assets/css/admin.css?v=<?= assetVersion('assets/css/admin.css') ?>">
 </head>
 <body>
 <div class="login-wrap">
-  <div class="login-card">
-    <div class="brand"><img src="assets/img/logo.png?v=<?= assetVersion('assets/img/logo.png') ?>" alt="Immobilier CI" class="logo-img-lg"></div>
-    <p class="sub">Espace Admin &amp; Super Admin</p>
 
-    <?php if ($flashMsg): ?><div class="alert alert-<?= $flashMsg['type'] === 'success' ? 'success' : 'error' ?>"><?= e($flashMsg['message']) ?></div><?php endif; ?>
-    <?php if ($error): ?><div class="alert alert-error"><?= e($error) ?></div><?php endif; ?>
+  <aside class="login-visual">
+    <div class="login-blob login-blob-1"></div>
+    <div class="login-blob login-blob-2"></div>
+    <div class="login-visual-content">
+      <img src="assets/img/logo.png?v=<?= assetVersion('assets/img/logo.png') ?>" alt="Immobilier CI" class="logo-img-lg login-visual-logo">
+      <h1>Bienvenue dans<br>votre espace</h1>
+      <p>Gérez vos annonces, vos messages et votre équipe en toute simplicité, où que vous soyez.</p>
+      <ul class="login-perks">
+        <li><span>🏠</span> Publiez et suivez vos annonces</li>
+        <li><span>💬</span> Répondez à vos messages en un clic</li>
+        <li><span>🛡️</span> Accès sécurisé par rôle</li>
+      </ul>
+    </div>
+  </aside>
 
-    <?php if (!$locked): ?>
-    <form method="post">
-      <?= csrfField() ?>
-      <div class="field">
-        <label>Adresse e-mail</label>
-        <input type="email" name="email" value="<?= e($_POST['email'] ?? '') ?>" required autofocus>
+  <main class="login-panel">
+    <div class="login-card">
+      <div class="login-card-head login-visual-logo-mobile">
+        <img src="assets/img/logo.png?v=<?= assetVersion('assets/img/logo.png') ?>" alt="Immobilier CI" class="logo-img-lg">
       </div>
-      <div class="field">
-        <label>Mot de passe</label>
-        <input type="password" name="password" required>
-      </div>
-      <button type="submit">Se connecter</button>
-    </form>
-    <?php endif; ?>
-    <a href="index" class="back-link">← Retour au site public</a>
-  </div>
+      <h2 class="login-card-title">Connexion</h2>
+      <p class="sub">Espace Admin &amp; Super Admin</p>
+
+      <?php if ($flashMsg): ?><div class="alert alert-<?= $flashMsg['type'] === 'success' ? 'success' : 'error' ?>"><?= e($flashMsg['message']) ?></div><?php endif; ?>
+      <?php if ($error): ?><div class="alert alert-error"><?= e($error) ?></div><?php endif; ?>
+
+      <?php if (!$locked): ?>
+      <form method="post">
+        <?= csrfField() ?>
+        <div class="field field-anim input-icon input-icon-mail">
+          <label>Adresse e-mail</label>
+          <input type="email" name="email" value="<?= e($_POST['email'] ?? '') ?>" placeholder="vous@immobilier-ci.ci" required autofocus>
+        </div>
+        <div class="field field-anim input-icon input-icon-lock">
+          <label>Mot de passe</label>
+          <input type="password" name="password" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="login-submit field-anim">Se connecter <span class="arrow">→</span></button>
+      </form>
+      <?php endif; ?>
+      <a href="index" class="back-link">← Retour au site public</a>
+    </div>
+  </main>
+
 </div>
 <script src="assets/js/password-toggle.js?v=<?= assetVersion('assets/js/password-toggle.js') ?>" defer></script>
 </body>
