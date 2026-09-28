@@ -1,5 +1,4 @@
 <footer class="site-footer">
-  <img src="assets/img/skyline.svg" alt="Illustration d'un quartier résidentiel" class="footer-skyline" loading="lazy" decoding="async">
   <div class="container">
     <div class="footer-grid">
       <div>
