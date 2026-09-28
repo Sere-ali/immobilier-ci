@@ -26,7 +26,7 @@ a{color:inherit;text-decoration:none}
 .sidebar .brand span{color:var(--laterite)}
 .logo-mark{flex-shrink:0}
 .logo-img{height:46px;width:auto;display:block}
-.logo-img-lg{height:88px;width:auto;display:block;margin:0 auto}
+.logo-img-lg{height:110px;width:auto;display:block;margin:0 auto}
 .sidebar .role-tag{
   font-family:'IBM Plex Mono',monospace;font-size:.68rem;text-transform:uppercase;letter-spacing:.05em;
   color:var(--sable);padding:0 8px 22px;border-bottom:1px solid rgba(255,255,255,.12);margin-bottom:18px;flex-shrink:0;
@@ -159,7 +159,15 @@ table.data-table{width:100%;border-collapse:collapse;font-size:.87rem;min-width:
   50%{transform:translate(26px,-22px) scale(1.08)}
 }
 .login-visual-content{position:relative;z-index:1;max-width:420px}
-.login-visual-logo{height:52px;width:auto;margin-bottom:34px;filter:brightness(0) invert(1);opacity:.95}
+/* Le logo est un visuel détaillé (immeubles dorés, dégradés, texte) : le
+   forcer en silhouette blanche unie (brightness(0) invert(1)) le rendait
+   méconnaissable. On l'affiche à sa taille et dans ses vraies couleurs, sur
+   une plaque claire pour qu'il ressorte bien sur le fond sombre du volet. */
+.login-visual-logo{
+  height:190px;width:auto;display:block;margin-bottom:34px;
+  background:#fff;padding:18px 26px;border-radius:16px;
+  box-shadow:0 14px 34px rgba(0,0,0,.22);
+}
 .login-visual-content h1{
   font-family:'Fraunces',serif;font-weight:600;font-size:clamp(1.6rem,3vw,2.3rem);line-height:1.2;margin:0 0 16px;
 }
@@ -230,7 +238,7 @@ table.data-table{width:100%;border-collapse:collapse;font-size:.87rem;min-width:
   .login-blob{display:none}
   .login-panel{padding:36px 20px 50px}
   .login-card-head{display:flex;justify-content:center;margin-bottom:22px}
-  .login-card-head img{height:44px;width:auto}
+  .login-card-head img{height:80px;width:auto}
 }
 @media (max-width:420px){
   .login-panel{padding:28px 16px 40px}
