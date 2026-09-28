@@ -19,6 +19,18 @@ if (isset($_GET['id'])) {
 
     if (!$canView) { flash('error', 'Message introuvable.'); redirect('messages'); }
 
+    if (isset($_GET['delete'])) {
+        // Seul le Super Admin peut supprimer un message reçu.
+        if (!$isSuper) {
+            flash('error', "Seul le Super Administrateur peut supprimer un message.");
+            redirect('messages?id=' . $mid);
+        }
+        $pdo->prepare('DELETE FROM messages WHERE id = ?')->execute([$mid]);
+        logActivity($pdo, $user['id'], "Suppression du message #$mid de {$message['full_name']}");
+        flash('success', 'Message supprimé.');
+        redirect('messages');
+    }
+
     if (isset($_GET['mark'])) {
         $pdo->prepare('UPDATE messages SET status = ? WHERE id = ?')->execute([$_GET['mark'], $mid]);
         redirect('messages?id=' . $mid);
@@ -54,6 +66,9 @@ if (isset($_GET['id'])) {
           <?php endif; ?>
           <a href="mailto:<?= e($message['email']) ?>" class="btn btn-outline">Répondre par e-mail</a>
           <a href="?id=<?= $mid ?>&mark=traite" class="btn btn-outline">Marquer comme traité</a>
+          <?php if ($isSuper): ?>
+            <a href="?id=<?= $mid ?>&delete=1" class="btn btn-danger" data-confirm="Supprimer définitivement ce message ? Cette action est irréversible.">🗑️ Supprimer</a>
+          <?php endif; ?>
         </div>
       </div>
     </div>
@@ -110,6 +125,9 @@ require_once __DIR__ . '/../includes/admin_header.php';
             <a href="?id=<?= $m['id'] ?>" class="btn btn-outline btn-sm">Voir</a>
             <?php if (!empty($m['phone']) && isValidWhatsappNumber($m['phone'])): ?>
               <a href="<?= e(waLink($m['phone'], "Bonjour {$m['full_name']}, merci pour votre message.")) ?>" target="_blank" rel="noopener" class="btn-whatsapp" style="padding:6px 10px;font-size:.78rem">💬</a>
+            <?php endif; ?>
+            <?php if ($isSuper): ?>
+              <a href="?id=<?= $m['id'] ?>&delete=1" class="btn btn-danger btn-sm" data-confirm="Supprimer définitivement ce message de <?= e($m['full_name']) ?> ?">🗑️</a>
             <?php endif; ?>
           </td>
         </tr>
