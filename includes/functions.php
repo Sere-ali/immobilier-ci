@@ -25,10 +25,10 @@ function assetVersion(string $relativePath): string
 function logoMark(int $size = 32): string
 {
     return '<svg width="' . $size . '" height="' . $size . '" viewBox="0 0 34 34" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" class="logo-mark">'
-         . '<rect width="34" height="34" rx="9" fill="#0F3D3E"/>'
-         . '<polygon points="17,8 27,16.5 7,16.5" fill="#C87F2A"/>'
+         . '<rect width="34" height="34" rx="9" fill="#0B1220"/>'
+         . '<polygon points="17,8 27,16.5 7,16.5" fill="#D4A017"/>'
          . '<rect x="10.5" y="16.5" width="13" height="10" rx="1" fill="#ffffff"/>'
-         . '<rect x="15.5" y="20.5" width="4" height="6" fill="#0F3D3E"/>'
+         . '<rect x="15.5" y="20.5" width="4" height="6" fill="#0B1220"/>'
          . '</svg>';
 }
 

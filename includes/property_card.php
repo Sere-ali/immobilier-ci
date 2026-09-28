@@ -1,6 +1,6 @@
 <?php
 /** Fragment attendant une variable $p (ligne properties + colonne image) dans la boucle appelante */
-$img = !empty($p['image']) ? imageUrl($p['image']) : 'https://placehold.co/600x450/E8DCC8/0F3D3E?text=Immobilier+CI';
+$img = !empty($p['image']) ? imageUrl($p['image']) : 'https://placehold.co/600x450/F1ECDD/0B1220?text=Immobilier+CI';
 ?>
 <a href="annonce?slug=<?= e($p['slug']) ?>" class="property-card">
   <div class="property-media">

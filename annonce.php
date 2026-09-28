@@ -78,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $pageTitle = $property['title'];
 require_once __DIR__ . '/includes/header.php';
 
-$mainImg = !empty($images) ? imageUrl($images[0]['image_path']) : 'https://placehold.co/1000x625/E8DCC8/0F3D3E?text=Immobilier+CI';
+$mainImg = !empty($images) ? imageUrl($images[0]['image_path']) : 'https://placehold.co/1000x625/F1ECDD/0B1220?text=Immobilier+CI';
 ?>
 <section class="page-hero" style="padding:30px 0">
   <div class="container">
