@@ -109,6 +109,8 @@ Chaque demande sur une annonce (ou message général) exige désormais un **num�
 | Modifier les paramètres du site | ❌ | ✅ |
 | Consulter le journal d'activité | ❌ | ✅ |
 
+**Validation des annonces** : une annonce créée par un Admin reste *en attente de validation* et n'apparaît pas sur le site public (page d'accueil, page Annonces, page détail) tant qu'un Super Admin ne l'a pas approuvée depuis *Gestion des annonces*. Le Super Admin peut aussi la rejeter (elle reste alors masquée, modifiable par l'admin pour une nouvelle validation). Une annonce créée directement par un Super Admin est publiée immédiatement. L'admin créateur et tout Super Admin peuvent prévisualiser une annonce non encore validée via le bouton « Voir ».
+
 ## 6. Responsive
 
 Le site s'adapte à toutes les tailles d'écran :

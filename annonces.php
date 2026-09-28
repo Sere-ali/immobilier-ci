@@ -14,6 +14,7 @@ if (!empty($_GET['min_price']) && is_numeric($_GET['min_price'])) { $where[] = '
 if (!empty($_GET['max_price']) && is_numeric($_GET['max_price'])) { $where[] = 'price <= ?'; $params[] = (float)$_GET['max_price']; }
 if (!empty($_GET['bedrooms']) && is_numeric($_GET['bedrooms'])) { $where[] = 'bedrooms >= ?'; $params[] = (int)$_GET['bedrooms']; }
 $where[] = "status = 'disponible'";
+$where[] = "approval_status = 'approuve'";
 
 $properties = [];
 $listingError = null;

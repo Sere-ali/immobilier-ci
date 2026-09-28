@@ -68,7 +68,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && csrfVerify() && empty($errors)) {
             logActivity($pdo, $user['id'], "Modification de l'annonce #$propertyId");
         } else {
             $slug = slugify($title) . '-' . strtolower(substr(md5(uniqid()), 0, 6));
-            $insertStmt = $pdo->prepare('INSERT INTO properties (reference, title, slug, description, listing_type, category, city, commune, address, price, surface, bedrooms, bathrooms, status, featured, created_by) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)');
+            // Une annonce créée par un administrateur simple reste masquée du site
+            // public tant que le super admin ne l'a pas validée. Le super admin,
+            // lui, publie directement (il est déjà l'autorité de validation).
+            $approvalStatus = $isSuper ? 'approuve' : 'en_attente';
+            $insertStmt = $pdo->prepare('INSERT INTO properties (reference, title, slug, description, listing_type, category, city, commune, address, price, surface, bedrooms, bathrooms, status, approval_status, featured, created_by) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)');
             // generateReference() lit un compteur puis l'incrémente en PHP : deux créations
             // simultanées peuvent calculer la même référence. La colonne reference est UNIQUE
             // en base, donc un conflit lève une erreur qu'on rattrape ici pour régénérer et
@@ -78,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && csrfVerify() && empty($errors)) {
             for ($attempt = 1; $attempt <= $maxAttempts; $attempt++) {
                 $reference = generateReference($pdo);
                 try {
-                    $insertStmt->execute([$reference, $title, $slug, $description, $listingType, $category, $city, $commune, $address, $price, $surface, $bedrooms, $bathrooms, $status, $featured, $user['id']]);
+                    $insertStmt->execute([$reference, $title, $slug, $description, $listingType, $category, $city, $commune, $address, $price, $surface, $bedrooms, $bathrooms, $status, $approvalStatus, $featured, $user['id']]);
                     break;
                 } catch (PDOException $e) {
                     if ($e->getCode() === '23000' && $attempt < $maxAttempts) {
@@ -152,10 +156,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && csrfVerify() && empty($errors)) {
             }
         }
 
+        $pendingNote = (!$property && !$isSuper) ? ' Elle sera visible sur le site public dès qu\'un super administrateur l\'aura validée.' : '';
         if (!empty($uploadWarnings)) {
-            flash('warning', ($property ? 'Annonce mise à jour, mais : ' : 'Annonce créée, mais : ') . implode(' ', $uploadWarnings));
+            flash('warning', ($property ? 'Annonce mise à jour, mais : ' : 'Annonce créée, mais : ') . implode(' ', $uploadWarnings) . $pendingNote);
         } else {
-            flash('success', $property ? 'Annonce mise à jour avec succès.' : 'Annonce créée avec succès.');
+            flash('success', ($property ? 'Annonce mise à jour avec succès.' : 'Annonce créée avec succès.') . $pendingNote);
         }
         redirect('properties');
     }
@@ -168,6 +173,11 @@ require_once __DIR__ . '/../includes/admin_header.php';
 <div class="panel">
   <div class="panel-head"><h2><?= e($pageTitle) ?></h2></div>
   <div class="panel-body">
+    <?php if ($property && $property['approval_status'] === 'en_attente'): ?>
+      <div class="alert alert-warning">⏳ En attente de validation par un super administrateur — pas encore visible sur le site public.</div>
+    <?php elseif ($property && $property['approval_status'] === 'rejete'): ?>
+      <div class="alert alert-error">🚫 Cette annonce a été rejetée par un super administrateur et n'est pas visible sur le site public. Modifiez-la puis contactez un super admin pour une nouvelle validation.</div>
+    <?php endif; ?>
     <?php foreach ($errors as $err): ?><div class="alert alert-error"><?= e($err) ?></div><?php endforeach; ?>
 
     <form method="post" enctype="multipart/form-data">

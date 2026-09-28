@@ -11,6 +11,7 @@ $totalUsers = (int)$pdo->query("SELECT COUNT(*) n FROM users")->fetch()['n'];
 $totalAdmins = (int)$pdo->query("SELECT COUNT(*) n FROM users WHERE role='admin'")->fetch()['n'];
 $totalMessages = (int)$pdo->query("SELECT COUNT(*) n FROM messages WHERE status='nouveau'")->fetch()['n'];
 $totalValue = (float)$pdo->query("SELECT COALESCE(SUM(price),0) n FROM properties WHERE status='disponible'")->fetch()['n'];
+$totalPending = (int)$pdo->query("SELECT COUNT(*) n FROM properties WHERE approval_status='en_attente'")->fetch()['n'];
 
 $byAdmin = $pdo->query("SELECT u.full_name, u.email, u.status, COUNT(p.id) AS nb
                          FROM users u LEFT JOIN properties p ON p.created_by = u.id
@@ -26,7 +27,10 @@ require_once __DIR__ . '/../includes/admin_header.php';
 
 <div class="kpi-grid">
   <div class="kpi-card"><div class="label">Total annonces</div><div class="value"><?= $totalProperties ?></div></div>
-  <div class="kpi-card"><div class="label">Utilisateurs</div><div class="value"><?= $totalUsers ?></div></div>
+  <a href="properties?approval=en_attente" class="kpi-card" style="display:block;<?= $totalPending > 0 ? 'border-color:var(--warning)' : '' ?>">
+    <div class="label">En attente de validation</div>
+    <div class="value" style="<?= $totalPending > 0 ? 'color:var(--warning)' : '' ?>"><?= $totalPending ?></div>
+  </a>
   <div class="kpi-card"><div class="label">Administrateurs</div><div class="value"><?= $totalAdmins ?></div></div>
   <div class="kpi-card"><div class="label">Messages non lus</div><div class="value"><?= $totalMessages ?></div></div>
 </div>

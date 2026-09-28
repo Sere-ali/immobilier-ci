@@ -20,13 +20,39 @@ if (isset($_GET['toggle_status'], $_GET['id'])) {
     redirect('properties');
 }
 
+// Validation des annonces : réservé au super admin. Une annonce approuvée
+// devient visible sur le site public ; rejetée, elle reste masquée et
+// l'administrateur qui l'a créée voit pourquoi sur sa fiche.
+if (isset($_GET['approve'], $_GET['id']) && $isSuper) {
+    $stmt = $pdo->prepare('SELECT id, title FROM properties WHERE id = ?');
+    $stmt->execute([(int)$_GET['id']]);
+    if ($prop = $stmt->fetch()) {
+        $pdo->prepare("UPDATE properties SET approval_status = 'approuve' WHERE id = ?")->execute([$prop['id']]);
+        logActivity($pdo, $user['id'], "Validation de l'annonce #{$prop['id']} ({$prop['title']})");
+        flash('success', 'Annonce approuvée : elle est maintenant visible sur le site public.');
+    }
+    redirect('properties');
+}
+if (isset($_GET['reject'], $_GET['id']) && $isSuper) {
+    $stmt = $pdo->prepare('SELECT id, title FROM properties WHERE id = ?');
+    $stmt->execute([(int)$_GET['id']]);
+    if ($prop = $stmt->fetch()) {
+        $pdo->prepare("UPDATE properties SET approval_status = 'rejete' WHERE id = ?")->execute([$prop['id']]);
+        logActivity($pdo, $user['id'], "Rejet de l'annonce #{$prop['id']} ({$prop['title']})");
+        flash('success', 'Annonce rejetée : elle reste masquée du site public.');
+    }
+    redirect('properties');
+}
+
 $filterStatus = $_GET['status'] ?? '';
+$filterApproval = $_GET['approval'] ?? '';
 $search = trim($_GET['q'] ?? '');
 
 $where = [];
 $params = [];
 if (!$isSuper) { $where[] = 'created_by = ?'; $params[] = $user['id']; }
 if ($filterStatus && array_key_exists($filterStatus, propertyStatuses())) { $where[] = 'p.status = ?'; $params[] = $filterStatus; }
+if ($filterApproval && array_key_exists($filterApproval, approvalStatuses())) { $where[] = 'p.approval_status = ?'; $params[] = $filterApproval; }
 if ($search !== '') { $where[] = '(title LIKE ? OR reference LIKE ? OR city LIKE ?)'; $params[] = "%$search%"; $params[] = "%$search%"; $params[] = "%$search%"; }
 
 $whereSql = $where ? ' WHERE ' . implode(' AND ', $where) : '';
@@ -61,6 +87,12 @@ require_once __DIR__ . '/../includes/admin_header.php';
           <option value="<?= e($k) ?>" <?= $filterStatus === $k ? 'selected' : '' ?>><?= e($v) ?></option>
         <?php endforeach; ?>
       </select>
+      <select name="approval" style="padding:9px 12px;border:1px solid var(--border);border-radius:8px">
+        <option value="">Toute validation</option>
+        <?php foreach (approvalStatuses() as $k => $v): ?>
+          <option value="<?= e($k) ?>" <?= $filterApproval === $k ? 'selected' : '' ?>><?= e($v) ?></option>
+        <?php endforeach; ?>
+      </select>
       <button class="btn btn-primary" type="submit">Filtrer</button>
     </form>
 
@@ -70,7 +102,7 @@ require_once __DIR__ . '/../includes/admin_header.php';
     <table class="data-table">
       <thead><tr><th></th><th>Titre / Réf.</th><th>Ville</th><th>Type</th><th>Prix</th>
         <?php if ($isSuper): ?><th>Créé par</th><?php endif; ?>
-        <th>Statut</th><th>Vues</th><th style="text-align:right">Actions</th></tr></thead>
+        <th>Statut</th><th>Validation</th><th>Vues</th><th style="text-align:right">Actions</th></tr></thead>
       <tbody>
       <?php foreach ($list as $p): ?>
         <tr>
@@ -85,8 +117,19 @@ require_once __DIR__ . '/../includes/admin_header.php';
               <?= propertyStatuses()[$p['status']] ?>
             </a>
           </td>
+          <td>
+            <span class="badge badge-<?= $p['approval_status']==='approuve'?'success':($p['approval_status']==='en_attente'?'warning':'neutral') ?>">
+              <?= e(approvalStatuses()[$p['approval_status']] ?? $p['approval_status']) ?>
+            </span>
+          </td>
           <td class="mono"><?= (int)$p['views'] ?></td>
           <td class="actions-cell" style="justify-content:flex-end">
+            <?php if ($isSuper && $p['approval_status'] !== 'approuve'): ?>
+              <a href="?approve=1&id=<?= $p['id'] ?>" class="btn btn-primary btn-sm" data-confirm="Approuver cette annonce et la publier sur le site public ?">Approuver</a>
+            <?php endif; ?>
+            <?php if ($isSuper && $p['approval_status'] !== 'rejete'): ?>
+              <a href="?reject=1&id=<?= $p['id'] ?>" class="btn btn-outline btn-sm" data-confirm="Rejeter cette annonce ? Elle restera masquée du site public.">Rejeter</a>
+            <?php endif; ?>
             <a href="../annonce?slug=<?= e($p['slug']) ?>" target="_blank" class="btn btn-outline btn-sm">Voir</a>
             <a href="property_form?id=<?= $p['id'] ?>" class="btn btn-outline btn-sm">Modifier</a>
             <a href="property_delete?id=<?= $p['id'] ?>" class="btn btn-danger btn-sm" data-confirm="Supprimer définitivement cette annonce ?">Suppr.</a>

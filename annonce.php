@@ -9,6 +9,17 @@ $stmt = $pdo->prepare('SELECT p.*, u.full_name AS owner_name, u.whatsapp AS owne
 $stmt->execute([$slug]);
 $property = $stmt->fetch();
 
+// Une annonce pas encore approuvée par un super admin reste masquée du public ;
+// seuls son créateur et un super admin peuvent la prévisualiser avant validation.
+$staffPreview = false;
+if ($property && $property['approval_status'] !== 'approuve') {
+    $viewer = isLoggedIn() ? currentUser() : null;
+    $staffPreview = $viewer && (isSuperAdmin() || $property['created_by'] == $viewer['id']);
+    if (!$staffPreview) {
+        $property = false;
+    }
+}
+
 if (!$property) {
     http_response_code(404);
     $pageTitle = 'Bien introuvable';
@@ -76,6 +87,11 @@ $mainImg = !empty($images) ? imageUrl($images[0]['image_path']) : 'https://place
 </section>
 
 <div class="container">
+  <?php if ($staffPreview): ?>
+    <div class="alert alert-warning" style="margin-bottom:18px">
+      👁️ Aperçu : cette annonce n'est pas encore visible du public — statut : <strong><?= e(approvalStatuses()[$property['approval_status']] ?? $property['approval_status']) ?></strong>.
+    </div>
+  <?php endif; ?>
   <div class="detail-layout">
     <div>
       <div class="gallery-main" style="background-image:url('<?= e($mainImg) ?>')"></div>

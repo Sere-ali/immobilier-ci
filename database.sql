@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS properties (
     bedrooms TINYINT DEFAULT NULL,
     bathrooms TINYINT DEFAULT NULL,
     status ENUM('disponible','reserve','vendu','loue') NOT NULL DEFAULT 'disponible',
+    approval_status ENUM('en_attente','approuve','rejete') NOT NULL DEFAULT 'approuve',
     featured TINYINT(1) NOT NULL DEFAULT 0,
     views INT NOT NULL DEFAULT 0,
     created_by INT DEFAULT NULL,
@@ -44,6 +45,7 @@ CREATE TABLE IF NOT EXISTS properties (
     INDEX idx_category (category),
     INDEX idx_listing_type (listing_type),
     INDEX idx_status (status),
+    INDEX idx_approval_status (approval_status),
     INDEX idx_created_by (created_by),
     INDEX idx_featured_created (featured, created_at)
 ) ENGINE=InnoDB;
@@ -131,5 +133,5 @@ CREATE TABLE IF NOT EXISTS rate_limits (
     INDEX idx_bucket_identifier_time (bucket, identifier, created_at)
 ) ENGINE=InnoDB;
 
-INSERT INTO settings (setting_key, setting_value) VALUES ('schema_version', '3')
-ON DUPLICATE KEY UPDATE setting_value = '3';
+INSERT INTO settings (setting_key, setting_value) VALUES ('schema_version', '4')
+ON DUPLICATE KEY UPDATE setting_value = '4';

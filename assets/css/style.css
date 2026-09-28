@@ -21,6 +21,8 @@
   --border: #E4DECF;
   --success: #1E6B34;
   --danger: #A12622;
+  --warning: #8a5b00;
+  --warning-bg: #fdf3da;
   --radius: 12px;
   --shadow: 0 10px 30px rgba(15,61,62,.08);
 }
@@ -271,6 +273,7 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;line-height:1.15;margin
 .alert{padding:12px 16px;border-radius:8px;font-size:.88rem;margin-bottom:18px}
 .alert-success{background:#eaf6ec;color:var(--success)}
 .alert-error{background:#fdecea;color:var(--danger)}
+.alert-warning{background:var(--warning-bg);color:var(--warning)}
 
 @media (max-width: 960px){
   .property-grid{grid-template-columns:repeat(2,1fr)}

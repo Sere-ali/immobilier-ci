@@ -131,6 +131,16 @@ function propertyStatuses(): array
     ];
 }
 
+/** Libellés du statut de validation d'une annonce par le super admin */
+function approvalStatuses(): array
+{
+    return [
+        'en_attente' => 'En attente de validation',
+        'approuve'   => 'Approuvée',
+        'rejete'     => 'Rejetée',
+    ];
+}
+
 function csrfToken(): string
 {
     if (empty($_SESSION['csrf_token'])) {
@@ -277,6 +287,18 @@ function ensureSchemaUpToDate(PDO $pdo): void
                 INDEX idx_bucket_identifier_time (bucket, identifier, created_at)
             ) ENGINE=InnoDB");
             $pdo->prepare("INSERT INTO settings (setting_key, setting_value) VALUES ('schema_version', '3') ON DUPLICATE KEY UPDATE setting_value = '3'")->execute();
+        } catch (Exception $e) {}
+    }
+
+    // v4 : validation des annonces par le super admin. Une annonce créée par un
+    // administrateur simple reste masquée du site public tant qu'elle n'est pas
+    // approuvée ; les annonces déjà existantes sont considérées approuvées
+    // (valeur par défaut) pour ne rien faire disparaître du site.
+    if ($version < 4) {
+        try { $pdo->exec("ALTER TABLE properties ADD COLUMN approval_status ENUM('en_attente','approuve','rejete') NOT NULL DEFAULT 'approuve' AFTER status"); } catch (Exception $e) {}
+        try { $pdo->exec("ALTER TABLE properties ADD INDEX idx_approval_status (approval_status)"); } catch (Exception $e) {}
+        try {
+            $pdo->prepare("INSERT INTO settings (setting_key, setting_value) VALUES ('schema_version', '4') ON DUPLICATE KEY UPDATE setting_value = '4'")->execute();
         } catch (Exception $e) {}
     }
 }

@@ -3,10 +3,10 @@ $pageTitle = 'Accueil';
 require_once __DIR__ . '/includes/header.php';
 
 $featured = $pdo->query("SELECT p.*, (SELECT image_path FROM property_images WHERE property_id = p.id ORDER BY is_primary DESC, sort_order ASC LIMIT 1) AS image
-                          FROM properties p WHERE featured = 1 ORDER BY created_at DESC LIMIT 6")->fetchAll();
+                          FROM properties p WHERE featured = 1 AND approval_status = 'approuve' ORDER BY created_at DESC LIMIT 6")->fetchAll();
 
-$totalProperties = (int)$pdo->query("SELECT COUNT(*) AS n FROM properties")->fetch()['n'];
-$totalCities = (int)$pdo->query("SELECT COUNT(DISTINCT city) AS n FROM properties")->fetch()['n'];
+$totalProperties = (int)$pdo->query("SELECT COUNT(*) AS n FROM properties WHERE approval_status = 'approuve'")->fetch()['n'];
+$totalCities = (int)$pdo->query("SELECT COUNT(DISTINCT city) AS n FROM properties WHERE approval_status = 'approuve'")->fetch()['n'];
 
 $categories = [
     'villa'       => ['🏡', 'Villas'],

@@ -53,7 +53,7 @@ require_once __DIR__ . '/../includes/admin_header.php';
       <div class="empty-state"><div class="icon">🏠</div><p>Aucune annonce pour le moment.</p></div>
     <?php else: ?>
     <table class="data-table">
-      <thead><tr><th></th><th>Titre</th><th>Ville</th><th>Prix</th><th>Statut</th><th></th></tr></thead>
+      <thead><tr><th></th><th>Titre</th><th>Ville</th><th>Prix</th><th>Statut</th><th>Validation</th><th></th></tr></thead>
       <tbody>
       <?php foreach ($recentProperties as $p): ?>
         <tr>
@@ -62,6 +62,7 @@ require_once __DIR__ . '/../includes/admin_header.php';
           <td><?= e($p['city']) ?></td>
           <td class="mono"><?= formatPrice($p['price']) ?></td>
           <td><span class="badge badge-<?= $p['status']==='disponible'?'success':($p['status']==='reserve'?'warning':'neutral') ?>"><?= propertyStatuses()[$p['status']] ?></span></td>
+          <td><span class="badge badge-<?= $p['approval_status']==='approuve'?'success':($p['approval_status']==='en_attente'?'warning':'neutral') ?>"><?= e(approvalStatuses()[$p['approval_status']] ?? $p['approval_status']) ?></span></td>
           <td class="actions-cell"><a href="property_form?id=<?= $p['id'] ?>" class="btn btn-outline btn-sm">Modifier</a></td>
         </tr>
       <?php endforeach; ?>
