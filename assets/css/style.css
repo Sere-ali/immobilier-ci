@@ -297,8 +297,11 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;line-height:1.15;margin
   .filters-bar button{width:100%}
   .search-bar{grid-template-columns:1fr 1fr}
   .contact-card{position:static}
-}
-@media (max-width: 640px){
+
+  /* Le menu ☰ prend le relais dès 960px (pas seulement en dessous de
+     640px) : certains téléphones (grand écran, affichage réduit dans les
+     réglages) ont une largeur logique CSS supérieure à 640px, et le menu
+     du haut y restait affiché en ligne au lieu de passer en tiroir. */
   .site-header .container{height:64px}
   .logo-img-header{height:42px}
   /* top+right+bottom+left (sans "height" fixe) suffisent à occuper tout
@@ -308,6 +311,8 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;line-height:1.15;margin
   .main-nav{position:fixed;top:64px;right:0;bottom:0;left:0;width:100%;background:var(--bg);flex-direction:column;padding:30px;gap:22px;transform:translateX(100%);transition:.25s;z-index:40;align-items:flex-start;overflow-y:auto}
   .main-nav.open{transform:translateX(0)}
   .nav-toggle{display:block}
+}
+@media (max-width: 640px){
   .hero{padding:50px 0 40px}
   .property-grid{grid-template-columns:1fr}
   .category-grid{grid-template-columns:repeat(2,1fr)}
