@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS users (
     email VARCHAR(150) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     role ENUM('superadmin','admin') NOT NULL DEFAULT 'admin',
+    is_principal TINYINT(1) NOT NULL DEFAULT 0,
     phone VARCHAR(30) DEFAULT NULL,
     whatsapp VARCHAR(30) DEFAULT NULL,
     status ENUM('actif','inactif') NOT NULL DEFAULT 'actif',

@@ -12,8 +12,10 @@ if (isset($_GET['toggle'], $_GET['id'])) {
         $stmt = $pdo->prepare('SELECT status, role FROM users WHERE id = ?');
         $stmt->execute([$targetId]);
         $row = $stmt->fetch();
-        if ($row && $row['role'] === 'superadmin') {
-            // Un super admin ne peut pas désactiver le compte d'un autre super admin.
+        if ($row && $row['role'] === 'superadmin' && empty($user['is_principal'])) {
+            // Un super admin ne peut pas désactiver le compte d'un autre super
+            // admin, sauf le super administrateur principal qui garde le contrôle
+            // total sur les super admins qu'il a nommés.
             flash('error', "Vous ne pouvez pas modifier le compte d'un autre super administrateur.");
         } elseif ($row) {
             $newStatus = $row['status'] === 'actif' ? 'inactif' : 'actif';
@@ -48,12 +50,12 @@ require_once __DIR__ . '/../includes/admin_header.php';
         <tr>
           <td><?= e($u['full_name']) ?></td>
           <td><?= e($u['email']) ?></td>
-          <td><span class="badge badge-<?= $u['role']==='superadmin'?'lagune':'neutral' ?>"><?= $u['role']==='superadmin'?'Super Admin':'Admin' ?></span></td>
+          <td><span class="badge badge-<?= $u['role']==='superadmin'?'lagune':'neutral' ?>"><?= $u['role']==='superadmin'?'Super Admin':'Admin' ?></span><?= !empty($u['is_principal']) ? ' <span class="badge badge-lagune" title="Super administrateur principal">★ Principal</span>' : '' ?></td>
           <td class="mono"><?= (int)$u['nb_properties'] ?></td>
           <td><span class="badge badge-<?= $u['status']==='actif'?'success':'danger' ?>"><?= ucfirst($u['status']) ?></span></td>
           <td class="mono" style="font-size:.8rem"><?= $u['last_login'] ? date('d/m/Y H:i', strtotime($u['last_login'])) : '—' ?></td>
           <td class="actions-cell" style="justify-content:flex-end">
-            <?php if ($u['role'] === 'superadmin' && $u['id'] != $user['id']): ?>
+            <?php if ($u['role'] === 'superadmin' && $u['id'] != $user['id'] && empty($user['is_principal'])): ?>
               <span class="badge badge-neutral" title="Un super admin ne peut pas modifier le compte d'un autre super admin">🔒 Protégé</span>
             <?php else: ?>
               <a href="user_form?id=<?= $u['id'] ?>" class="btn btn-outline btn-sm">Modifier</a>

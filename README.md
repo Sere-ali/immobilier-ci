@@ -111,11 +111,13 @@ Chaque demande sur une annonce (ou message général) exige désormais un **num�
 
 **Validation des annonces** : une annonce créée par un Admin reste *en attente de validation* et n'apparaît pas sur le site public (page d'accueil, page Annonces, page détail) tant qu'un Super Admin ne l'a pas approuvée depuis *Gestion des annonces*. Le Super Admin peut aussi la rejeter (elle reste alors masquée, modifiable par l'admin pour une nouvelle validation). Une annonce créée directement par un Super Admin est publiée immédiatement. L'admin créateur et tout Super Admin peuvent prévisualiser une annonce non encore validée via le bouton « Voir ».
 
+**Super administrateur principal** : le tout premier compte Super Admin (créé par l'installateur) est marqué *principal* (badge « ★ Principal »). Un Super Admin ne peut ni modifier, ni désactiver, ni supprimer le compte d'un **autre** Super Admin — cela évite qu'un Super Admin nouvellement promu ne prenne le contrôle d'un autre compte Super Admin. Le principal fait exception : il garde toujours un contrôle total et peut gérer (y compris rétrograder) n'importe quel Super Admin qu'il a nommé. Personne, pas même le principal, ne peut modifier son propre rôle (protection contre l'auto-rétrogradation) ni supprimer son propre compte.
+
 ## 6. Responsive
 
 Le site s'adapte à toutes les tailles d'écran :
 - **Site public** : menu mobile en tiroir, grilles d'annonces qui passent de 3 à 2 puis 1 colonne, barre de recherche qui s'empile, galerie photo qui réduit son nombre de colonnes
-- **Espace Admin/Super Admin** : la barre latérale devient une barre horizontale défilante sur mobile (avec le lien "Voir le site public" et "Déconnexion" toujours visibles), les tableaux de données défilent horizontalement sans casser la mise en page, les formulaires passent en une seule colonne
+- **Espace Admin/Super Admin** : la barre latérale devient un tiroir (menu escamotable) ouvert par un bouton ☰ sur mobile, les tableaux de données défilent horizontalement sans casser la mise en page, les formulaires passent en une seule colonne
 
 ## 6bis. URLs propres et performance
 

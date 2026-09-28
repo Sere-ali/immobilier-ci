@@ -375,6 +375,31 @@ function ensureSchemaUpToDate(PDO $pdo): void
             error_log('Migration v5 (seed Anyama) error: ' . $e->getMessage());
         }
     }
+
+    // v6 : notion de "super administrateur principal". Un super admin nommé
+    // (promu depuis un compte administrateur) reste protégé face aux autres
+    // super admins classiques, mais PAS face au super administrateur principal
+    // — celui-ci garde toujours le contrôle total et peut gérer/rétrograder
+    // n'importe quel super admin qu'il a nommé. Le tout premier compte super
+    // admin de l'installation est désigné principal automatiquement s'il n'y
+    // en a pas encore.
+    if ($version < 6) {
+        try {
+            try { $pdo->exec("ALTER TABLE users ADD COLUMN is_principal TINYINT(1) NOT NULL DEFAULT 0 AFTER role"); } catch (Exception $e) {}
+
+            $hasPrincipal = (int) $pdo->query("SELECT COUNT(*) n FROM users WHERE is_principal = 1")->fetch()['n'];
+            if (!$hasPrincipal) {
+                $firstSuperAdminId = $pdo->query("SELECT id FROM users WHERE role = 'superadmin' ORDER BY id ASC LIMIT 1")->fetchColumn();
+                if ($firstSuperAdminId) {
+                    $pdo->prepare('UPDATE users SET is_principal = 1 WHERE id = ?')->execute([$firstSuperAdminId]);
+                }
+            }
+
+            $pdo->prepare("INSERT INTO settings (setting_key, setting_value) VALUES ('schema_version', '6') ON DUPLICATE KEY UPDATE setting_value = '6'")->execute();
+        } catch (Exception $e) {
+            error_log('Migration v6 (super admin principal) error: ' . $e->getMessage());
+        }
+    }
 }
 
 /**

@@ -71,7 +71,10 @@ if ($installAllowed && $_SERVER['REQUEST_METHOD'] === 'POST' && !$alreadyInstall
             $pdo->exec("SET FOREIGN_KEY_CHECKS=1");
 
             $hash = password_hash($password, PASSWORD_DEFAULT);
-            $stmt = $pdo->prepare('INSERT INTO users (full_name, email, password, role, status) VALUES (?, ?, ?, "superadmin", "actif")');
+            // Le tout premier super admin créé par l'installateur est le super
+            // administrateur "principal" : lui seul pourra gérer/rétrograder
+            // d'autres super admins nommés plus tard.
+            $stmt = $pdo->prepare('INSERT INTO users (full_name, email, password, role, status, is_principal) VALUES (?, ?, ?, "superadmin", "actif", 1)');
             $stmt->execute([$fullName, $email, $hash]);
             $superAdminId = (int)$pdo->lastInsertId();
 

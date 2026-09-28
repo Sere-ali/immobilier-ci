@@ -16,8 +16,10 @@ if ($id) {
     // Un super admin ne peut pas modifier le compte d'un AUTRE super admin (ni
     // son rôle, ni son statut, ni ses identifiants) : ça éviterait qu'un super
     // admin nouvellement nommé ne rétrograde ou ne prenne le contrôle d'un
-    // autre compte super admin, y compris celui qui l'a créé.
-    if ($editUser['role'] === 'superadmin' && (int)$editUser['id'] !== (int)$currentAdmin['id']) {
+    // autre compte super admin. Seul le super administrateur PRINCIPAL échappe
+    // à cette protection : il garde toujours le contrôle total, y compris sur
+    // les super admins qu'il a lui-même nommés.
+    if ($editUser['role'] === 'superadmin' && (int)$editUser['id'] !== (int)$currentAdmin['id'] && empty($currentAdmin['is_principal'])) {
         flash('error', "Vous ne pouvez pas modifier le compte d'un autre super administrateur.");
         redirect('users');
     }
