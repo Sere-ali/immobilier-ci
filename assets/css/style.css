@@ -201,6 +201,18 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;line-height:1.15;margin
 .breadcrumb{font-family:'IBM Plex Mono',monospace;font-size:.72rem;color:var(--sable);margin-bottom:10px;overflow-x:auto;white-space:nowrap}
 .breadcrumb a{color:var(--sable)}
 
+/* Pages de texte long (politique de confidentialité, CGU, etc.) */
+.legal-content{max-width:760px;margin:40px auto 70px;color:var(--ink)}
+.legal-content .legal-updated{color:var(--ink-soft);font-size:.85rem;margin-bottom:28px}
+.legal-content h2{font-size:1.15rem;margin:32px 0 12px;color:var(--lagune)}
+.legal-content h2:first-of-type{margin-top:0}
+.legal-content p{margin:0 0 14px;color:var(--ink-soft)}
+.legal-content ul{margin:0 0 14px;padding-left:22px;color:var(--ink-soft)}
+.legal-content li{margin-bottom:6px}
+.legal-content a{color:var(--lagune);text-decoration:underline}
+.legal-content strong{color:var(--ink)}
+@media (max-width:640px){.legal-content{margin:28px auto 50px}}
+
 /* Barre de filtres horizontale, au-dessus des résultats */
 .filters-bar{
   background:var(--card);border:1px solid var(--border);border-radius:var(--radius);

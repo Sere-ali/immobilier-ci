@@ -63,9 +63,9 @@ sur App Store Connect.
 | Délai de revue | Quelques heures à 2-3 jours | 1 à 3 jours en général |
 
 ### Politique de confidentialité
-Les deux stores l'exigent. Une simple page sur le site (ex :
-`immobilier-ci.onrender.com/confidentialite`) suffit — dites-moi si vous
-voulez que je la rédige et l'ajoute au site.
+Les deux stores l'exigent. Elle est déjà en ligne, donnez cette URL dans les
+formulaires de soumission :
+`https://immobilier-ci.onrender.com/confidentialite`
 
 ## 6. Mettre à jour l'app plus tard
 
