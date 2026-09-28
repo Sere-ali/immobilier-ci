@@ -138,7 +138,7 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;line-height:1.15;margin
 }
 .property-card:hover{transform:translateY(-4px);box-shadow:0 16px 40px rgba(15,61,62,.14)}
 .property-media{position:relative;aspect-ratio:4/3;background:var(--sable)}
-.property-media img{width:100%;height:100%;object-fit:cover;display:block}
+.property-media img{width:100%;height:100%;object-fit:contain;display:block}
 .property-media .badge{
   position:absolute;top:12px;left:12px;background:var(--lagune);color:#fff;
   font-size:.72rem;font-weight:600;padding:5px 10px;border-radius:6px;text-transform:uppercase;letter-spacing:.03em;
@@ -227,9 +227,9 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;line-height:1.15;margin
 
 /* Détail annonce */
 .detail-layout{display:grid;grid-template-columns:1.6fr 1fr;gap:40px;padding:44px 0}
-.gallery-main{border-radius:var(--radius);overflow:hidden;aspect-ratio:16/10;background:var(--sable) center/cover no-repeat;margin-bottom:10px}
+.gallery-main{border-radius:var(--radius);overflow:hidden;aspect-ratio:16/10;background:var(--sable) center/contain no-repeat;margin-bottom:10px}
 .gallery-thumbs{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
-.gallery-thumbs .thumb{aspect-ratio:1;border-radius:8px;background:var(--sable) center/cover no-repeat;cursor:pointer;border:2px solid transparent}
+.gallery-thumbs .thumb{aspect-ratio:1;border-radius:8px;background:var(--sable) center/contain no-repeat;cursor:pointer;border:2px solid transparent}
 .gallery-thumbs .thumb.active{border-color:var(--laterite)}
 /* En-tête de la fiche bien : titre, localisation et prix clairement hiérarchisés */
 .detail-header{margin:26px 0 18px}
