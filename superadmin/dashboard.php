@@ -27,7 +27,7 @@ require_once __DIR__ . '/../includes/admin_header.php';
 
 <div class="kpi-grid">
   <div class="kpi-card"><div class="label">Total annonces</div><div class="value"><?= $totalProperties ?></div></div>
-  <a href="properties?approval=en_attente" class="kpi-card" style="display:block;<?= $totalPending > 0 ? 'border-color:var(--warning)' : '' ?>">
+  <a href="<?= e($root) ?>admin/properties?approval=en_attente" class="kpi-card" style="display:block;<?= $totalPending > 0 ? 'border-color:var(--warning)' : '' ?>">
     <div class="label">En attente de validation</div>
     <div class="value" style="<?= $totalPending > 0 ? 'color:var(--warning)' : '' ?>"><?= $totalPending ?></div>
   </a>
