@@ -57,9 +57,15 @@ function slugify(string $text): string
 function generateReference(PDO $pdo): string
 {
     $year = date('Y');
-    $stmt = $pdo->query("SELECT COUNT(*) AS nb FROM properties WHERE YEAR(created_at) = $year");
-    $count = (int)$stmt->fetch()['nb'] + 1;
-    return 'CI-' . $year . '-' . str_pad((string)$count, 4, '0', STR_PAD_LEFT);
+    // Se base sur le plus grand numéro de référence déjà utilisé cette année,
+    // pas sur un COMPTE d'annonces : si une annonce a été supprimée entre-temps
+    // (trou dans la numérotation), un COUNT(*) régénère un numéro déjà pris à
+    // chaque tentative (échec systématique, observé en production avec
+    // CI-2026-0009 : 8 annonces restantes mais la référence 9 déjà attribuée).
+    $stmt = $pdo->prepare("SELECT MAX(CAST(SUBSTRING_INDEX(reference, '-', -1) AS UNSIGNED)) AS maxnum FROM properties WHERE reference LIKE ?");
+    $stmt->execute(['CI-' . $year . '-%']);
+    $next = (int)$stmt->fetch()['maxnum'] + 1;
+    return 'CI-' . $year . '-' . str_pad((string)$next, 4, '0', STR_PAD_LEFT);
 }
 
 function getSetting(PDO $pdo, string $key, string $default = ''): string
