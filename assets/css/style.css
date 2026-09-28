@@ -46,11 +46,25 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;line-height:1.15;margin
 .mono{font-family:'IBM Plex Mono',monospace}
 
 /* ---------- Header ---------- */
+/* Important : le flou (backdrop-filter) n'est PAS posé directement sur
+   .site-header mais sur son pseudo-élément ::before ci-dessous. En CSS,
+   un élément avec backdrop-filter devient le référentiel de positionnement
+   ("containing block") de TOUS ses descendants en position:fixed — y
+   compris le menu mobile .main-nav (qui est fixed) une fois ouvert. Or
+   .site-header ne fait que ~64-84px de haut : le menu se retrouvait donc
+   comprimé dans cette hauteur et seul le premier lien ("Accueil") restait
+   visible, les autres (Annonces, Vente, Location, Contact) étant coupés.
+   En déplaçant le flou sur ::before, .site-header redevient neutre et
+   .main-nav se positionne de nouveau par rapport à tout l'écran. */
 .site-header{
   position:sticky;top:0;z-index:50;
   background:rgba(247,245,241,.92);
-  backdrop-filter:blur(8px);
   border-bottom:1px solid var(--border);
+}
+.site-header::before{
+  content:'';position:absolute;inset:0;
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  z-index:-1;
 }
 .site-header .container{display:flex;align-items:center;justify-content:space-between;height:84px}
 .logo{font-family:'Fraunces',serif;font-weight:700;font-size:1.4rem;color:var(--lagune);display:flex;align-items:center;gap:8px;white-space:nowrap}
