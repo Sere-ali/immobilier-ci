@@ -47,8 +47,6 @@ function navLinkClass(string $script, string $currentScript, ?string $listingTyp
       <a href="contact" class="<?= navLinkClass('contact.php', $currentScript) ?>">Contact</a>
       <?php if (isLoggedIn()): ?>
         <a href="<?= isSuperAdmin() ? 'superadmin/dashboard' : 'admin/dashboard' ?>" class="nav-cta">Mon espace</a>
-      <?php else: ?>
-        <a href="login" class="nav-cta">Connexion</a>
       <?php endif; ?>
     </nav>
     <button class="nav-toggle" aria-label="Menu">&#9776;</button>

@@ -114,6 +114,16 @@ table.data-table{width:100%;border-collapse:collapse;font-size:.87rem;min-width:
 }
 .field textarea{resize:vertical;min-height:110px}
 
+/* Champ mot de passe : bouton "œil" pour afficher/masquer la saisie */
+.password-field{position:relative}
+.password-field input[type=password], .password-field input[type=text]{padding-right:42px !important}
+.password-toggle{
+  position:absolute;top:50%;right:4px;transform:translateY(-50%);
+  background:none;border:none;cursor:pointer;font-size:1rem;line-height:1;
+  padding:6px 8px;border-radius:6px;color:var(--ink-soft);
+}
+.password-toggle:hover{background:var(--bg)}
+
 /* Champ téléphone : indicatif +225 fixe, l'utilisateur ne saisit que ses 10 chiffres */
 .phone-input-group{display:flex;align-items:stretch;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:#fff}
 .phone-input-group:focus-within{border-color:var(--lagune);box-shadow:0 0 0 3px rgba(15,61,62,.1)}

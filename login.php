@@ -75,5 +75,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <a href="index" class="back-link">← Retour au site public</a>
   </div>
 </div>
+<script src="assets/js/password-toggle.js?v=<?= assetVersion('assets/js/password-toggle.js') ?>" defer></script>
 </body>
 </html>

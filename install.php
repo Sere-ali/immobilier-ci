@@ -121,6 +121,10 @@ if ($installAllowed && $_SERVER['REQUEST_METHOD'] === 'POST' && !$alreadyInstall
 .field{margin-bottom:16px}
 .field label{display:block;font-size:.85rem;font-weight:600;margin-bottom:6px;color:#1b1b18}
 .field input[type=text],.field input[type=email],.field input[type=password]{width:100%;padding:11px 13px;border:1px solid #ddd6c8;border-radius:8px;font-size:.95rem}
+.password-field{position:relative}
+.password-field input{padding-right:42px !important}
+.password-toggle{position:absolute;top:50%;right:4px;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1rem;line-height:1;padding:6px 8px;border-radius:6px;color:#6b6b63}
+.password-toggle:hover{background:#f6f4ee}
 .checkbox-row{display:flex;align-items:center;gap:8px;margin-bottom:20px}
 .btn-install{width:100%;padding:13px;border:none;border-radius:8px;background:#0f3d3e;color:#fff;font-weight:600;font-size:1rem;cursor:pointer}
 .btn-install:hover{background:#0a2c2c}
@@ -172,5 +176,6 @@ if ($installAllowed && $_SERVER['REQUEST_METHOD'] === 'POST' && !$alreadyInstall
     <?php endif; ?>
   </div>
 </div>
+<script src="assets/js/password-toggle.js?v=<?= assetVersion('assets/js/password-toggle.js') ?>" defer></script>
 </body>
 </html>
