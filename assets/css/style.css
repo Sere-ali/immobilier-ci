@@ -301,7 +301,11 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;line-height:1.15;margin
 @media (max-width: 640px){
   .site-header .container{height:64px}
   .logo-img-header{height:42px}
-  .main-nav{position:fixed;top:64px;right:0;bottom:0;left:0;width:100%;height:calc(100vh - 64px);background:var(--bg);flex-direction:column;padding:30px;gap:22px;transform:translateX(100%);transition:.25s;z-index:40;align-items:flex-start;overflow-y:auto}
+  /* top+right+bottom+left (sans "height" fixe) suffisent à occuper tout
+     l'écran visible sous l'en-tête, sans les décalages qu'introduirait un
+     "100vh" fixe sur mobile (qui ne tient pas compte de la barre d'adresse
+     et laissait apparaître un bout du pied de page sous le menu). */
+  .main-nav{position:fixed;top:64px;right:0;bottom:0;left:0;width:100%;background:var(--bg);flex-direction:column;padding:30px;gap:22px;transform:translateX(100%);transition:.25s;z-index:40;align-items:flex-start;overflow-y:auto}
   .main-nav.open{transform:translateX(0)}
   .nav-toggle{display:block}
   .hero{padding:50px 0 40px}
