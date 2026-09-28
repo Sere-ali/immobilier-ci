@@ -8,6 +8,19 @@ function e(?string $value): string
     return htmlspecialchars($value ?? '', ENT_QUOTES, 'UTF-8');
 }
 
+/**
+ * Numéro de version pour un fichier statique (CSS/JS), basé sur sa date de
+ * modification. Ajouté en `?v=...` sur les balises <link>/<script> pour que
+ * le navigateur télécharge la nouvelle version dès qu'on republie le fichier,
+ * même si `.htaccess` demande au navigateur de le garder en cache 1 mois.
+ */
+function assetVersion(string $relativePath): string
+{
+    $fullPath = __DIR__ . '/../' . ltrim($relativePath, '/');
+    $mtime = @filemtime($fullPath);
+    return $mtime ? (string) $mtime : '1';
+}
+
 /** Petit logo maison (SVG en ligne) utilisé à côté du nom du site, sur le site public et dans l'espace admin */
 function logoMark(int $size = 32): string
 {
