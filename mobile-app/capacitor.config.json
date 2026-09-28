@@ -1,0 +1,33 @@
+{
+  "appId": "com.immobilierci.app",
+  "appName": "Immobilier CI",
+  "webDir": "www",
+  "backgroundColor": "#0F3D3E",
+  "server": {
+    "url": "https://immobilier-ci.onrender.com",
+    "cleartext": false,
+    "allowNavigation": [
+      "immobilier-ci.onrender.com",
+      "*.immobilier-ci.onrender.com"
+    ]
+  },
+  "android": {
+    "backgroundColor": "#0F3D3E"
+  },
+  "ios": {
+    "backgroundColor": "#0F3D3E",
+    "contentInset": "always"
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 800,
+      "backgroundColor": "#0F3D3E",
+      "showSpinner": false,
+      "androidSplashResourceName": "splash"
+    },
+    "StatusBar": {
+      "style": "DARK",
+      "backgroundColor": "#0F3D3E"
+    }
+  }
+}

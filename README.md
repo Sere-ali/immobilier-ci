@@ -172,3 +172,12 @@ immobilier-ci/
 ├── admin/                      → back-office Admin
 └── superadmin/                 → back-office Super Admin
 ```
+
+## 9. Application mobile (Android / iOS)
+
+Le dossier `mobile-app/` contient une application mobile prête à compiler
+(coquille Capacitor autour du site en ligne, avec icône et écran de
+démarrage déjà générés à partir du logo). Voir `mobile-app/README.md` pour
+la marche à suivre : la compilation finale (.aab pour Play Store, archive
+Xcode pour App Store) doit se faire sur un ordinateur avec Android
+Studio/Xcode, ces outils n'étant pas disponibles depuis cet environnement.

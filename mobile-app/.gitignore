@@ -1,0 +1,24 @@
+node_modules/
+.DS_Store
+
+# Android build outputs (régénérés par Gradle)
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+android/*.iml
+android/.idea/
+android/captures/
+
+# iOS build outputs (régénérés par Xcode/CocoaPods, si ajouté plus tard)
+ios/App/Pods/
+ios/App/build/
+ios/App/.build/
+ios/App/App.xcworkspace/xcuserdata/
+ios/App/App.xcodeproj/xcuserdata/
+ios/App/App.xcodeproj/project.xcworkspace/xcuserdata/
+
+# Signature (jamais commiter les mots de passe/keystore)
+*.keystore
+*.jks
+android/keystore.properties
