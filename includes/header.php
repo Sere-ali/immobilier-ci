@@ -54,6 +54,7 @@ function navLinkClass(string $script, string $currentScript, ?string $listingTyp
       <a href="annonces?listing_type=vente" class="<?= navLinkClass('annonces.php', $currentScript, 'vente', $currentListingType) ?>">Vente</a>
       <a href="annonces?listing_type=location" class="<?= navLinkClass('annonces.php', $currentScript, 'location', $currentListingType) ?>">Location</a>
       <a href="contact" class="<?= navLinkClass('contact.php', $currentScript) ?>">Contact</a>
+      <button type="button" id="pwa-install-link" class="pwa-install-link" hidden>📲 Installer l'app</button>
       <?php if (isLoggedIn()): ?>
         <a href="<?= isSuperAdmin() ? 'superadmin/dashboard' : 'admin/dashboard' ?>" class="nav-cta">Mon espace</a>
       <?php endif; ?>
@@ -61,3 +62,26 @@ function navLinkClass(string $script, string $currentScript, ?string $listingTyp
     <button class="nav-toggle" aria-label="Menu">&#9776;</button>
   </div>
 </header>
+
+<div id="pwa-install-banner" class="pwa-install-banner" hidden>
+  <div class="pwa-install-banner-icon"><img src="assets/img/icons/icon-192.png" alt="" width="40" height="40"></div>
+  <div class="pwa-install-banner-text">
+    <strong>Installer Immobilier CI</strong>
+    <span>Accédez au site comme une application, directement depuis votre écran d'accueil.</span>
+  </div>
+  <button type="button" id="pwa-install-cta" class="pwa-install-cta">Installer</button>
+  <button type="button" id="pwa-install-dismiss" class="pwa-install-dismiss" aria-label="Fermer">✕</button>
+</div>
+
+<div id="pwa-install-ios-tip" class="pwa-install-ios-tip" hidden>
+  <div class="pwa-install-ios-tip-box">
+    <button type="button" id="pwa-ios-tip-close" class="pwa-install-dismiss" aria-label="Fermer">✕</button>
+    <h3>Installer l'application</h3>
+    <p>Sur iPhone/iPad :</p>
+    <ol>
+      <li>Appuyez sur l'icône <strong>Partager</strong> <span class="mono">⎋</span> en bas de Safari</li>
+      <li>Choisissez <strong>« Sur l'écran d'accueil »</strong></li>
+      <li>Appuyez sur <strong>Ajouter</strong></li>
+    </ol>
+  </div>
+</div>

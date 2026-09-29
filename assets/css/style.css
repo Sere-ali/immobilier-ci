@@ -78,6 +78,13 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;line-height:1.15;margin
 .main-nav a{font-weight:600;font-size:.95rem;color:#E9E4D6;position:relative;padding:4px 0}
 .main-nav a:hover{color:var(--gold-light)}
 .nav-cta{background:var(--laterite);color:var(--ink) !important;padding:12px 22px;border-radius:999px;font-weight:800}
+.pwa-install-link{
+  background:transparent;border:1.5px solid rgba(212,160,23,.5);color:var(--gold-light);
+  padding:10px 18px;border-radius:999px;font-weight:700;font-size:.85rem;cursor:pointer;font-family:inherit;
+  transition:background-color .2s ease, transform .15s ease;
+}
+.pwa-install-link:hover{background:rgba(212,160,23,.12)}
+.pwa-install-link:active{transform:scale(.96)}
 .nav-cta:hover{background:var(--laterite-dark)}
 .nav-toggle{display:none;background:none;border:none;font-size:1.5rem;cursor:pointer;color:var(--gold-light);padding:4px 8px}
 
@@ -512,6 +519,52 @@ html.js .main-nav.open a:nth-child(6){transition-delay:.3s}
 @media (prefers-reduced-motion: reduce){
   *, *::before, *::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important;scroll-behavior:auto !important}
   [data-reveal], [data-reveal-group] > *{opacity:1 !important;transform:none !important}
+}
+
+/* =========================================================
+   Bannière et fenêtre d'installation de l'application (PWA)
+   ========================================================= */
+@keyframes pwaBannerUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.pwa-install-banner{
+  position:fixed;left:16px;right:16px;bottom:16px;z-index:70;max-width:480px;margin:0 auto;
+  background:var(--lagune);color:#fff;border:1px solid rgba(212,160,23,.4);border-radius:18px;
+  box-shadow:0 20px 50px rgba(11,18,32,.35);padding:16px;
+  display:flex;align-items:center;gap:14px;
+  animation:pwaBannerUp .4s cubic-bezier(.2,.8,.2,1) both;
+}
+.pwa-install-banner[hidden]{display:none}
+.pwa-install-banner-icon img{border-radius:10px;display:block;flex-shrink:0}
+.pwa-install-banner-text{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.pwa-install-banner-text strong{font-family:'Fraunces',serif;font-size:.98rem}
+.pwa-install-banner-text span{font-size:.78rem;color:rgba(255,255,255,.7);line-height:1.4}
+.pwa-install-cta{
+  background:var(--laterite);color:var(--ink);border:none;padding:10px 16px;border-radius:999px;
+  font-weight:800;font-size:.82rem;cursor:pointer;white-space:nowrap;flex-shrink:0;
+  transition:background-color .2s ease, transform .15s ease;
+}
+.pwa-install-cta:hover{background:var(--laterite-dark)}
+.pwa-install-cta:active{transform:scale(.95)}
+.pwa-install-dismiss{
+  background:none;border:none;color:rgba(255,255,255,.55);font-size:1rem;cursor:pointer;
+  padding:4px 6px;flex-shrink:0;line-height:1;
+}
+.pwa-install-dismiss:hover{color:#fff}
+
+.pwa-install-ios-tip{position:fixed;inset:0;z-index:80;background:rgba(11,18,32,.6);display:flex;align-items:center;justify-content:center;padding:20px}
+.pwa-install-ios-tip[hidden]{display:none}
+.pwa-install-ios-tip-box{
+  position:relative;background:var(--card);color:var(--ink);border-radius:20px;padding:30px 26px 26px;
+  max-width:340px;width:100%;box-shadow:0 24px 60px rgba(11,18,32,.4);
+  animation:fadeUp .35s cubic-bezier(.2,.8,.2,1) both;
+}
+.pwa-install-ios-tip-box h3{font-family:'Fraunces',serif;margin:0 0 12px;font-size:1.15rem}
+.pwa-install-ios-tip-box p{margin:0 0 10px;color:var(--ink-soft);font-size:.9rem}
+.pwa-install-ios-tip-box ol{margin:0;padding-left:20px;font-size:.88rem;line-height:1.9;color:var(--ink)}
+.pwa-install-ios-tip-box .pwa-install-dismiss{position:absolute;top:12px;right:12px;color:var(--ink-soft)}
+.pwa-install-ios-tip-box .pwa-install-dismiss:hover{color:var(--ink)}
+
+@media (max-width:640px){
+  .pwa-install-link{display:none}
 }
 
 /* =========================================================
