@@ -41,17 +41,31 @@ if ('serviceWorker' in navigator) {
     deferredPrompt = e;
   });
 
+  // Filet de sécurité : si "appinstalled" ne se déclenche jamais (cas rare
+  // selon navigateur), le message ne doit pas rester affiché indéfiniment.
+  var installWatchdog = null;
+
   if (btn) {
     btn.addEventListener('click', function () {
       if (deferredPrompt) {
-        // Message affiché pendant que la fenêtre d'installation native est ouverte
-        // et que l'application se télécharge/s'installe sur l'appareil.
+        // Message affiché dès le clic, pendant que la fenêtre d'installation
+        // native est ouverte.
         showToast('Téléchargement en cours. Veuillez patienter…');
         deferredPrompt.prompt();
         deferredPrompt.userChoice.then(function (choice) {
-          if (toast) toast.hidden = true;
           if (choice && choice.outcome === 'accepted') {
-            showToast('Installation réussie ✓', 2500);
+            // L'utilisateur a validé la fenêtre système, mais le téléchargement
+            // et l'installation continuent encore quelques secondes sur
+            // l'appareil : on garde le message visible (texte mis à jour)
+            // jusqu'à l'événement "appinstalled", qui confirme la fin réelle
+            // de l'installation sur l'écran du téléphone.
+            showToast('Installation en cours sur votre appareil…');
+            if (installWatchdog) window.clearTimeout(installWatchdog);
+            installWatchdog = window.setTimeout(function () {
+              if (toast) toast.hidden = true;
+            }, 12000);
+          } else if (toast) {
+            toast.hidden = true;
           }
         }).finally(function () { deferredPrompt = null; });
         return;
@@ -66,6 +80,13 @@ if ('serviceWorker' in navigator) {
     });
   }
   if (tipClose) tipClose.addEventListener('click', function () { tip.hidden = true; });
+
+  // Confirmation visible dès que l'application est réellement installée sur
+  // l'appareil (déclenché par le navigateur lui-même, fiable sur Android/Chrome).
+  window.addEventListener('appinstalled', function () {
+    if (installWatchdog) window.clearTimeout(installWatchdog);
+    showToast('Installation réussie ✓', 2500);
+  });
 })();
 
 document.addEventListener('DOMContentLoaded', function () {

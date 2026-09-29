@@ -27,11 +27,18 @@
   --warning-bg: #fdf3da;
   --radius: 18px;
   --shadow: 0 20px 50px rgba(11,18,32,.14);
-  /* Dégradé bleu nuit → doré, simple et net : une seule diagonale, sans
-     couches superposées, utilisée partout où le site était en aplat sombre
-     uni (en-tête, hero, bandeau CTA, en-tête de page, pied de page...).
-     C'est ce dégradé — et lui seul — qui donne l'effet "brillant". */
+  /* Dégradé bleu nuit, réservé aux petites zones qui ont besoin d'un fond
+     sombre pour rester lisibles (ex. logo). Les grandes sections (en-tête,
+     hero, bandeau CTA, pied de page...) utilisent désormais un fond
+     blanc/bleu clair — voir --blue et --blue-soft ci-dessous. */
   --gradient-navy: linear-gradient(135deg, #1E3A66 0%, #0B1220 65%, #060910 100%);
+  /* Bleu principal : accents, liens, boutons, bordures — remplace le fond
+     bleu nuit plein comme couleur dominante du site (fond blanc/bleu clair,
+     bleu en accent, comme demandé). */
+  --blue: #1D4ED8;
+  --blue-dark: #163EB0;
+  --blue-soft: #EAF1FF;
+  --blue-soft-border: rgba(29,78,216,.22);
 }
 
 *{box-sizing:border-box}
@@ -76,9 +83,9 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;line-height:1.15;margin
    contenu ne parte pas sous l'en-tête. */
 .site-header{
   position:fixed;top:0;left:0;right:0;width:100%;z-index:50;
-  background:linear-gradient(120deg, rgba(23,40,71,.95), rgba(6,9,16,.96));
-  border-bottom:1px solid rgba(212,160,23,.4);
-  box-shadow:0 14px 34px -18px rgba(6,9,16,.65);
+  background:linear-gradient(120deg, rgba(255,255,255,.96), rgba(234,241,255,.96));
+  border-bottom:1px solid var(--blue-soft-border);
+  box-shadow:0 10px 26px -20px rgba(11,18,32,.35);
 }
 .site-header::before{
   content:'';position:absolute;inset:0;
@@ -87,64 +94,70 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;line-height:1.15;margin
 }
 .site-header .container{display:flex;align-items:center;justify-content:space-between;height:84px}
 .header-brand{display:flex;align-items:center;min-width:0}
-.logo{font-family:'Fraunces',serif;font-weight:700;font-size:1.4rem;color:#fff;display:flex;align-items:center;gap:8px;white-space:nowrap}
+/* Le logo (fichier image) a été dessiné pour un fond sombre (texte blanc +
+   marine) : on lui garde un petit écrin bleu nuit pour rester lisible sur
+   l'en-tête désormais blanc/bleu clair. */
+.logo{
+  font-family:'Fraunces',serif;font-weight:700;font-size:1.4rem;color:#fff;display:flex;align-items:center;gap:8px;white-space:nowrap;
+  background:var(--gradient-navy);padding:8px 14px;border-radius:14px;
+}
 .logo-mark{flex-shrink:0}
 .logo span{color:var(--laterite)}
 .logo-img{height:50px;width:auto;display:block}
-.logo-img-header{height:62px}
+.logo-img-header{height:48px}
 .main-nav{display:flex;align-items:center;gap:32px}
-.main-nav a{font-weight:600;font-size:.95rem;color:#E9E4D6;position:relative;padding:4px 0}
-.main-nav a:hover{color:var(--gold-light)}
+.main-nav a{font-weight:600;font-size:.95rem;color:var(--ink);position:relative;padding:4px 0}
+.main-nav a:hover{color:var(--blue)}
 .nav-cta{background:var(--laterite);color:var(--ink) !important;padding:12px 22px;border-radius:999px;font-weight:800}
 
 /* Bouton "Installer l'app", juste à côté du logo, toujours visible (iPhone et Android) */
 .pwa-install-badge{
   display:inline-flex;align-items:center;gap:6px;
-  background:transparent;border:1.5px solid rgba(212,160,23,.5);color:var(--gold-light);
+  background:transparent;border:1.5px solid var(--blue-soft-border);color:var(--blue);
   padding:7px 14px;border-radius:999px;font-weight:700;font-size:.78rem;cursor:pointer;font-family:inherit;
   margin-left:14px;white-space:nowrap;flex-shrink:0;
   transition:background-color .2s ease, transform .15s ease, border-color .2s ease;
 }
-.pwa-install-badge:hover{background:rgba(212,160,23,.14);border-color:var(--gold-light)}
+.pwa-install-badge:hover{background:rgba(29,78,216,.08);border-color:var(--blue)}
 .pwa-install-badge:active{transform:scale(.95)}
 .pwa-install-badge[hidden]{display:none}
 .nav-cta:hover{background:var(--laterite-dark)}
-.nav-toggle{display:none;background:none;border:none;font-size:1.5rem;cursor:pointer;color:var(--gold-light);padding:4px 8px}
+.nav-toggle{display:none;background:none;border:none;font-size:1.5rem;cursor:pointer;color:var(--blue);padding:4px 8px}
 
 /* ---------- Hero ---------- */
 .hero{
   position:relative;overflow:hidden;
-  background:var(--gradient-navy);
-  color:#fff;
+  background:linear-gradient(160deg, #FFFFFF 0%, var(--blue-soft) 100%);
+  color:var(--ink);
   padding:70px 0 60px;
 }
 .hero .skyline{
   position:absolute;inset:auto 0 0 0;height:120px;
   background:
-    linear-gradient(var(--lagune-dark),var(--lagune-dark)) 0 100%/6% 55% no-repeat,
-    linear-gradient(var(--lagune-dark),var(--lagune-dark)) 8% 100%/4% 80% no-repeat,
-    linear-gradient(var(--lagune-dark),var(--lagune-dark)) 14% 100%/7% 40% no-repeat,
-    linear-gradient(var(--lagune-dark),var(--lagune-dark)) 24% 100%/5% 95% no-repeat,
-    linear-gradient(var(--lagune-dark),var(--lagune-dark)) 32% 100%/8% 60% no-repeat,
-    linear-gradient(var(--lagune-dark),var(--lagune-dark)) 43% 100%/4% 35% no-repeat,
-    linear-gradient(var(--lagune-dark),var(--lagune-dark)) 50% 100%/9% 100% no-repeat,
-    linear-gradient(var(--lagune-dark),var(--lagune-dark)) 62% 100%/5% 50% no-repeat,
-    linear-gradient(var(--lagune-dark),var(--lagune-dark)) 70% 100%/7% 70% no-repeat,
-    linear-gradient(var(--lagune-dark),var(--lagune-dark)) 80% 100%/4% 45% no-repeat,
-    linear-gradient(var(--lagune-dark),var(--lagune-dark)) 87% 100%/6% 85% no-repeat,
-    linear-gradient(var(--lagune-dark),var(--lagune-dark)) 96% 100%/4% 30% no-repeat;
-  opacity:.5;
+    linear-gradient(var(--blue),var(--blue)) 0 100%/6% 55% no-repeat,
+    linear-gradient(var(--blue),var(--blue)) 8% 100%/4% 80% no-repeat,
+    linear-gradient(var(--blue),var(--blue)) 14% 100%/7% 40% no-repeat,
+    linear-gradient(var(--blue),var(--blue)) 24% 100%/5% 95% no-repeat,
+    linear-gradient(var(--blue),var(--blue)) 32% 100%/8% 60% no-repeat,
+    linear-gradient(var(--blue),var(--blue)) 43% 100%/4% 35% no-repeat,
+    linear-gradient(var(--blue),var(--blue)) 50% 100%/9% 100% no-repeat,
+    linear-gradient(var(--blue),var(--blue)) 62% 100%/5% 50% no-repeat,
+    linear-gradient(var(--blue),var(--blue)) 70% 100%/7% 70% no-repeat,
+    linear-gradient(var(--blue),var(--blue)) 80% 100%/4% 45% no-repeat,
+    linear-gradient(var(--blue),var(--blue)) 87% 100%/6% 85% no-repeat,
+    linear-gradient(var(--blue),var(--blue)) 96% 100%/4% 30% no-repeat;
+  opacity:.08;
 }
 .hero-inner{position:relative;z-index:2;text-align:center;max-width:760px;margin:0 auto}
 .hero .eyebrow{
   display:inline-flex;align-items:center;gap:8px;
   font-family:'Manrope',sans-serif;font-weight:700;font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;
-  background:rgba(212,160,23,.12);border:1px solid rgba(212,160,23,.4);
-  padding:6px 14px;border-radius:999px;margin-bottom:22px;color:var(--gold-light);
+  background:var(--blue-soft);border:1px solid var(--blue-soft-border);
+  padding:6px 14px;border-radius:999px;margin-bottom:22px;color:var(--blue);
 }
-.hero h1{font-size:clamp(1.7rem,5vw,3.4rem);color:#fff}
-.hero h1 em{font-style:italic;color:var(--laterite)}
-.hero p{font-size:clamp(.95rem,2vw,1.1rem);color:rgba(255,255,255,.8);max-width:560px;margin:14px auto 36px}
+.hero h1{font-size:clamp(1.7rem,5vw,3.4rem);color:var(--ink)}
+.hero h1 em{font-style:italic;color:var(--blue)}
+.hero p{font-size:clamp(.95rem,2vw,1.1rem);color:var(--ink-soft);max-width:560px;margin:14px auto 36px}
 
 /* Barre de recherche */
 .search-bar{
@@ -163,14 +176,14 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;line-height:1.15;margin
 .search-bar button:hover{background:var(--lagune-dark)}
 
 /* Bande de villes rapides */
-.cities-strip{background:var(--lagune-dark);padding:14px 0}
+.cities-strip{background:var(--blue-soft);padding:14px 0;border-top:1px solid var(--blue-soft-border);border-bottom:1px solid var(--blue-soft-border)}
 .cities-strip .container{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
 .cities-strip .container::-webkit-scrollbar{display:none}
 .cities-strip a{
-  flex:0 0 auto;font-family:'IBM Plex Mono',monospace;font-size:.78rem;color:var(--sable);
-  border:1px solid rgba(255,255,255,.15);padding:7px 14px;border-radius:999px;white-space:nowrap;
+  flex:0 0 auto;font-family:'IBM Plex Mono',monospace;font-size:.78rem;color:var(--ink-soft);
+  border:1px solid var(--blue-soft-border);padding:7px 14px;border-radius:999px;white-space:nowrap;background:#fff;
 }
-.cities-strip a:hover{background:rgba(255,255,255,.08);color:#fff}
+.cities-strip a:hover{background:var(--blue);color:#fff;border-color:var(--blue)}
 
 /* ---------- Sections génériques ---------- */
 .section{padding:70px 0}
@@ -210,11 +223,11 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;line-height:1.15;margin
 /* ---------- Catégories ---------- */
 .category-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:16px}
 .category-card{
-  background:var(--gradient-navy);border:1px solid rgba(212,160,23,.25);border-radius:20px;color:#fff;
+  background:#fff;border:1px solid var(--blue-soft-border);border-radius:20px;color:var(--ink);
   padding:24px 16px;text-align:center;transition:.2s;
 }
-.category-card:hover{border-color:var(--laterite);transform:translateY(-3px);box-shadow:0 18px 40px -18px rgba(212,160,23,.45)}
-.category-card .icon{color:var(--gold-light);margin-bottom:14px;line-height:0}
+.category-card:hover{border-color:var(--blue);transform:translateY(-3px);box-shadow:0 18px 40px -18px rgba(29,78,216,.35)}
+.category-card .icon{color:var(--blue);margin-bottom:14px;line-height:0}
 .category-card .icon svg{display:block}
 .category-card .name{font-weight:600;font-size:.92rem;font-family:'Fraunces',serif}
 
@@ -226,31 +239,34 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;line-height:1.15;margin
 .stat-item .label{font-family:'IBM Plex Mono',monospace;font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-soft)}
 
 /* ---------- CTA ---------- */
-.cta-band{background:var(--gradient-navy);color:#fff;border-radius:20px;padding:clamp(30px,6vw,52px);text-align:center;margin:0 24px}
-.cta-band h2{color:#fff}
-.cta-band p{color:rgba(255,255,255,.75);max-width:480px;margin:10px auto 26px}
+.cta-band{background:linear-gradient(160deg, #FFFFFF 0%, var(--blue-soft) 100%);border:1px solid var(--blue-soft-border);color:var(--ink);border-radius:20px;padding:clamp(30px,6vw,52px);text-align:center;margin:0 24px}
+.cta-band h2{color:var(--ink)}
+.cta-band p{color:var(--ink-soft);max-width:480px;margin:10px auto 26px}
 .btn{display:inline-block;padding:14px 28px;border-radius:999px;font-weight:800;font-size:.95rem;cursor:pointer;border:none}
 .btn-primary{background:var(--laterite);color:var(--ink)}
 .btn-primary:hover{background:var(--laterite-dark)}
-.btn-outline{background:transparent;border:1px solid rgba(255,255,255,.4);color:#fff}
-.btn-outline:hover{background:rgba(255,255,255,.1)}
+.btn-outline{background:transparent;border:1.5px solid var(--blue);color:var(--blue)}
+.btn-outline:hover{background:var(--blue);color:#fff}
 
 /* ---------- Footer ---------- */
 .site-footer{
-  background:var(--gradient-navy);color:rgba(255,255,255,.65);padding:60px 0 24px;margin-top:70px;
-  border-top:1px solid rgba(212,160,23,.4);
+  background:linear-gradient(160deg, #FFFFFF 0%, var(--blue-soft) 100%);color:var(--ink-soft);padding:60px 0 24px;margin-top:70px;
+  border-top:1px solid var(--blue-soft-border);
 }
 .footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px}
-.footer-grid h4{color:#fff;font-family:'Manrope',sans-serif;font-size:.85rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:16px}
-.footer-grid a{display:block;font-size:.88rem;color:rgba(255,255,255,.65);margin-bottom:10px;word-break:break-word}
-.footer-grid a:hover{color:#fff}
-.footer-bottom{border-top:1px solid rgba(255,255,255,.12);padding-top:22px;font-size:.8rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.footer-grid h4{color:var(--ink);font-family:'Manrope',sans-serif;font-size:.85rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:16px}
+/* Le logo (texte blanc + marine intégrés à l'image) a besoin d'un fond
+   sombre pour rester lisible, même sur le pied de page désormais clair. */
+.footer-grid h4 .logo-img{background:var(--gradient-navy);padding:10px 16px;border-radius:12px;display:inline-block}
+.footer-grid a{display:block;font-size:.88rem;color:var(--ink-soft);margin-bottom:10px;word-break:break-word}
+.footer-grid a:hover{color:var(--blue)}
+.footer-bottom{border-top:1px solid var(--blue-soft-border);padding-top:22px;font-size:.8rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
 
 /* ---------- Pages listing / détail ---------- */
-.page-hero{background:var(--gradient-navy);color:#fff;padding:40px 0}
-.page-hero h1{color:#fff;font-size:clamp(1.5rem,3.5vw,2rem)}
-.breadcrumb{font-family:'IBM Plex Mono',monospace;font-size:.72rem;color:var(--sable);margin-bottom:10px;overflow-x:auto;white-space:nowrap}
-.breadcrumb a{color:var(--sable)}
+.page-hero{background:linear-gradient(160deg, #FFFFFF 0%, var(--blue-soft) 100%);color:var(--ink);padding:40px 0;border-bottom:1px solid var(--blue-soft-border)}
+.page-hero h1{color:var(--ink);font-size:clamp(1.5rem,3.5vw,2rem)}
+.breadcrumb{font-family:'IBM Plex Mono',monospace;font-size:.72rem;color:var(--ink-soft);margin-bottom:10px;overflow-x:auto;white-space:nowrap}
+.breadcrumb a{color:var(--blue)}
 
 /* Pages de texte long (politique de confidentialité, CGU, etc.) */
 .legal-content{max-width:760px;margin:40px auto 70px;color:var(--ink)}
@@ -322,14 +338,14 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;line-height:1.15;margin
 .detail-specs .spec-icon{font-size:1.3rem;line-height:1}
 .detail-specs .spec b{display:block;font-family:'IBM Plex Mono',monospace;font-size:1.05rem;line-height:1.2}
 .detail-specs .spec span{font-size:.74rem;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.03em}
-.contact-card{background:var(--gradient-navy);color:#fff;border:1px solid rgba(212,160,23,.4);border-radius:22px;padding:28px;align-self:start;position:sticky;top:96px}
-.contact-card h3{font-size:1.2rem;margin-bottom:16px;color:#fff;font-family:'Fraunces',serif}
+.contact-card{background:#fff;color:var(--ink);border:1px solid var(--blue-soft-border);box-shadow:var(--shadow);border-radius:22px;padding:28px;align-self:start;position:sticky;top:96px}
+.contact-card h3{font-size:1.2rem;margin-bottom:16px;color:var(--ink);font-family:'Fraunces',serif}
 .contact-card .field{margin-bottom:14px}
-.contact-card label{display:block;font-size:.78rem;font-weight:700;margin-bottom:6px;color:#D9DDE8}
-.contact-card input, .contact-card textarea{width:100%;padding:11px 12px;border:none;border-radius:10px;font-family:inherit;font-size:.9rem;background:var(--bg);color:var(--ink)}
+.contact-card label{display:block;font-size:.78rem;font-weight:700;margin-bottom:6px;color:var(--ink-soft)}
+.contact-card input, .contact-card textarea{width:100%;padding:11px 12px;border:1px solid var(--border-strong);border-radius:10px;font-family:inherit;font-size:.9rem;background:var(--bg);color:var(--ink)}
 .contact-card button{width:100%;background:var(--laterite);color:var(--ink);border:none;padding:13px;border-radius:10px;font-weight:800;cursor:pointer;margin-top:6px}
 .contact-card button:hover{background:var(--laterite-dark)}
-.contact-card p{color:#AEB6C8}
+.contact-card p{color:var(--ink-soft)}
 
 /* Formulaires génériques (contact, login) */
 .form-page{max-width:560px;margin:0 auto;padding:60px 24px}
@@ -596,7 +612,7 @@ html.js .main-nav.open a:nth-child(6){transition-delay:.3s}
 /* =========================================================
    Page Contact — layout dédié
    ========================================================= */
-.contact-hero-sub{color:rgba(255,255,255,.75);max-width:520px;margin-top:8px;font-size:1rem}
+.contact-hero-sub{color:var(--ink-soft);max-width:520px;margin-top:8px;font-size:1rem}
 
 .contact-layout{
   display:grid;grid-template-columns:.85fr 1.15fr;gap:28px;
@@ -606,19 +622,19 @@ html.js .main-nav.open a:nth-child(6){transition-delay:.3s}
 /* ---- Colonne coordonnées ---- */
 .contact-info-card{
   position:relative;overflow:hidden;
-  background:var(--gradient-navy);color:#fff;
+  background:#fff;color:var(--ink);border:1px solid var(--blue-soft-border);
   border-radius:20px;padding:38px 32px;
-  box-shadow:0 20px 50px rgba(11,18,32,.22);
+  box-shadow:var(--shadow);
 }
 .contact-info-glow{
   position:absolute;top:-60px;right:-60px;width:220px;height:220px;border-radius:50%;
-  background:radial-gradient(circle, rgba(212,160,23,.35), transparent 70%);
+  background:radial-gradient(circle, rgba(29,78,216,.16), transparent 70%);
   pointer-events:none;
 }
 .contact-status{
   display:inline-flex;align-items:center;gap:8px;
   font-family:'IBM Plex Mono',monospace;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;
-  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+  background:var(--blue-soft);border:1px solid var(--blue-soft-border);color:var(--ink);
   padding:6px 12px;border-radius:999px;margin-bottom:20px;
 }
 .contact-status .dot{
@@ -631,20 +647,20 @@ html.js .main-nav.open a:nth-child(6){transition-delay:.3s}
   70%{box-shadow:0 0 0 8px rgba(111,216,138,0)}
   100%{box-shadow:0 0 0 0 rgba(111,216,138,0)}
 }
-.contact-info-card h2{color:#fff;font-size:1.5rem;margin-bottom:10px}
-.contact-info-lead{color:rgba(255,255,255,.7);font-size:.92rem;margin-bottom:28px;max-width:360px}
+.contact-info-card h2{color:var(--ink);font-size:1.5rem;margin-bottom:10px}
+.contact-info-lead{color:var(--ink-soft);font-size:.92rem;margin-bottom:28px;max-width:360px}
 
 .contact-info-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:20px;position:relative;z-index:1}
 .contact-info-list li{display:flex;align-items:flex-start;gap:14px}
 .contact-info-icon{
   flex:0 0 auto;width:42px;height:42px;border-radius:11px;
-  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);
+  background:var(--blue-soft);border:1px solid var(--blue-soft-border);color:var(--blue);
   display:flex;align-items:center;justify-content:center;font-size:1.1rem;
   transition:transform .25s cubic-bezier(.34,1.56,.64,1), background-color .25s ease;
 }
-.contact-info-list li:hover .contact-info-icon{transform:scale(1.1) rotate(-4deg);background:rgba(255,255,255,.18)}
-.contact-info-label{display:block;font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:rgba(255,255,255,.5);margin-bottom:3px}
-.contact-info-list a, .contact-info-list span{color:#fff;font-weight:500;font-size:.95rem;word-break:break-word}
+.contact-info-list li:hover .contact-info-icon{transform:scale(1.1) rotate(-4deg);background:var(--blue-soft-border)}
+.contact-info-label{display:block;font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-soft);margin-bottom:3px}
+.contact-info-list a, .contact-info-list span{color:var(--ink);font-weight:500;font-size:.95rem;word-break:break-word}
 .contact-info-list a{border-bottom:1px solid transparent;transition:border-color .2s ease}
 .contact-info-list a:hover{border-color:var(--laterite)}
 
