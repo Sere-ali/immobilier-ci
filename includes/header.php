@@ -31,7 +31,7 @@ function navLinkClass(string $script, string $currentScript, ?string $listingTyp
 <title><?= e($pageTitle) ?> — <?= e($siteName) ?></title>
 <meta name="description" content="Achat, vente et location de biens immobiliers en Côte d'Ivoire.">
 <link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#0B1220">
+<meta name="theme-color" content="#1D4ED8">
 <link rel="icon" href="/assets/img/icons/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="icon" href="/assets/img/icons/favicon-16.png" sizes="16x16" type="image/png">
 <link rel="apple-touch-icon" href="/assets/img/icons/apple-touch-icon.png">
