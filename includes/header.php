@@ -72,25 +72,19 @@ function navLinkClass(string $script, string $currentScript, ?string $listingTyp
   <span id="pwa-install-toast-text">Téléchargement en cours. Veuillez patienter…</span>
 </div>
 
+<!-- Uniquement pour iPhone/iPad : c'est le SEUL cas où il n'existe aucune
+     installation automatique (Apple ne permet pas à Safari de proposer un
+     dialogue d'installation). Sur Android, le bouton déclenche directement
+     la fenêtre d'installation native de Chrome, sans aucune fenêtre à nous. -->
 <div id="pwa-install-tip" class="pwa-install-ios-tip" hidden>
   <div class="pwa-install-ios-tip-box">
     <button type="button" id="pwa-tip-close" class="pwa-install-dismiss" aria-label="Fermer">✕</button>
     <h3>Installer l'application</h3>
-    <div id="pwa-tip-ios">
-      <p>Sur iPhone / iPad (Safari) :</p>
-      <ol>
-        <li>Appuyez sur l'icône <strong>Partager</strong> <span class="mono">⎋</span> en bas de l'écran</li>
-        <li>Choisissez <strong>« Sur l'écran d'accueil »</strong></li>
-        <li>Appuyez sur <strong>Ajouter</strong></li>
-      </ol>
-    </div>
-    <div id="pwa-tip-android">
-      <p>Sur Android (Chrome) :</p>
-      <ol>
-        <li>Appuyez sur le menu <strong>⋮</strong> en haut à droite</li>
-        <li>Choisissez <strong>« Installer l'application »</strong></li>
-        <li>Confirmez par <strong>Installer</strong></li>
-      </ol>
-    </div>
+    <p>Sur iPhone / iPad (Safari) :</p>
+    <ol>
+      <li>Appuyez sur l'icône <strong>Partager</strong> <span class="mono">⎋</span> en bas de l'écran</li>
+      <li>Choisissez <strong>« Sur l'écran d'accueil »</strong></li>
+      <li>Appuyez sur <strong>Ajouter</strong></li>
+    </ol>
   </div>
 </div>

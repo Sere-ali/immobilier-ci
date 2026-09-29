@@ -13,16 +13,16 @@ if ('serviceWorker' in navigator) {
 // aucune condition (aucun test "déjà installée" qui pourrait le faire
 // disparaître à tort selon le navigateur) — pas besoin d'attendre un
 // événement du navigateur pour apparaître.
-// - Android/Chrome/Edge : si le navigateur a proposé l'installation native
-//   (beforeinstallprompt), on l'utilise directement au clic.
-// - iPhone/iPad (Safari, pas d'installation programmable) et tout navigateur
-//   sans ce support : on affiche de simples instructions.
+// - Android/Chrome/Edge : 100% automatique via la fenêtre d'installation
+//   native du navigateur (beforeinstallprompt) — on ne montre JAMAIS de
+//   fenêtre "à nous" avec des étapes à suivre sur Android, uniquement le
+//   petit message de progression pendant l'installation.
+// - iPhone/iPad (Safari) : seul cas où Apple ne permet aucune installation
+//   automatique — on y affiche les 3 étapes manuelles, et uniquement là.
 (function () {
   var btn = document.getElementById('pwa-install-link');
   var tip = document.getElementById('pwa-install-tip');
   var tipClose = document.getElementById('pwa-tip-close');
-  var tipIOS = document.getElementById('pwa-tip-ios');
-  var tipAndroid = document.getElementById('pwa-tip-android');
   var toast = document.getElementById('pwa-install-toast');
   var toastText = document.getElementById('pwa-install-toast-text');
 
@@ -45,38 +45,60 @@ if ('serviceWorker' in navigator) {
   // selon navigateur), le message ne doit pas rester affiché indéfiniment.
   var installWatchdog = null;
 
+  function runNativePrompt() {
+    // Message affiché dès le clic, pendant que la fenêtre d'installation
+    // native est ouverte.
+    showToast('Téléchargement en cours. Veuillez patienter…');
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(function (choice) {
+      if (choice && choice.outcome === 'accepted') {
+        // L'utilisateur a validé la fenêtre système, mais le téléchargement
+        // et l'installation continuent encore quelques secondes sur
+        // l'appareil : on garde le message visible (texte mis à jour)
+        // jusqu'à l'événement "appinstalled", qui confirme la fin réelle
+        // de l'installation sur l'écran du téléphone.
+        showToast('Installation en cours sur votre appareil…');
+        if (installWatchdog) window.clearTimeout(installWatchdog);
+        installWatchdog = window.setTimeout(function () {
+          if (toast) toast.hidden = true;
+        }, 12000);
+      } else if (toast) {
+        toast.hidden = true;
+      }
+    }).finally(function () { deferredPrompt = null; });
+  }
+
   if (btn) {
     btn.addEventListener('click', function () {
       if (deferredPrompt) {
-        // Message affiché dès le clic, pendant que la fenêtre d'installation
-        // native est ouverte.
-        showToast('Téléchargement en cours. Veuillez patienter…');
-        deferredPrompt.prompt();
-        deferredPrompt.userChoice.then(function (choice) {
-          if (choice && choice.outcome === 'accepted') {
-            // L'utilisateur a validé la fenêtre système, mais le téléchargement
-            // et l'installation continuent encore quelques secondes sur
-            // l'appareil : on garde le message visible (texte mis à jour)
-            // jusqu'à l'événement "appinstalled", qui confirme la fin réelle
-            // de l'installation sur l'écran du téléphone.
-            showToast('Installation en cours sur votre appareil…');
-            if (installWatchdog) window.clearTimeout(installWatchdog);
-            installWatchdog = window.setTimeout(function () {
-              if (toast) toast.hidden = true;
-            }, 12000);
-          } else if (toast) {
-            toast.hidden = true;
-          }
-        }).finally(function () { deferredPrompt = null; });
+        runNativePrompt();
         return;
       }
-      // Pas de prompt natif disponible (iOS, ou Chrome/Android qui ne l'a
-      // pas encore proposé) : on affiche les instructions adaptées.
-      if (tip) {
-        if (tipIOS) tipIOS.hidden = !isIOS;
-        if (tipAndroid) tipAndroid.hidden = isIOS;
-        tip.hidden = false;
+      // Le navigateur n'a pas encore transmis l'événement d'installation
+      // native au moment du clic (cela arrive : Chrome ne le déclenche
+      // parfois qu'après quelques secondes sur la page). On patiente très
+      // brièvement avant de conclure qu'il n'est vraiment pas disponible,
+      // pour éviter de basculer sur autre chose alors que l'installation
+      // automatique allait justement se déclencher.
+      if (!isIOS) {
+        showToast('Préparation du téléchargement…');
+        var waited = false;
+        var onLatePrompt = function () {
+          waited = true;
+          window.clearTimeout(waitTimer);
+          runNativePrompt();
+        };
+        window.addEventListener('beforeinstallprompt', onLatePrompt, { once: true });
+        var waitTimer = window.setTimeout(function () {
+          window.removeEventListener('beforeinstallprompt', onLatePrompt);
+          if (waited) return;
+          if (toast) toast.hidden = true;
+        }, 2500);
+        return;
       }
+      // iPhone / iPad : seul cas où l'on affiche des instructions, faute
+      // d'installation automatique possible sur Safari.
+      if (tip) tip.hidden = false;
     });
   }
   if (tipClose) tipClose.addEventListener('click', function () { tip.hidden = true; });
