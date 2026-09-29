@@ -100,7 +100,7 @@ try {
       <p>Aucune annonce ne correspond à ces critères. Essayez d'élargir votre recherche.</p>
     </div>
   <?php else: ?>
-    <div class="property-grid">
+    <div class="property-grid" data-reveal-group>
       <?php foreach ($properties as $p): ?>
         <?php include __DIR__ . '/includes/property_card.php'; ?>
       <?php endforeach; ?>

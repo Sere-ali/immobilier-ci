@@ -386,18 +386,20 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;line-height:1.15;margin
 .hero .search-bar{animation:fadeUp .8s cubic-bezier(.2,.8,.2,1) .24s both}
 .hero .skyline{animation:softPulse 6s ease-in-out infinite}
 
-/* Reveal au scroll : géré en JS (ajoute .in-view). Ne s'active que si JS a chargé (html.js),
-   pour que le contenu reste visible par défaut si JS échoue. */
-html.js [data-reveal]{opacity:0;transform:translateY(24px);transition:opacity .7s cubic-bezier(.2,.8,.2,1), transform .7s cubic-bezier(.2,.8,.2,1)}
-html.js [data-reveal].in-view{opacity:1;transform:translateY(0)}
-html.js [data-reveal-group] > *{opacity:0;transform:translateY(20px);transition:opacity .6s cubic-bezier(.2,.8,.2,1), transform .6s cubic-bezier(.2,.8,.2,1)}
-html.js [data-reveal-group].in-view > *{opacity:1;transform:translateY(0)}
-html.js [data-reveal-group].in-view > *:nth-child(1){transition-delay:.03s}
-html.js [data-reveal-group].in-view > *:nth-child(2){transition-delay:.09s}
-html.js [data-reveal-group].in-view > *:nth-child(3){transition-delay:.15s}
-html.js [data-reveal-group].in-view > *:nth-child(4){transition-delay:.21s}
-html.js [data-reveal-group].in-view > *:nth-child(5){transition-delay:.27s}
-html.js [data-reveal-group].in-view > *:nth-child(6){transition-delay:.33s}
+/* Apparition à l'affichage : en CSS pur (aucune détection de défilement, aucune dépendance
+   JS). L'animation se joue dès que l'élément est peint par le navigateur — donc toujours,
+   sur tous les appareils — et se termine forcément sur l'état final visible (opacity:1).
+   Contrairement à l'ancien système basé sur IntersectionObserver, le contenu ne peut jamais
+   rester invisible si un navigateur ne déclenche pas un événement de défilement. */
+[data-reveal]{animation:fadeUp .7s cubic-bezier(.2,.8,.2,1) both}
+[data-reveal-group] > *{animation:fadeUp .6s cubic-bezier(.2,.8,.2,1) both}
+[data-reveal-group] > *:nth-child(1){animation-delay:.04s}
+[data-reveal-group] > *:nth-child(2){animation-delay:.09s}
+[data-reveal-group] > *:nth-child(3){animation-delay:.14s}
+[data-reveal-group] > *:nth-child(4){animation-delay:.19s}
+[data-reveal-group] > *:nth-child(5){animation-delay:.24s}
+[data-reveal-group] > *:nth-child(6){animation-delay:.29s}
+[data-reveal-group] > *:nth-child(n+7){animation-delay:.32s}
 
 /* Cartes de biens : zoom photo au survol + ombre progressive */
 .property-media{overflow:hidden}
@@ -434,6 +436,36 @@ html.js [data-reveal-group].in-view > *:nth-child(6){transition-delay:.33s}
 .btn-primary:hover{box-shadow:0 10px 24px rgba(212,160,23,.35)}
 .nav-cta:hover{box-shadow:0 8px 20px rgba(11,18,32,.28)}
 
+/* Effet de brillance au survol sur les boutons d'action principaux */
+@keyframes shineSweep{
+  from{transform:translateX(-160%) skewX(-20deg)}
+  to{transform:translateX(260%) skewX(-20deg)}
+}
+.btn-primary, .nav-cta{position:relative;overflow:hidden}
+.btn-primary::after, .nav-cta::after{
+  content:'';position:absolute;top:0;left:0;width:35%;height:100%;
+  background:linear-gradient(120deg, transparent, rgba(255,255,255,.55), transparent);
+  transform:translateX(-160%) skewX(-20deg);pointer-events:none;
+}
+.btn-primary:hover::after, .nav-cta:hover::after{animation:shineSweep .85s ease}
+
+/* Étiquette de prix et badge : petit "pop" au survol de la carte */
+.property-card:hover .badge{transform:scale(1.06)}
+.badge{transition:transform .3s cubic-bezier(.34,1.56,.64,1)}
+
+/* Indicateur de chargement sur les boutons de formulaire (recherche, filtres) :
+   utile en particulier sur connexion lente, pour confirmer que le clic a bien été pris en compte. */
+@keyframes spin{to{transform:rotate(360deg)}}
+.search-bar button.is-loading, .filters-bar button.is-loading{
+  color:transparent !important;pointer-events:none;position:relative;
+}
+.search-bar button.is-loading::before, .filters-bar button.is-loading::before{
+  content:'';position:absolute;top:50%;left:50%;width:16px;height:16px;margin:-8px 0 0 -8px;
+  border:2px solid rgba(255,255,255,.35);border-top-color:var(--gold-light);border-radius:50%;
+  animation:spin .7s linear infinite;
+}
+.filters-bar button.is-loading::before{border:2px solid rgba(11,18,32,.2);border-top-color:var(--ink)}
+
 /* Villes rapides : légère élévation au survol */
 .cities-strip a{transition:background-color .25s ease, transform .2s ease, border-color .25s ease}
 .cities-strip a:hover{transform:translateY(-2px)}
@@ -463,7 +495,7 @@ html.js .main-nav.open a:nth-child(6){transition-delay:.3s}
 /* Accessibilité : réduit fortement les animations si l'utilisateur le demande */
 @media (prefers-reduced-motion: reduce){
   *, *::before, *::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important;scroll-behavior:auto !important}
-  html.js [data-reveal], html.js [data-reveal-group] > *{opacity:1 !important;transform:none !important}
+  [data-reveal], [data-reveal-group] > *{opacity:1 !important;transform:none !important}
 }
 
 /* =========================================================

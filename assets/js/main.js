@@ -41,36 +41,20 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  // Respecte la préférence "mouvement réduit" : pas d'animation de reveal/compteur dans ce cas
+  // Respecte la préférence "mouvement réduit" : pas d'animation de compteur dans ce cas
   var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  // Apparitions au défilement (éléments et groupes)
-  var revealTargets = document.querySelectorAll('[data-reveal], [data-reveal-group]');
-  if (revealTargets.length && 'IntersectionObserver' in window && !reduceMotion) {
-    var revealObserver = new IntersectionObserver(function (entries, obs) {
-      entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('in-view');
-          obs.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
-    revealTargets.forEach(function (el) { revealObserver.observe(el); });
-    // Filet de sécurité : sur certains navigateurs/appareils, l'observateur peut ne jamais se
-    // déclencher (repli d'arrière-plan, bug spécifique à un navigateur mobile, etc.), ce qui
-    // laisserait le contenu invisible (opacity:0) indéfiniment. On force donc l'affichage après
-    // un court délai si ce n'est pas déjà fait, pour ne jamais bloquer du contenu essentiel.
-    window.setTimeout(function () {
-      revealTargets.forEach(function (el) { el.classList.add('in-view'); });
-    }, 1500);
-  } else {
-    revealTargets.forEach(function (el) { el.classList.add('in-view'); });
-  }
+  // Note : les apparitions au chargement (hero, grilles de catégories/annonces, bandeau
+  // "à la une") sont désormais gérées entièrement en CSS (voir style.css), sans passer par
+  // IntersectionObserver — ce mécanisme JS s'est révélé peu fiable sur certains navigateurs
+  // mobiles, laissant le contenu invisible. Le CSS pur garantit que le contenu apparaît
+  // toujours, quel que soit l'appareil.
 
   // Compteurs animés (bandeau de chiffres clés)
   var counters = document.querySelectorAll('[data-count-to]');
   if (counters.length) {
     var animateCounter = function (el) {
+      if (el.dataset.counted === '1') return;
+      el.dataset.counted = '1';
       var target = parseFloat(el.getAttribute('data-count-to'), 10) || 0;
       var suffix = el.getAttribute('data-suffix') || '';
       if (reduceMotion) {
@@ -104,10 +88,25 @@ document.addEventListener('DOMContentLoaded', function () {
         });
       }, { threshold: 0.4 });
       counters.forEach(function (el) { counterObserver.observe(el); });
+      // Filet de sécurité : si l'observateur ne se déclenche jamais (même souci potentiel
+      // que pour les grilles d'annonces), on force l'affichage des vrais chiffres après un
+      // court délai plutôt que de laisser "0+" affiché indéfiniment.
+      window.setTimeout(function () {
+        counters.forEach(animateCounter);
+      }, 1500);
     } else {
       counters.forEach(animateCounter);
     }
   }
+
+  // Indicateur de chargement sur les formulaires de recherche/filtres (utile sur connexion
+  // lente, pour confirmer immédiatement que le clic a bien été pris en compte).
+  document.querySelectorAll('.search-bar, .filters-bar').forEach(function (form) {
+    form.addEventListener('submit', function () {
+      var btn = form.querySelector('button[type=submit], button:not([type])');
+      if (btn) btn.classList.add('is-loading');
+    });
+  });
 
   // Champs téléphone : n'accepte que des chiffres, limité à 10 (l'indicatif +225 est ajouté automatiquement)
   document.querySelectorAll('[data-phone-digits]').forEach(function (input) {
