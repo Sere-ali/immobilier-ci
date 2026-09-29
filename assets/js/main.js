@@ -9,25 +9,20 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-// Bouton "Installer l'app" à côté du logo : toujours visible (iPhone et
-// Android), pas besoin d'attendre un événement du navigateur pour apparaître.
+// Bouton "Installer l'app" à côté du logo : reste TOUJOURS affiché, sans
+// aucune condition (aucun test "déjà installée" qui pourrait le faire
+// disparaître à tort selon le navigateur) — pas besoin d'attendre un
+// événement du navigateur pour apparaître.
 // - Android/Chrome/Edge : si le navigateur a proposé l'installation native
 //   (beforeinstallprompt), on l'utilise directement au clic.
 // - iPhone/iPad (Safari, pas d'installation programmable) et tout navigateur
 //   sans ce support : on affiche de simples instructions.
 (function () {
-  var isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-
   var btn = document.getElementById('pwa-install-link');
   var tip = document.getElementById('pwa-install-tip');
   var tipClose = document.getElementById('pwa-tip-close');
   var tipIOS = document.getElementById('pwa-tip-ios');
   var tipAndroid = document.getElementById('pwa-tip-android');
-
-  if (isStandalone) {
-    if (btn) btn.hidden = true; // déjà installée : rien à proposer
-    return;
-  }
 
   var isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream;
   var deferredPrompt = null;
@@ -35,9 +30,6 @@ if ('serviceWorker' in navigator) {
   window.addEventListener('beforeinstallprompt', function (e) {
     e.preventDefault();
     deferredPrompt = e;
-  });
-  window.addEventListener('appinstalled', function () {
-    if (btn) btn.hidden = true;
   });
 
   if (btn) {
