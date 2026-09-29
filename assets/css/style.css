@@ -27,10 +27,11 @@
   --warning-bg: #fdf3da;
   --radius: 18px;
   --shadow: 0 20px 50px rgba(11,18,32,.14);
-  /* Dégradé "nuit étoilée" plus riche que l'aplat uni --lagune : donne du
-     relief et un effet plus lumineux/brillant aux grands blocs sombres
-     (en-tête, hero, bandeau CTA, en-tête de page). */
-  --gradient-navy: linear-gradient(135deg, #17335E 0%, #0B1220 55%, #060910 100%);
+  /* Dégradé bleu nuit → doré, simple et net : une seule diagonale, sans
+     couches superposées, utilisée partout où le site était en aplat sombre
+     uni (en-tête, hero, bandeau CTA, en-tête de page, pied de page...).
+     C'est ce dégradé — et lui seul — qui donne l'effet "brillant". */
+  --gradient-navy: linear-gradient(135deg, #1E3A66 0%, #0B1220 65%, #060910 100%);
 }
 
 *{box-sizing:border-box}
@@ -116,14 +117,6 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;line-height:1.15;margin
   background:var(--gradient-navy);
   color:#fff;
   padding:70px 0 60px;
-}
-/* Lueur dorée douce, animée, derrière le contenu du hero : apporte l'aspect
-   "brillant" demandé sans nuire à la lisibilité du texte (z-index sous
-   .hero-inner). */
-.hero::after{
-  content:'';position:absolute;inset:0;z-index:1;pointer-events:none;
-  background:radial-gradient(ellipse 60% 55% at 50% 0%, rgba(240,197,74,.22), transparent 70%);
-  animation:softPulse 6s ease-in-out infinite;
 }
 .hero .skyline{
   position:absolute;inset:auto 0 0 0;height:120px;
@@ -233,12 +226,7 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;line-height:1.15;margin
 .stat-item .label{font-family:'IBM Plex Mono',monospace;font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-soft)}
 
 /* ---------- CTA ---------- */
-.cta-band{position:relative;overflow:hidden;background:var(--gradient-navy);color:#fff;border-radius:20px;padding:clamp(30px,6vw,52px);text-align:center;margin:0 24px}
-.cta-band::after{
-  content:'';position:absolute;inset:0;pointer-events:none;
-  background:radial-gradient(ellipse 70% 80% at 50% 100%, rgba(240,197,74,.2), transparent 70%);
-}
-.cta-band > *{position:relative;z-index:1}
+.cta-band{background:var(--gradient-navy);color:#fff;border-radius:20px;padding:clamp(30px,6vw,52px);text-align:center;margin:0 24px}
 .cta-band h2{color:#fff}
 .cta-band p{color:rgba(255,255,255,.75);max-width:480px;margin:10px auto 26px}
 .btn{display:inline-block;padding:14px 28px;border-radius:999px;font-weight:800;font-size:.95rem;cursor:pointer;border:none}
@@ -248,7 +236,10 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;line-height:1.15;margin
 .btn-outline:hover{background:rgba(255,255,255,.1)}
 
 /* ---------- Footer ---------- */
-.site-footer{background:var(--lagune-dark);color:rgba(255,255,255,.65);padding:60px 0 24px;margin-top:70px}
+.site-footer{
+  background:var(--gradient-navy);color:rgba(255,255,255,.65);padding:60px 0 24px;margin-top:70px;
+  border-top:1px solid rgba(212,160,23,.4);
+}
 .footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px}
 .footer-grid h4{color:#fff;font-family:'Manrope',sans-serif;font-size:.85rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:16px}
 .footer-grid a{display:block;font-size:.88rem;color:rgba(255,255,255,.65);margin-bottom:10px;word-break:break-word}
