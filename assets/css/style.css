@@ -69,6 +69,7 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;line-height:1.15;margin
   z-index:-1;
 }
 .site-header .container{display:flex;align-items:center;justify-content:space-between;height:84px}
+.header-brand{display:flex;align-items:center;min-width:0}
 .logo{font-family:'Fraunces',serif;font-weight:700;font-size:1.4rem;color:#fff;display:flex;align-items:center;gap:8px;white-space:nowrap}
 .logo-mark{flex-shrink:0}
 .logo span{color:var(--laterite)}
@@ -78,13 +79,18 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;line-height:1.15;margin
 .main-nav a{font-weight:600;font-size:.95rem;color:#E9E4D6;position:relative;padding:4px 0}
 .main-nav a:hover{color:var(--gold-light)}
 .nav-cta{background:var(--laterite);color:var(--ink) !important;padding:12px 22px;border-radius:999px;font-weight:800}
-.pwa-install-link{
+
+/* Bouton "Installer l'app", juste à côté du logo, toujours visible (iPhone et Android) */
+.pwa-install-badge{
+  display:inline-flex;align-items:center;gap:6px;
   background:transparent;border:1.5px solid rgba(212,160,23,.5);color:var(--gold-light);
-  padding:10px 18px;border-radius:999px;font-weight:700;font-size:.85rem;cursor:pointer;font-family:inherit;
-  transition:background-color .2s ease, transform .15s ease;
+  padding:7px 14px;border-radius:999px;font-weight:700;font-size:.78rem;cursor:pointer;font-family:inherit;
+  margin-left:14px;white-space:nowrap;flex-shrink:0;
+  transition:background-color .2s ease, transform .15s ease, border-color .2s ease;
 }
-.pwa-install-link:hover{background:rgba(212,160,23,.12)}
-.pwa-install-link:active{transform:scale(.96)}
+.pwa-install-badge:hover{background:rgba(212,160,23,.14);border-color:var(--gold-light)}
+.pwa-install-badge:active{transform:scale(.95)}
+.pwa-install-badge[hidden]{display:none}
 .nav-cta:hover{background:var(--laterite-dark)}
 .nav-toggle{display:none;background:none;border:none;font-size:1.5rem;cursor:pointer;color:var(--gold-light);padding:4px 8px}
 
@@ -330,6 +336,10 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;line-height:1.15;margin
      du haut y restait affiché en ligne au lieu de passer en tiroir. */
   .site-header .container{height:64px}
   .logo-img-header{height:42px}
+  /* Bouton "Installer l'app" compact (icône seule) pour laisser la place
+     au logo et au menu hamburger sur les petits écrans. */
+  .pwa-install-badge{padding:8px;margin-left:8px;border-radius:999px}
+  .pwa-install-badge-text{display:none}
   /* top+right+bottom+left (sans "height" fixe) suffisent à occuper tout
      l'écran visible sous l'en-tête, sans les décalages qu'introduirait un
      "100vh" fixe sur mobile (qui ne tient pas compte de la barre d'adresse
@@ -522,28 +532,8 @@ html.js .main-nav.open a:nth-child(6){transition-delay:.3s}
 }
 
 /* =========================================================
-   Bannière et fenêtre d'installation de l'application (PWA)
+   Fenêtre d'installation de l'application (PWA)
    ========================================================= */
-@keyframes pwaBannerUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-.pwa-install-banner{
-  position:fixed;left:16px;right:16px;bottom:16px;z-index:70;max-width:480px;margin:0 auto;
-  background:var(--lagune);color:#fff;border:1px solid rgba(212,160,23,.4);border-radius:18px;
-  box-shadow:0 20px 50px rgba(11,18,32,.35);padding:16px;
-  display:flex;align-items:center;gap:14px;
-  animation:pwaBannerUp .4s cubic-bezier(.2,.8,.2,1) both;
-}
-.pwa-install-banner[hidden]{display:none}
-.pwa-install-banner-icon img{border-radius:10px;display:block;flex-shrink:0}
-.pwa-install-banner-text{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
-.pwa-install-banner-text strong{font-family:'Fraunces',serif;font-size:.98rem}
-.pwa-install-banner-text span{font-size:.78rem;color:rgba(255,255,255,.7);line-height:1.4}
-.pwa-install-cta{
-  background:var(--laterite);color:var(--ink);border:none;padding:10px 16px;border-radius:999px;
-  font-weight:800;font-size:.82rem;cursor:pointer;white-space:nowrap;flex-shrink:0;
-  transition:background-color .2s ease, transform .15s ease;
-}
-.pwa-install-cta:hover{background:var(--laterite-dark)}
-.pwa-install-cta:active{transform:scale(.95)}
 .pwa-install-dismiss{
   background:none;border:none;color:rgba(255,255,255,.55);font-size:1rem;cursor:pointer;
   padding:4px 6px;flex-shrink:0;line-height:1;
@@ -562,10 +552,6 @@ html.js .main-nav.open a:nth-child(6){transition-delay:.3s}
 .pwa-install-ios-tip-box ol{margin:0;padding-left:20px;font-size:.88rem;line-height:1.9;color:var(--ink)}
 .pwa-install-ios-tip-box .pwa-install-dismiss{position:absolute;top:12px;right:12px;color:var(--ink-soft)}
 .pwa-install-ios-tip-box .pwa-install-dismiss:hover{color:var(--ink)}
-
-@media (max-width:640px){
-  .pwa-install-link{display:none}
-}
 
 /* =========================================================
    Page Contact — layout dédié

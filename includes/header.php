@@ -47,14 +47,18 @@ function navLinkClass(string $script, string $currentScript, ?string $listingTyp
 <body>
 <header class="site-header">
   <div class="container">
-    <a href="index" class="logo"><img src="assets/img/logo.png?v=<?= assetVersion('assets/img/logo.png') ?>" alt="Immobilier CI" class="logo-img logo-img-header"></a>
+    <div class="header-brand">
+      <a href="index" class="logo"><img src="assets/img/logo.png?v=<?= assetVersion('assets/img/logo.png') ?>" alt="Immobilier CI" class="logo-img logo-img-header"></a>
+      <button type="button" id="pwa-install-link" class="pwa-install-badge">
+        <span class="pwa-install-badge-icon">📲</span><span class="pwa-install-badge-text">Installer l'app</span>
+      </button>
+    </div>
     <nav class="main-nav">
       <a href="index" class="<?= navLinkClass('index.php', $currentScript) ?>">Accueil</a>
       <a href="annonces" class="<?= navLinkClass('annonces.php', $currentScript, '', $currentListingType) ?> <?= navLinkClass('annonce.php', $currentScript) ?>">Annonces</a>
       <a href="annonces?listing_type=vente" class="<?= navLinkClass('annonces.php', $currentScript, 'vente', $currentListingType) ?>">Vente</a>
       <a href="annonces?listing_type=location" class="<?= navLinkClass('annonces.php', $currentScript, 'location', $currentListingType) ?>">Location</a>
       <a href="contact" class="<?= navLinkClass('contact.php', $currentScript) ?>">Contact</a>
-      <button type="button" id="pwa-install-link" class="pwa-install-link" hidden>📲 Installer l'app</button>
       <?php if (isLoggedIn()): ?>
         <a href="<?= isSuperAdmin() ? 'superadmin/dashboard' : 'admin/dashboard' ?>" class="nav-cta">Mon espace</a>
       <?php endif; ?>
@@ -63,25 +67,25 @@ function navLinkClass(string $script, string $currentScript, ?string $listingTyp
   </div>
 </header>
 
-<div id="pwa-install-banner" class="pwa-install-banner" hidden>
-  <div class="pwa-install-banner-icon"><img src="assets/img/icons/icon-192.png" alt="" width="40" height="40"></div>
-  <div class="pwa-install-banner-text">
-    <strong>Installer Immobilier CI</strong>
-    <span>Accédez au site comme une application, directement depuis votre écran d'accueil.</span>
-  </div>
-  <button type="button" id="pwa-install-cta" class="pwa-install-cta">Installer</button>
-  <button type="button" id="pwa-install-dismiss" class="pwa-install-dismiss" aria-label="Fermer">✕</button>
-</div>
-
-<div id="pwa-install-ios-tip" class="pwa-install-ios-tip" hidden>
+<div id="pwa-install-tip" class="pwa-install-ios-tip" hidden>
   <div class="pwa-install-ios-tip-box">
-    <button type="button" id="pwa-ios-tip-close" class="pwa-install-dismiss" aria-label="Fermer">✕</button>
+    <button type="button" id="pwa-tip-close" class="pwa-install-dismiss" aria-label="Fermer">✕</button>
     <h3>Installer l'application</h3>
-    <p>Sur iPhone/iPad :</p>
-    <ol>
-      <li>Appuyez sur l'icône <strong>Partager</strong> <span class="mono">⎋</span> en bas de Safari</li>
-      <li>Choisissez <strong>« Sur l'écran d'accueil »</strong></li>
-      <li>Appuyez sur <strong>Ajouter</strong></li>
-    </ol>
+    <div id="pwa-tip-ios">
+      <p>Sur iPhone / iPad (Safari) :</p>
+      <ol>
+        <li>Appuyez sur l'icône <strong>Partager</strong> <span class="mono">⎋</span> en bas de l'écran</li>
+        <li>Choisissez <strong>« Sur l'écran d'accueil »</strong></li>
+        <li>Appuyez sur <strong>Ajouter</strong></li>
+      </ol>
+    </div>
+    <div id="pwa-tip-android">
+      <p>Sur Android (Chrome) :</p>
+      <ol>
+        <li>Appuyez sur le menu <strong>⋮</strong> en haut à droite</li>
+        <li>Choisissez <strong>« Installer l'application »</strong></li>
+        <li>Confirmez par <strong>Installer</strong></li>
+      </ol>
+    </div>
   </div>
 </div>

@@ -9,69 +9,54 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-// Bouton/bandeau "Installer l'application" : Chrome/Edge/Android proposent un
-// événement natif (beforeinstallprompt) qu'on intercepte pour afficher notre
-// propre bouton ; iOS Safari n'a pas cet événement, on affiche alors de
-// simples instructions (Partager → Sur l'écran d'accueil).
+// Bouton "Installer l'app" à côté du logo : toujours visible (iPhone et
+// Android), pas besoin d'attendre un événement du navigateur pour apparaître.
+// - Android/Chrome/Edge : si le navigateur a proposé l'installation native
+//   (beforeinstallprompt), on l'utilise directement au clic.
+// - iPhone/iPad (Safari, pas d'installation programmable) et tout navigateur
+//   sans ce support : on affiche de simples instructions.
 (function () {
   var isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-  if (isStandalone) return; // déjà installée : rien à proposer
 
-  var DISMISS_KEY = 'pwaInstallDismissedAt';
-  var dismissedAt = 0;
-  try { dismissedAt = parseInt(localStorage.getItem(DISMISS_KEY) || '0', 10); } catch (e) {}
-  var recentlyDismissed = dismissedAt && (Date.now() - dismissedAt) < 1000 * 60 * 60 * 24 * 14; // 14 jours
+  var btn = document.getElementById('pwa-install-link');
+  var tip = document.getElementById('pwa-install-tip');
+  var tipClose = document.getElementById('pwa-tip-close');
+  var tipIOS = document.getElementById('pwa-tip-ios');
+  var tipAndroid = document.getElementById('pwa-tip-android');
 
-  var navLink = document.getElementById('pwa-install-link');
-  var banner = document.getElementById('pwa-install-banner');
-  var bannerCta = document.getElementById('pwa-install-cta');
-  var bannerDismiss = document.getElementById('pwa-install-dismiss');
-  var iosTip = document.getElementById('pwa-install-ios-tip');
-  var iosTipClose = document.getElementById('pwa-ios-tip-close');
+  if (isStandalone) {
+    if (btn) btn.hidden = true; // déjà installée : rien à proposer
+    return;
+  }
 
   var isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream;
   var deferredPrompt = null;
 
-  function dismiss() {
-    if (banner) banner.hidden = true;
-    try { localStorage.setItem(DISMISS_KEY, String(Date.now())); } catch (e) {}
-  }
+  window.addEventListener('beforeinstallprompt', function (e) {
+    e.preventDefault();
+    deferredPrompt = e;
+  });
+  window.addEventListener('appinstalled', function () {
+    if (btn) btn.hidden = true;
+  });
 
-  function doInstall() {
-    if (deferredPrompt) {
-      deferredPrompt.prompt();
-      deferredPrompt.userChoice.finally(function () {
-        deferredPrompt = null;
-        if (banner) banner.hidden = true;
-        if (navLink) navLink.hidden = true;
-      });
-    } else if (isIOS && iosTip) {
-      iosTip.hidden = false;
-    }
-  }
-
-  if (isIOS) {
-    // Pas d'événement natif sur iOS : on propose directement le bouton/bandeau.
-    if (navLink) navLink.hidden = false;
-    if (banner && !recentlyDismissed) banner.hidden = false;
-  } else {
-    window.addEventListener('beforeinstallprompt', function (e) {
-      e.preventDefault();
-      deferredPrompt = e;
-      if (navLink) navLink.hidden = false;
-      if (banner && !recentlyDismissed) banner.hidden = false;
-    });
-    window.addEventListener('appinstalled', function () {
-      if (banner) banner.hidden = true;
-      if (navLink) navLink.hidden = true;
-      try { localStorage.removeItem(DISMISS_KEY); } catch (e) {}
+  if (btn) {
+    btn.addEventListener('click', function () {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.finally(function () { deferredPrompt = null; });
+        return;
+      }
+      // Pas de prompt natif disponible (iOS, ou Chrome/Android qui ne l'a
+      // pas encore proposé) : on affiche les instructions adaptées.
+      if (tip) {
+        if (tipIOS) tipIOS.hidden = !isIOS;
+        if (tipAndroid) tipAndroid.hidden = isIOS;
+        tip.hidden = false;
+      }
     });
   }
-
-  if (navLink) navLink.addEventListener('click', doInstall);
-  if (bannerCta) bannerCta.addEventListener('click', doInstall);
-  if (bannerDismiss) bannerDismiss.addEventListener('click', dismiss);
-  if (iosTipClose) iosTipClose.addEventListener('click', function () { iosTip.hidden = true; });
+  if (tipClose) tipClose.addEventListener('click', function () { tip.hidden = true; });
 })();
 
 document.addEventListener('DOMContentLoaded', function () {
