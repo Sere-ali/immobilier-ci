@@ -23,9 +23,18 @@ if ('serviceWorker' in navigator) {
   var tipClose = document.getElementById('pwa-tip-close');
   var tipIOS = document.getElementById('pwa-tip-ios');
   var tipAndroid = document.getElementById('pwa-tip-android');
+  var toast = document.getElementById('pwa-install-toast');
+  var toastText = document.getElementById('pwa-install-toast-text');
 
   var isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream;
   var deferredPrompt = null;
+
+  function showToast(text, autoHideMs) {
+    if (!toast) return;
+    if (toastText) toastText.textContent = text;
+    toast.hidden = false;
+    if (autoHideMs) window.setTimeout(function () { toast.hidden = true; }, autoHideMs);
+  }
 
   window.addEventListener('beforeinstallprompt', function (e) {
     e.preventDefault();
@@ -35,8 +44,16 @@ if ('serviceWorker' in navigator) {
   if (btn) {
     btn.addEventListener('click', function () {
       if (deferredPrompt) {
+        // Message affiché pendant que la fenêtre d'installation native est ouverte
+        // et que l'application se télécharge/s'installe sur l'appareil.
+        showToast('Téléchargement en cours. Veuillez patienter…');
         deferredPrompt.prompt();
-        deferredPrompt.userChoice.finally(function () { deferredPrompt = null; });
+        deferredPrompt.userChoice.then(function (choice) {
+          if (toast) toast.hidden = true;
+          if (choice && choice.outcome === 'accepted') {
+            showToast('Installation réussie ✓', 2500);
+          }
+        }).finally(function () { deferredPrompt = null; });
         return;
       }
       // Pas de prompt natif disponible (iOS, ou Chrome/Android qui ne l'a

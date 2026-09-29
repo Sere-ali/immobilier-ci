@@ -67,6 +67,11 @@ function navLinkClass(string $script, string $currentScript, ?string $listingTyp
   </div>
 </header>
 
+<div id="pwa-install-toast" class="pwa-install-toast" hidden>
+  <span class="pwa-install-toast-spinner"></span>
+  <span id="pwa-install-toast-text">Téléchargement en cours. Veuillez patienter…</span>
+</div>
+
 <div id="pwa-install-tip" class="pwa-install-ios-tip" hidden>
   <div class="pwa-install-ios-tip-box">
     <button type="button" id="pwa-tip-close" class="pwa-install-dismiss" aria-label="Fermer">✕</button>
