@@ -1,3 +1,10 @@
+// Application installable (PWA), aussi côté admin.
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('/sw.js').catch(function () {});
+  });
+}
+
 document.addEventListener('DOMContentLoaded', function () {
   // Menu de la sidebar sur mobile : tiroir plein écran (ouverture/fermeture
   // au clic sur le bouton hamburger, sur l'arrière-plan, ou sur un lien du menu).

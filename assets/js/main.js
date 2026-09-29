@@ -1,5 +1,14 @@
 document.documentElement.classList.add('js');
 
+// Application installable (PWA) : enregistre le service worker (mise en cache
+// des fichiers statiques + page de repli hors ligne). N'échoue jamais
+// silencieusement une fonctionnalité du site si l'enregistrement échoue.
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('/sw.js').catch(function () {});
+  });
+}
+
 document.addEventListener('DOMContentLoaded', function () {
   var toggle = document.querySelector('.nav-toggle');
   var nav = document.querySelector('.main-nav');

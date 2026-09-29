@@ -26,3 +26,12 @@ RewriteRule ^(.*)$ $1.php [L]
     ExpiresByType image/webp "access plus 1 month"
     ExpiresByType image/svg+xml "access plus 1 month"
 </IfModule>
+
+# 4) Application installable (PWA) : le service worker ne doit jamais être mis
+#    en cache longtemps par le navigateur, sinon les mises à jour du site
+#    (nouveau CSS/JS, etc.) mettraient beaucoup trop de temps à être détectées.
+<IfModule mod_headers.c>
+    <Files "sw.js">
+        Header set Cache-Control "no-cache"
+    </Files>
+</IfModule>
