@@ -4,8 +4,15 @@
 <stop offset="0" stop-color="#22304F"/><stop offset="1" stop-color="#0F1830"/>
 </linearGradient>
 </defs>
+<style>
+@keyframes sunPulse{0%,100%{opacity:.85}50%{opacity:.5}}
+@keyframes winGlow{0%,100%{stroke-opacity:1}50%{stroke-opacity:.4}}
+.sun{animation:sunPulse 4s ease-in-out infinite}
+.win{animation:winGlow 3s ease-in-out infinite}
+@media (prefers-reduced-motion: reduce){.sun,.win{animation:none}}
+</style>
 <rect width="800" height="600" fill="url(#bg)"/>
-<circle cx="660" cy="120" r="46" fill="#F0C54A" opacity=".85"/>
+<circle class="sun" cx="660" cy="120" r="46" fill="#F0C54A" opacity=".85"/>
 <g stroke="#D4A017" stroke-width="2" opacity=".35">
 <path d="M40 420 L120 340 L200 420" fill="none"/>
 <path d="M600 460 L660 400 L720 460" fill="none"/>
@@ -14,7 +21,7 @@
 <g stroke="#F0C54A" stroke-width="3" fill="none" stroke-linejoin="round">
 <path d="M230 460 L230 360 L400 280 L570 360 L570 460 Z"/>
 <path d="M300 460 L300 390 L360 390 L360 460"/>
-<rect x="410" y="380" width="60" height="60" rx="2"/>
+<rect class="win" x="410" y="380" width="60" height="60" rx="2"/>
 <line x1="440" y1="380" x2="440" y2="440"/>
 <line x1="410" y1="410" x2="470" y2="410"/>
 </g>

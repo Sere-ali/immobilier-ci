@@ -106,7 +106,7 @@ $mainImg = $mainHasRealPhoto ? imageUrl($images[0]['image_path']) : categoryPlac
         </div>
       <?php endif; ?>
 
-      <div class="detail-header">
+      <div class="detail-header" data-reveal>
         <div class="ref mono" style="color:var(--ink-soft);font-size:.8rem"><?= e($property['reference']) ?> · <?= e(propertyCategories()[$property['category']] ?? $property['category']) ?></div>
         <h1 style="margin:6px 0"><?= e($property['title']) ?></h1>
         <div class="detail-location">📍 <?= e($property['commune'] ? $property['commune'] . ', ' : '') . e($property['city']) ?></div>
@@ -116,7 +116,7 @@ $mainImg = $mainHasRealPhoto ? imageUrl($images[0]['image_path']) : categoryPlac
         </div>
       </div>
 
-      <div class="detail-specs">
+      <div class="detail-specs" data-reveal-group>
         <?php if ($property['surface']): ?><div class="spec"><span class="spec-icon">📐</span><div><b class="mono"><?= (int)$property['surface'] ?> m²</b><span>Surface</span></div></div><?php endif; ?>
         <?php if ($property['bedrooms']): ?><div class="spec"><span class="spec-icon">🛏️</span><div><b class="mono"><?= (int)$property['bedrooms'] ?></b><span>Chambres</span></div></div><?php endif; ?>
         <?php if ($property['bathrooms']): ?><div class="spec"><span class="spec-icon">🛁</span><div><b class="mono"><?= (int)$property['bathrooms'] ?></b><span>Salles de bain</span></div></div><?php endif; ?>
@@ -124,10 +124,10 @@ $mainImg = $mainHasRealPhoto ? imageUrl($images[0]['image_path']) : categoryPlac
       </div>
 
       <h3>Description</h3>
-      <p style="color:var(--ink-soft);line-height:1.7"><?= nl2br(e($property['description'])) ?></p>
+      <p data-reveal style="color:var(--ink-soft);line-height:1.7"><?= nl2br(e($property['description'])) ?></p>
     </div>
 
-    <div class="contact-card">
+    <div class="contact-card" data-reveal>
       <h3>Intéressé(e) par ce bien ?</h3>
       <?php if ($formSuccess): ?>
         <div class="alert alert-success">Votre demande a bien été envoyée. Notre équipe vous recontactera rapidement.</div>

@@ -4,8 +4,17 @@
 <stop offset="0" stop-color="#1E3A38"/><stop offset="1" stop-color="#0B1A19"/>
 </linearGradient>
 </defs>
+<style>
+@keyframes sunPulse{0%,100%{opacity:.85}50%{opacity:.5}}
+@keyframes flagWave{0%,100%{transform:skewY(0deg)}50%{transform:skewY(6deg)}}
+@keyframes treeSway{0%,100%{transform:rotate(0deg)}50%{transform:rotate(-3deg)}}
+.sun{animation:sunPulse 4s ease-in-out infinite}
+.flag{animation:flagWave 2.2s ease-in-out infinite;transform-box:fill-box;transform-origin:0% 100%}
+.tree{animation:treeSway 3.4s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 100%}
+@media (prefers-reduced-motion: reduce){.sun,.flag,.tree{animation:none}}
+</style>
 <rect width="800" height="600" fill="url(#bg)"/>
-<circle cx="650" cy="110" r="42" fill="#F0C54A" opacity=".85"/>
+<circle class="sun" cx="650" cy="110" r="42" fill="#F0C54A" opacity=".85"/>
 <line x1="0" y1="440" x2="800" y2="440" stroke="#D4A017" stroke-width="2" opacity=".5"/>
 <g stroke="#F0C54A" stroke-width="2.2" stroke-linecap="round">
 <line x1="150" y1="440" x2="150" y2="330"/><path d="M150 330 l-22 -16" fill="none"/>
@@ -16,11 +25,11 @@
 </g>
 <path d="M150 330 L650 330" stroke="#D4A017" stroke-width="1.6" opacity=".7"/>
 <path d="M150 330 l-18 -12 M650 330 l-18 -12" stroke="#D4A017" stroke-width="1.6" opacity=".7" fill="none"/>
-<g stroke="#F0C54A" stroke-width="2.5" fill="none" stroke-linecap="round">
+<g class="tree" stroke="#F0C54A" stroke-width="2.5" fill="none" stroke-linecap="round">
 <path d="M400 440 V395"/>
 <path d="M400 395 c-18 -4 -32 -18 -34 -36 18 0 32 10 34 24 2 -14 16 -24 34 -24 -2 18 -16 32 -34 36z"/>
 </g>
 <rect x="470" y="410" width="14" height="34" fill="#F0C54A"/>
-<path d="M470 410 L520 410 L470 432 Z" fill="#D4A017"/>
+<path class="flag" d="M470 410 L520 410 L470 432 Z" fill="#D4A017"/>
 <text x="400" y="510" text-anchor="middle" font-family="Georgia, 'Fraunces', serif" font-size="30" letter-spacing="10" fill="#F0C54A" font-weight="600">TERRAIN</text>
 </svg>

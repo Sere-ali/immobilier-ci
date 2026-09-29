@@ -401,6 +401,14 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;line-height:1.15;margin
 [data-reveal-group] > *:nth-child(6){animation-delay:.29s}
 [data-reveal-group] > *:nth-child(n+7){animation-delay:.32s}
 
+/* Apparition en fondu/zoom-arrière des photos (cartes + fiche détail), en CSS pur */
+@keyframes imgReveal{
+  from{opacity:0;transform:scale(1.06)}
+  to{opacity:1;transform:scale(1)}
+}
+.property-media img{animation:imgReveal .55s cubic-bezier(.2,.8,.2,1) both}
+.gallery-main{animation:imgReveal .6s cubic-bezier(.2,.8,.2,1) both}
+
 /* Cartes de biens : zoom photo au survol + ombre progressive */
 .property-media{overflow:hidden}
 .property-card{transition:transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s cubic-bezier(.2,.8,.2,1)}
@@ -415,6 +423,14 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;line-height:1.15;margin
 .category-card .icon{display:inline-block;transition:transform .35s cubic-bezier(.34,1.56,.64,1)}
 .category-card:hover{box-shadow:0 12px 28px rgba(11,18,32,.1)}
 .category-card:hover .icon{transform:scale(1.18) rotate(-4deg)}
+@keyframes iconBreathe{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+.category-card .icon{animation:iconBreathe 3.2s ease-in-out infinite}
+.category-card:nth-child(2) .icon{animation-delay:.4s}
+.category-card:nth-child(3) .icon{animation-delay:.8s}
+.category-card:nth-child(4) .icon{animation-delay:1.2s}
+.category-card:nth-child(5) .icon{animation-delay:1.6s}
+.category-card:nth-child(6) .icon{animation-delay:2s}
+.category-card:hover .icon{animation-play-state:paused}
 
 /* Liens de navigation : soulignement animé */
 .main-nav a:not(.nav-cta){position:relative}
