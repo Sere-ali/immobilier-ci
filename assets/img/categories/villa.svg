@@ -3,16 +3,20 @@
 <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
 <stop offset="0" stop-color="#22304F"/><stop offset="1" stop-color="#0F1830"/>
 </linearGradient>
+<filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+<feGaussianBlur stdDeviation="7" result="blur"/>
+<feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
 </defs>
 <style>
-@keyframes sunPulse{0%,100%{opacity:.85}50%{opacity:.5}}
-@keyframes winGlow{0%,100%{stroke-opacity:1}50%{stroke-opacity:.4}}
-.sun{animation:sunPulse 4s ease-in-out infinite}
-.win{animation:winGlow 3s ease-in-out infinite}
+@keyframes sunPulse{0%,100%{opacity:.9}50%{opacity:.62}}
+@keyframes winGlow{0%,100%{stroke-opacity:1}50%{stroke-opacity:.58}}
+.sun{animation:sunPulse 5s cubic-bezier(.45,0,.55,1) infinite;filter:url(#glow)}
+.win{animation:winGlow 3.6s cubic-bezier(.45,0,.55,1) infinite}
 @media (prefers-reduced-motion: reduce){.sun,.win{animation:none}}
 </style>
 <rect width="800" height="600" fill="url(#bg)"/>
-<circle class="sun" cx="660" cy="120" r="46" fill="#F0C54A" opacity=".85"/>
+<circle class="sun" cx="660" cy="120" r="42" fill="#F0C54A" opacity=".9"/>
 <g stroke="#D4A017" stroke-width="2" opacity=".35">
 <path d="M40 420 L120 340 L200 420" fill="none"/>
 <path d="M600 460 L660 400 L720 460" fill="none"/>

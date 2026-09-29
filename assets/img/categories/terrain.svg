@@ -3,18 +3,22 @@
 <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
 <stop offset="0" stop-color="#1E3A38"/><stop offset="1" stop-color="#0B1A19"/>
 </linearGradient>
+<filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+<feGaussianBlur stdDeviation="7" result="blur"/>
+<feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
 </defs>
 <style>
-@keyframes sunPulse{0%,100%{opacity:.85}50%{opacity:.5}}
-@keyframes flagWave{0%,100%{transform:skewY(0deg)}50%{transform:skewY(6deg)}}
-@keyframes treeSway{0%,100%{transform:rotate(0deg)}50%{transform:rotate(-3deg)}}
-.sun{animation:sunPulse 4s ease-in-out infinite}
-.flag{animation:flagWave 2.2s ease-in-out infinite;transform-box:fill-box;transform-origin:0% 100%}
-.tree{animation:treeSway 3.4s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 100%}
+@keyframes sunPulse{0%,100%{opacity:.9}50%{opacity:.62}}
+@keyframes flagWave{0%,100%{transform:skewY(0deg)}50%{transform:skewY(5deg)}}
+@keyframes treeSway{0%,100%{transform:rotate(0deg)}50%{transform:rotate(-2.5deg)}}
+.sun{animation:sunPulse 5s cubic-bezier(.45,0,.55,1) infinite;filter:url(#glow)}
+.flag{animation:flagWave 2.4s ease-in-out infinite;transform-box:fill-box;transform-origin:0% 100%}
+.tree{animation:treeSway 3.8s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 100%}
 @media (prefers-reduced-motion: reduce){.sun,.flag,.tree{animation:none}}
 </style>
 <rect width="800" height="600" fill="url(#bg)"/>
-<circle class="sun" cx="650" cy="110" r="42" fill="#F0C54A" opacity=".85"/>
+<circle class="sun" cx="650" cy="110" r="38" fill="#F0C54A" opacity=".9"/>
 <line x1="0" y1="440" x2="800" y2="440" stroke="#D4A017" stroke-width="2" opacity=".5"/>
 <g stroke="#F0C54A" stroke-width="2.2" stroke-linecap="round">
 <line x1="150" y1="440" x2="150" y2="330"/><path d="M150 330 l-22 -16" fill="none"/>

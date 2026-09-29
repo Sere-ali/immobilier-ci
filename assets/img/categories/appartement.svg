@@ -3,16 +3,20 @@
 <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
 <stop offset="0" stop-color="#3A3320"/><stop offset="1" stop-color="#141109"/>
 </linearGradient>
+<filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+<feGaussianBlur stdDeviation="6" result="blur"/>
+<feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
 </defs>
 <style>
-@keyframes sunPulse{0%,100%{opacity:.8}50%{opacity:.45}}
-@keyframes winTwinkle{0%,100%{opacity:1}50%{opacity:.25}}
-.sun{animation:sunPulse 4s ease-in-out infinite}
-.win{animation:winTwinkle 2.6s ease-in-out infinite}
+@keyframes sunPulse{0%,100%{opacity:.88}50%{opacity:.6}}
+@keyframes winTwinkle{0%,100%{opacity:1}50%{opacity:.55}}
+.sun{animation:sunPulse 5s cubic-bezier(.45,0,.55,1) infinite;filter:url(#glow)}
+.win{animation:winTwinkle 3.4s cubic-bezier(.45,0,.55,1) infinite;filter:url(#glow)}
 @media (prefers-reduced-motion: reduce){.sun,.win{animation:none}}
 </style>
 <rect width="800" height="600" fill="url(#bg)"/>
-<circle class="sun" cx="140" cy="110" r="40" fill="#F0C54A" opacity=".8"/>
+<circle class="sun" cx="140" cy="110" r="36" fill="#F0C54A" opacity=".88"/>
 <line x1="0" y1="470" x2="800" y2="470" stroke="#D4A017" stroke-width="2" opacity=".5"/>
 <g stroke="#F0C54A" stroke-width="3" fill="none">
 <rect x="290" y="200" width="220" height="270" rx="4"/>
