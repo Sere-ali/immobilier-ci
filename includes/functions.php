@@ -71,16 +71,22 @@ function categoryIcon(string $key): string
 }
 
 /**
- * Illustration "photo" de remplacement pour une annonce qui n'a pas encore de vraie
- * photo (import de démonstration, ou annonce créée sans image) : une scène de marque
- * dessinée pour la catégorie du bien (villa, immeuble, etc.), avec le nom de la
- * catégorie écrit dessus — jamais une simple vignette de couleur unie sans repère.
+ * Photo de remplacement pour une annonce qui n'a pas encore de vraie photo
+ * (import de démonstration, ou annonce créée sans image) : une vraie photo
+ * représentative de la catégorie du bien (villa, immeuble, etc.) — jamais
+ * une simple icône ou une vignette de couleur unie sans repère.
  */
 function categoryPlaceholderImage(string $category): string
 {
-    $known = ['villa', 'appartement', 'terrain', 'bureau', 'magasin', 'immeuble'];
-    $key = in_array($category, $known, true) ? $category : 'immeuble';
-    return 'assets/img/categories/' . $key . '.svg';
+    $known = [
+        'villa'       => 'https://res.cloudinary.com/epxlbn9z/image/upload/v1790761943/tdybdvdgxyaec9gu3gin.jpg',
+        'appartement' => 'https://res.cloudinary.com/epxlbn9z/image/upload/v1790761951/zfpabm2ibetqahym3kcu.jpg',
+        'terrain'     => 'https://res.cloudinary.com/epxlbn9z/image/upload/v1790761956/tzf7x1zq1rzyjbyvemnf.jpg',
+        'bureau'      => 'https://res.cloudinary.com/epxlbn9z/image/upload/v1790761962/l9jlggzudzgw2a8vl3cs.jpg',
+        'magasin'     => 'https://res.cloudinary.com/epxlbn9z/image/upload/v1790761968/kzkzwvsa9jnqn34nwmro.jpg',
+        'immeuble'    => 'https://res.cloudinary.com/epxlbn9z/image/upload/v1790761972/ylz22jdoyoylvf8gc40p.jpg',
+    ];
+    return $known[$category] ?? $known['immeuble'];
 }
 
 /** Petit logo maison (SVG en ligne) utilisé à côté du nom du site, sur le site public et dans l'espace admin */
