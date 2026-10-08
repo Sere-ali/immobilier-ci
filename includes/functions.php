@@ -178,8 +178,23 @@ function logActivity(PDO $pdo, ?int $userId, string $action): void
 function ivoryCoastCities(): array
 {
     return [
-        'Abidjan', 'Bouaké', 'Yamoussoukro', 'San-Pédro', 'Korhogo',
-        'Daloa', 'Man', 'Gagnoa', 'Abengourou', 'Grand-Bassam', 'Bingerville', 'Assinie',
+        'Abidjan', 'Abengourou', 'Abobo', 'Aboisso', 'Adiaké', 'Adjamé',
+        'Adzopé', 'Agboville', 'Agnibilékrou', 'Akoupé', 'Alépé', 'Anyama',
+        'Arrah', 'Assinie', 'Attécoubé', 'Ayamé', 'Bangolo', 'Béoumi',
+        'Biankouma', 'Bingerville', 'Bocanda', 'Bondoukou', 'Bonon', 'Bouaflé',
+        'Bouaké', 'Bouna', 'Boundiali', 'Brobo', 'Buyo', 'Cocody',
+        'Dabakala', 'Dabou', 'Daloa', 'Danané', 'Daoukro', 'Dimbokro',
+        'Divo', 'Duékoué', 'Facobly', 'Ferkessédougou', 'Fresco', 'Gagnoa',
+        'Gohitafla', 'Grabo', 'Grand-Bassam', 'Grand-Lahou', 'Guibéroua', 'Guiglo',
+        'Issia', 'Jacqueville', 'Kani', 'Katiola', 'Kong', 'Korhogo',
+        'Kouibly', 'Koumassi', 'Lakota', 'Madinani', 'Man', 'Mankono',
+        'Marcory', 'Minignan', 'Odienné', 'Ouangolodougou', 'Oumé', 'Ouragahio',
+        'Plateau', 'Port-Bouët', 'Prikro', 'Sakassou', 'Samatiguila', 'San-Pédro',
+        'Sandégué', 'Sassandra', 'Séguéla', 'Sikensi', 'Sinfra', 'Sipilou',
+        'Songon', 'Soubré', 'Taabo', 'Tabou', 'Tanda', 'Tengréla',
+        'Tiapoum', 'Tiassalé', 'Tiébissou', 'Tortiya', 'Touba', 'Toulépleu',
+        'Toumodi', 'Transua', 'Treichville', 'Vavoua', 'Yamoussoukro', 'Yopougon',
+        'Zouan-Hounien', 'Zoukougbeu', 'Zuénoula',
     ];
 }
 
