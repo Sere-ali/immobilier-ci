@@ -43,6 +43,17 @@ require_once __DIR__ . '/../includes/admin_header.php';
   </div>
 </div>
 
+<?php if (!empty($user['is_principal'])): ?>
+<?php /* Réservé au super administrateur principal : les autres super admins ne voient pas ce bloc. */ ?>
+<div class="panel" style="border-color:var(--gold-light)">
+  <div class="panel-head"><h2>💰 Bénéfice du super administrateur</h2></div>
+  <div class="panel-body">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:2rem;font-weight:600;color:var(--laterite)"><?= formatPrice($totalValue * 0.02) ?></div>
+    <p style="color:var(--ink-soft);font-size:.88rem;margin-top:6px">2 % de la valeur totale du portefeuille disponible (<?= formatPrice($totalValue) ?>). Visible uniquement par le super administrateur principal.</p>
+  </div>
+</div>
+<?php endif; ?>
+
 <div class="panel">
   <div class="panel-head">
     <h2>Performance par administrateur</h2>
