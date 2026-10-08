@@ -99,13 +99,20 @@ require_once __DIR__ . '/../includes/admin_header.php';
     <?php if (empty($list)): ?>
       <div class="empty-state"><div class="icon">🏠</div><p>Aucune annonce trouvée.</p></div>
     <?php else: ?>
+    <form method="post" action="property_bulk_delete" id="bulk-form">
+    <?= csrfField() ?>
+    <div class="bulk-bar">
+      <span id="bulk-count">Aucune annonce sélectionnée</span>
+      <button type="submit" class="btn btn-danger btn-sm" id="bulk-delete-btn" disabled>🗑️ Supprimer la sélection</button>
+    </div>
     <table class="data-table">
-      <thead><tr><th></th><th>Titre / Réf.</th><th>Ville</th><th>Type</th><th>Prix</th>
+      <thead><tr><th class="select-col"><input type="checkbox" id="select-all" aria-label="Tout sélectionner"></th><th></th><th>Titre / Réf.</th><th>Ville</th><th>Type</th><th>Prix</th>
         <?php if ($isSuper): ?><th>Créé par</th><?php endif; ?>
         <th>Statut</th><th>Validation</th><th>Vues</th><th style="text-align:right">Actions</th></tr></thead>
       <tbody>
       <?php foreach ($list as $p): ?>
         <tr>
+          <td class="select-col"><input type="checkbox" class="row-check" name="ids[]" value="<?= (int)$p['id'] ?>" aria-label="Sélectionner <?= e($p['title']) ?>"></td>
           <td><div class="thumb-cell" style="background-image:url('<?= e($p['image'] ? imageUrl($p['image'], '../') : 'https://placehold.co/100x80/E8DCC8/0F3D3E') ?>')"></div></td>
           <td><?= e($p['title']) ?><br><span class="mono" style="font-size:.72rem;color:var(--ink-soft)"><?= e($p['reference']) ?></span></td>
           <td><?= e($p['city']) ?></td>
@@ -138,6 +145,7 @@ require_once __DIR__ . '/../includes/admin_header.php';
       <?php endforeach; ?>
       </tbody>
     </table>
+    </form>
     <?= paginationLinks($pagination) ?>
     <?php endif; ?>
   </div>

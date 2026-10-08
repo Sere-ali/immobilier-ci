@@ -360,3 +360,15 @@ a.badge:hover{transform:translateY(-1px)}
 .btn-whatsapp:hover{background:#1ebe57;box-shadow:0 8px 18px rgba(37,211,102,.3)}
 .btn-whatsapp:active{transform:scale(.96)}
 .btn-whatsapp-icon{font-size:1rem}
+
+/* ---------- Suppression multiple d'annonces ---------- */
+.bulk-bar{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  margin-bottom:12px;padding:10px 14px;border:1px solid var(--border);border-radius:10px;background:#faf9f6;
+  font-size:.85rem;color:var(--ink-soft);
+}
+.bulk-bar .btn[disabled]{opacity:.45;cursor:not-allowed}
+.data-table .select-col{width:44px;padding-right:0;text-align:center}
+.data-table .select-col input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--danger)}
+.data-table tr.row-selected{background:#fdf6f5}
+.data-table tr.row-selected:hover{background:#fbeeec}

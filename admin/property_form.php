@@ -29,7 +29,7 @@ $errors = [];
 // Si la requête dépasse post_max_size, PHP vide $_POST et $_FILES avant même
 // que le script ne s'exécute : on distingue ce cas d'une simple session expirée.
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_POST) && empty($_FILES) && (int)($_SERVER['CONTENT_LENGTH'] ?? 0) > 0) {
-    $errors[] = "Les fichiers envoyés sont trop volumineux au total (taille maximale : " . ini_get('post_max_size') . "). Réduisez le nombre ou le poids des photos et réessayez.";
+    $errors[] = "Les fichiers envoyés sont trop volumineux au total (taille maximale : " . ini_get('post_max_size') . "). Réduisez le nombre ou le poids des photos (ou de la vidéo) et réessayez.";
 } elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && !csrfVerify()) {
     $errors[] = 'Session expirée, merci de réessayer.';
 }
@@ -156,6 +156,72 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && csrfVerify() && empty($errors)) {
             }
         }
 
+        // --- Vidéo de l'annonce (optionnelle, une seule : une nouvelle remplace l'ancienne) ---
+        $oldVideo = $property['video_path'] ?? null;
+
+        if ($property && !empty($_POST['remove_video']) && $oldVideo) {
+            try {
+                $pdo->prepare('UPDATE properties SET video_path = NULL WHERE id = ?')->execute([$propertyId]);
+                deleteLocalUpload($oldVideo);
+                $oldVideo = null;
+            } catch (Exception $e) {
+                error_log('Suppression vidéo annonce #' . $propertyId . ' : ' . $e->getMessage());
+                $uploadWarnings[] = "La vidéo n'a pas pu être supprimée.";
+            }
+        }
+
+        $videoErr = $_FILES['video']['error'] ?? UPLOAD_ERR_NO_FILE;
+        if ($videoErr !== UPLOAD_ERR_NO_FILE) {
+            $videoName = $_FILES['video']['name'] ?? 'vidéo';
+            $videoTmp = $_FILES['video']['tmp_name'] ?? '';
+            $videoExt = strtolower(pathinfo($videoName, PATHINFO_EXTENSION));
+            $storedVideo = null;
+
+            if ($videoErr !== UPLOAD_ERR_OK) {
+                $reason = [
+                    UPLOAD_ERR_INI_SIZE   => 'trop volumineuse (50 Mo maximum)',
+                    UPLOAD_ERR_FORM_SIZE  => 'trop volumineuse (50 Mo maximum)',
+                    UPLOAD_ERR_PARTIAL    => 'envoi interrompu, merci de réessayer',
+                    UPLOAD_ERR_NO_TMP_DIR => 'erreur serveur (dossier temporaire manquant)',
+                    UPLOAD_ERR_CANT_WRITE => 'erreur serveur (écriture disque impossible)',
+                    UPLOAD_ERR_EXTENSION  => 'bloquée par une extension serveur',
+                ][$videoErr] ?? 'erreur inconnue';
+                $uploadWarnings[] = "La vidéo « $videoName » n'a pas pu être envoyée : $reason.";
+            } elseif (!in_array($videoExt, allowedVideoExtensions(), true)) {
+                $uploadWarnings[] = "La vidéo « $videoName » a été ignorée : format non autorisé (mp4, mov, webm uniquement).";
+            } elseif (($_FILES['video']['size'] ?? 0) > MAX_VIDEO_BYTES) {
+                $uploadWarnings[] = "La vidéo « $videoName » a été ignorée : elle dépasse 50 Mo.";
+            } elseif (!isRealVideoFile($videoTmp)) {
+                $uploadWarnings[] = "La vidéo « $videoName » a été ignorée : le fichier n'est pas une vidéo valide.";
+            } else {
+                if (cloudinaryConfigured()) {
+                    $storedVideo = uploadVideoToCloudinary($videoTmp, $videoName);
+                    if ($storedVideo === null) {
+                        $uploadWarnings[] = "La vidéo « $videoName » n'a pas pu être envoyée vers le stockage externe (Cloudinary). Vérifiez les identifiants configurés ou la taille du fichier.";
+                    }
+                } else {
+                    if (!is_dir(UPLOAD_DIR)) mkdir(UPLOAD_DIR, 0775, true);
+                    $newVideoName = uniqid('vid_', true) . '.' . $videoExt;
+                    if (move_uploaded_file($videoTmp, UPLOAD_DIR . $newVideoName)) {
+                        $storedVideo = $newVideoName;
+                    } else {
+                        $uploadWarnings[] = "La vidéo « $videoName » n'a pas pu être enregistrée sur le serveur.";
+                    }
+                }
+            }
+
+            if ($storedVideo !== null) {
+                try {
+                    $pdo->prepare('UPDATE properties SET video_path = ? WHERE id = ?')->execute([$storedVideo, $propertyId]);
+                    deleteLocalUpload($oldVideo); // l'ancienne vidéo est remplacée
+                } catch (Exception $e) {
+                    error_log('Enregistrement vidéo annonce #' . $propertyId . ' : ' . $e->getMessage());
+                    deleteLocalUpload($storedVideo);
+                    $uploadWarnings[] = "La vidéo a été envoyée mais n'a pas pu être rattachée à l'annonce.";
+                }
+            }
+        }
+
         $pendingNote = (!$property && !$isSuper) ? ' Elle sera visible sur le site public dès qu\'un super administrateur l\'aura validée.' : '';
         if (!empty($uploadWarnings)) {
             flash('warning', ($property ? 'Annonce mise à jour, mais : ' : 'Annonce créée, mais : ') . implode(' ', $uploadWarnings) . $pendingNote);
@@ -253,7 +319,7 @@ require_once __DIR__ . '/../includes/admin_header.php';
         <div class="field full">
           <label>Photos <?= $images ? '(ajouter d\'autres photos)' : '' ?></label>
           <input type="file" id="images" name="images[]" multiple accept="image/png,image/jpeg,image/webp">
-          <div class="hint">Formats acceptés : JPG, PNG, WEBP — 15 Mo maximum par photo.</div>
+          <div class="hint">Formats acceptés : JPG, PNG, WEBP — Photos : 15 Mo maximum chacune.</div>
           <div id="images-preview" style="margin-top:8px"></div>
           <?php if ($images): ?>
             <div class="hint">Photos actuelles :</div>
@@ -262,6 +328,22 @@ require_once __DIR__ . '/../includes/admin_header.php';
                 <div style="width:70px;height:56px;border-radius:6px;background:center/cover no-repeat url('<?= e(imageUrl($img['image_path'], '../')) ?>');border:1px solid var(--border)"></div>
               <?php endforeach; ?>
             </div>
+          <?php endif; ?>
+        </div>
+        <div class="field full">
+          <label>Vidéo de l'annonce <?= !empty($property['video_path']) ? '(remplacer la vidéo)' : '(optionnel)' ?></label>
+          <!-- Le vrai champ fichier est masqué ; le bouton ci-dessous (label) l'ouvre. -->
+          <input type="file" id="video" name="video" accept="video/mp4,video/quicktime,video/webm,.mp4,.m4v,.mov,.webm" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none" tabindex="-1">
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+            <label for="video" class="btn btn-outline" style="cursor:pointer;margin:0">🎥 <?= !empty($property['video_path']) ? 'Choisir une autre vidéo' : 'Ajouter une vidéo' ?></label>
+            <span id="video-name" class="hint" style="margin:0">Aucune vidéo sélectionnée</span>
+          </div>
+          <div class="hint">Formats acceptés : MP4, MOV, WEBM — 50 Mo maximum. Une seule vidéo par annonce.</div>
+          <video id="video-preview" controls playsinline style="display:none;margin-top:10px;width:100%;max-width:420px;border-radius:10px;background:#000"></video>
+          <?php if (!empty($property['video_path'])): ?>
+            <div class="hint" style="margin-top:10px">Vidéo actuelle :</div>
+            <video src="<?= e(imageUrl($property['video_path'], '../')) ?>" controls playsinline preload="metadata" style="margin-top:6px;width:100%;max-width:420px;border-radius:10px;background:#000"></video>
+            <label class="checkbox-row" style="margin-top:8px"><input type="checkbox" name="remove_video" value="1"> Supprimer la vidéo actuelle</label>
           <?php endif; ?>
         </div>
       </div>

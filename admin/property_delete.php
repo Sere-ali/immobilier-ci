@@ -16,15 +16,8 @@ if (!$property || (!isSuperAdmin() && $property['created_by'] != $user['id'])) {
     redirect('properties');
 }
 
-$imgStmt = $pdo->prepare('SELECT image_path FROM property_images WHERE property_id = ?');
-$imgStmt->execute([$id]);
-foreach ($imgStmt->fetchAll() as $img) {
-    // N'essaie de supprimer que les fichiers stockés localement (pas les URL Cloudinary)
-    if (!preg_match('#^https?://#i', $img['image_path'])) {
-        $path = UPLOAD_DIR . $img['image_path'];
-        if (is_file($path)) unlink($path);
-    }
-}
+// Supprime les photos et la vidéo stockées localement (pas les URL Cloudinary)
+deletePropertyFiles($pdo, $id);
 
 $pdo->prepare('DELETE FROM properties WHERE id = ?')->execute([$id]);
 logActivity($pdo, $user['id'], "Suppression de l'annonce #$id ({$property['title']})");

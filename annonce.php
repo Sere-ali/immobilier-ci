@@ -106,6 +106,15 @@ $mainImg = $mainHasRealPhoto ? imageUrl($images[0]['image_path']) : categoryPlac
         </div>
       <?php endif; ?>
 
+      <?php if (!empty($property['video_path'])): ?>
+        <div class="detail-video">
+          <h3>🎥 Visite en vidéo</h3>
+          <video controls playsinline preload="metadata" poster="<?= e($mainImg) ?>" src="<?= e(imageUrl($property['video_path'])) ?>">
+            Votre navigateur ne peut pas lire cette vidéo.
+          </video>
+        </div>
+      <?php endif; ?>
+
       <div class="detail-header" data-reveal>
         <div class="ref mono" style="color:var(--ink-soft);font-size:.8rem"><?= e($property['reference']) ?> · <?= e(propertyCategories()[$property['category']] ?? $property['category']) ?></div>
         <h1 style="margin:6px 0"><?= e($property['title']) ?></h1>

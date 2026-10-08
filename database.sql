@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS properties (
     surface DECIMAL(10,2) DEFAULT NULL,
     bedrooms TINYINT DEFAULT NULL,
     bathrooms TINYINT DEFAULT NULL,
+    video_path VARCHAR(255) DEFAULT NULL,
     status ENUM('disponible','reserve','vendu','loue') NOT NULL DEFAULT 'disponible',
     approval_status ENUM('en_attente','approuve','rejete') NOT NULL DEFAULT 'approuve',
     featured TINYINT(1) NOT NULL DEFAULT 0,

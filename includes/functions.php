@@ -474,6 +474,24 @@ function ensureSchemaUpToDate(PDO $pdo): void
             error_log('Migration v6 (super admin principal) error: ' . $e->getMessage());
         }
     }
+
+    // v7 : une vidéo optionnelle par annonce (nom de fichier local, ou URL
+    // complète si elle est hébergée sur Cloudinary, comme pour les photos).
+    // La version n'est enregistrée que si la colonne existe réellement
+    // ensuite, pour retenter la migration au prochain chargement en cas d'échec.
+    if ($version < 7) {
+        try { $pdo->exec("ALTER TABLE properties ADD COLUMN video_path VARCHAR(255) DEFAULT NULL AFTER bathrooms"); } catch (Exception $e) {}
+        try {
+            $hasColumn = (bool) $pdo->query("SHOW COLUMNS FROM properties LIKE 'video_path'")->fetch();
+            if ($hasColumn) {
+                $pdo->prepare("INSERT INTO settings (setting_key, setting_value) VALUES ('schema_version', '7') ON DUPLICATE KEY UPDATE setting_value = '7'")->execute();
+            } else {
+                error_log('Migration v7 (video_path) : colonne introuvable après ALTER TABLE.');
+            }
+        } catch (Exception $e) {
+            error_log('Migration v7 (video annonce) error: ' . $e->getMessage());
+        }
+    }
 }
 
 /**
@@ -498,6 +516,18 @@ function imageUrl(?string $path, string $webPrefix = ''): string
  */
 function uploadImageToCloudinary(string $tmpPath, string $originalName): ?string
 {
+    return cloudinaryUpload($tmpPath, $originalName, 'image', 30, 'image/jpeg');
+}
+
+/** Même chose pour une vidéo d'annonce (envoi plus long : fichier plus lourd). */
+function uploadVideoToCloudinary(string $tmpPath, string $originalName): ?string
+{
+    return cloudinaryUpload($tmpPath, $originalName, 'video', 180, 'video/mp4');
+}
+
+/** Envoi signé vers Cloudinary, commun aux photos (resource_type image) et vidéos (video). */
+function cloudinaryUpload(string $tmpPath, string $originalName, string $resourceType, int $timeout, string $fallbackMime): ?string
+{
     $cloudName = getenv('CLOUDINARY_CLOUD_NAME');
     $apiKey    = getenv('CLOUDINARY_API_KEY');
     $apiSecret = getenv('CLOUDINARY_API_SECRET');
@@ -515,9 +545,9 @@ function uploadImageToCloudinary(string $tmpPath, string $originalName): ?string
     }
     $signature = sha1($toSign . $apiSecret);
 
-    $mime = function_exists('mime_content_type') ? (mime_content_type($tmpPath) ?: 'image/jpeg') : 'image/jpeg';
+    $mime = function_exists('mime_content_type') ? (mime_content_type($tmpPath) ?: $fallbackMime) : $fallbackMime;
 
-    $ch = curl_init("https://api.cloudinary.com/v1_1/{$cloudName}/image/upload");
+    $ch = curl_init("https://api.cloudinary.com/v1_1/{$cloudName}/{$resourceType}/upload");
     curl_setopt_array($ch, [
         CURLOPT_POST => true,
         CURLOPT_POSTFIELDS => [
@@ -528,7 +558,7 @@ function uploadImageToCloudinary(string $tmpPath, string $originalName): ?string
             'signature' => $signature,
         ],
         CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_TIMEOUT => 30,
+        CURLOPT_TIMEOUT => $timeout,
     ]);
     $response = curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -659,6 +689,54 @@ function sanitizePhoneForStorage(string $raw): string
     $digits = preg_replace('/\D/', '', $raw) ?? '';
     $digits = substr($digits, 0, 15);
     return ($hasPlus ? '+' : '') . $digits;
+}
+
+/** Taille maximale d'une vidéo d'annonce (octets) — doit rester sous upload_max_filesize (docker/uploads.ini) */
+const MAX_VIDEO_BYTES = 50 * 1024 * 1024;
+
+/** Extensions de vidéo acceptées pour une annonce */
+function allowedVideoExtensions(): array
+{
+    return ['mp4', 'm4v', 'mov', 'webm'];
+}
+
+/**
+ * Vérifie qu'un fichier téléversé est réellement une vidéo MP4/MOV/M4V ou WebM,
+ * d'après sa signature binaire (comme pour les images, l'extension seule ne
+ * prouve rien : un script renommé en .mp4 ne doit pas passer).
+ */
+function isRealVideoFile(string $tmpPath): bool
+{
+    $head = @file_get_contents($tmpPath, false, null, 0, 12);
+    if ($head === false || strlen($head) < 8) return false;
+    if (substr($head, 4, 4) === 'ftyp') return true;             // MP4 / M4V / MOV (ISO base media)
+    if (substr($head, 0, 4) === "\x1A\x45\xDF\xA3") return true;  // WebM / Matroska (EBML)
+    return false;
+}
+
+/** Supprime un fichier d'upload stocké localement (sans toucher aux URL Cloudinary). */
+function deleteLocalUpload(?string $path): void
+{
+    if (!$path || preg_match('#^https?://#i', $path)) return;
+    $file = UPLOAD_DIR . basename($path);
+    if (is_file($file)) @unlink($file);
+}
+
+/** Supprime les photos et la vidéo stockées localement d'une annonce (avant de supprimer l'annonce en base). */
+function deletePropertyFiles(PDO $pdo, int $propertyId): void
+{
+    $imgStmt = $pdo->prepare('SELECT image_path FROM property_images WHERE property_id = ?');
+    $imgStmt->execute([$propertyId]);
+    foreach ($imgStmt->fetchAll() as $img) {
+        deleteLocalUpload($img['image_path']);
+    }
+    try {
+        $vidStmt = $pdo->prepare('SELECT video_path FROM properties WHERE id = ?');
+        $vidStmt->execute([$propertyId]);
+        deleteLocalUpload($vidStmt->fetchColumn() ?: null);
+    } catch (Exception $e) {
+        // Colonne video_path pas encore migrée : aucune vidéo à supprimer.
+    }
 }
 
 /** Vérifie qu'un fichier téléversé est réellement une image (pas seulement son extension) */
