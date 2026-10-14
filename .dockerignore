@@ -1,0 +1,6 @@
+.git
+mobile-app
+node_modules
+*.md
+uploads/*
+!uploads/.gitkeep
