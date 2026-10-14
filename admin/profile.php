@@ -63,6 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_password'])) {
 }
 
 $pageTitle = 'Mon profil';
+$liveDisabled = true;
 require_once __DIR__ . '/../includes/admin_header.php';
 ?>
 

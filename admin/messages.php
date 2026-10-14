@@ -41,6 +41,7 @@ if (isset($_GET['id'])) {
     }
 
     $pageTitle = 'Message reçu';
+    $liveDisabled = true;
     require_once __DIR__ . '/../includes/admin_header.php';
     ?>
     <div class="panel">

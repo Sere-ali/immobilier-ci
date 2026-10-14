@@ -937,3 +937,8 @@ body{
 @media (prefers-reduced-motion: reduce){
   .chat-fab,.chat-online-dot,.chat-rec-dot,.chat-widget.is-sending .chat-send svg{animation:none !important}
 }
+
+/* Mises à jour en direct */
+@keyframes liveFlash{0%{box-shadow:0 0 0 0 rgba(37,99,235,.45)}100%{box-shadow:0 0 0 14px rgba(37,99,235,0)}}
+.live-flash{animation:liveFlash .9s ease-out}
+.live-swap [data-reveal],.live-swap [data-reveal-group]>*{animation:none!important;opacity:1!important;transform:none!important}

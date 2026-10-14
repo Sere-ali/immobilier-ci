@@ -103,6 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$alreadySeeded) {
 
 $pageTitle = 'Importer des annonces de démonstration';
 $pageSubtitle = '50 annonces variées, réparties dans plusieurs villes de Côte d\'Ivoire';
+$liveDisabled = true;
 require_once __DIR__ . '/../includes/admin_header.php';
 ?>
 <div class="panel">

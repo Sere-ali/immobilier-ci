@@ -105,6 +105,7 @@ if ($activeId) {
 
 $pageTitle = 'Chat';
 $pageSubtitle = count($convs) . ' conversation(s) avec les visiteurs';
+$liveDisabled = true;
 require_once __DIR__ . '/../includes/admin_header.php';
 
 function chatWhen(string $dt): string

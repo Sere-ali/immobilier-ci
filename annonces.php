@@ -93,6 +93,7 @@ try {
   <?php if ($listingError): ?>
     <div class="alert alert-error"><?= e($listingError) ?></div>
   <?php endif; ?>
+  <div data-live="results">
   <div class="results-meta"><?= $pagination ? $pagination['totalItems'] : count($properties) ?> bien(s) trouvé(s)</div>
   <?php if (empty($properties)): ?>
     <div class="empty-state">
@@ -107,6 +108,7 @@ try {
     </div>
     <?php if ($pagination): ?><?= paginationLinks($pagination) ?><?php endif; ?>
   <?php endif; ?>
+  </div>
 </div>
 
 <?php require_once __DIR__ . '/includes/footer.php'; ?>

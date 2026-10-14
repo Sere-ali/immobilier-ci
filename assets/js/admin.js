@@ -31,13 +31,11 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  document.querySelectorAll('[data-confirm]').forEach(function (el) {
-    el.addEventListener('click', function (e) {
-      var msg = el.getAttribute('data-confirm') || 'Confirmer cette action ?';
-      if (!confirm(msg)) {
-        e.preventDefault();
-      }
-    });
+  // Confirmations (délégation : continue de marcher quand la page se met à jour toute seule)
+  document.addEventListener('click', function (e) {
+    var el = e.target.closest && e.target.closest('[data-confirm]');
+    if (!el) return;
+    if (!confirm(el.getAttribute('data-confirm') || 'Confirmer cette action ?')) e.preventDefault();
   });
 
   var fileInput = document.querySelector('#images');
@@ -90,8 +88,10 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // Suppression multiple d'annonces : cases à cocher + "tout sélectionner".
-  var bulkForm = document.querySelector('#bulk-form');
-  if (bulkForm) {
+  function initBulk() {
+    var bulkForm = document.querySelector('#bulk-form');
+    if (!bulkForm || bulkForm.getAttribute('data-bound') === '1') return;
+    bulkForm.setAttribute('data-bound', '1');
     var rowChecks = Array.prototype.slice.call(bulkForm.querySelectorAll('.row-check'));
     var selectAll = bulkForm.querySelector('#select-all');
     var bulkBtn = bulkForm.querySelector('#bulk-delete-btn');
@@ -124,6 +124,8 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     updateBulk();
   }
+  initBulk();
+  document.addEventListener('live:updated', initBulk);
 
   document.querySelectorAll('.alert').forEach(function (alert) {
     setTimeout(function () {

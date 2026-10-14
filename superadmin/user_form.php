@@ -88,6 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && csrfVerify()) {
 }
 
 $pageTitle = $editUser ? 'Modifier un administrateur' : 'Nouvel administrateur';
+$liveDisabled = true;
 require_once __DIR__ . '/../includes/admin_header.php';
 ?>
 

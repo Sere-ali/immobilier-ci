@@ -55,7 +55,7 @@ $categories = [
   </div>
 </div>
 
-<div class="stats-band">
+<div class="stats-band" data-live="stats">
   <div class="container">
     <div class="stat-item"><div class="num mono" data-count-to="<?= (int)$totalProperties ?>" data-suffix="+">0+</div><div class="label">Biens référencés</div></div>
     <div class="stat-item"><div class="num mono" data-count-to="<?= (int)$totalCities ?>">0</div><div class="label">Villes couvertes</div></div>
@@ -82,7 +82,7 @@ $categories = [
   </div>
 </section>
 
-<section class="section" style="padding-top:0">
+<section class="section" style="padding-top:0" data-live="featured">
   <div class="container">
     <div class="section-head">
       <div>

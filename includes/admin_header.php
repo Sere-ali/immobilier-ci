@@ -40,7 +40,7 @@ function navActive(string $file, string $current): string
   <aside class="sidebar">
     <div class="brand"><img src="<?= e($root) ?>assets/img/logo.png?v=<?= assetVersion('assets/img/logo.png') ?>" alt="Immobilier CI" class="logo-img"></div>
     <div class="role-tag"><?= $user['role'] === 'superadmin' ? 'Super Administrateur' : 'Administrateur' ?></div>
-    <nav>
+    <nav data-live="nav">
       <span class="group-label">Gestion</span>
       <a href="<?= e($root) ?>admin/dashboard" class="<?= navActive('dashboard.php', $currentScript) === 'active' && !$inSuperAdmin ? 'active' : '' ?>">📊 Tableau de bord</a>
       <a href="<?= e($root) ?>admin/properties" class="<?= in_array($currentScript, ['properties.php','property_form.php']) && !$inSuperAdmin ? 'active' : '' ?>">🏠 Annonces</a>
@@ -75,7 +75,7 @@ function navActive(string $file, string $current): string
         <?php if (!empty($pageSubtitle)): ?><div class="subtitle"><?= e($pageSubtitle) ?></div><?php endif; ?>
       </div>
     </div>
-    <div class="admin-content">
-      <?php $f = getFlash(); if ($f): ?>
+    <div class="admin-content"<?= empty($liveDisabled) ? ' data-live="content"' : '' ?>>
+      <?php $f = empty($_SERVER['HTTP_X_LIVE_REFRESH']) ? getFlash() : null; if ($f): ?>
         <div class="alert alert-<?= e($f['type']) ?>"><span><?= e($f['message']) ?></span></div>
       <?php endif; ?>

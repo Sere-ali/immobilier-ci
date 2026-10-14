@@ -29,7 +29,9 @@ if (!$property) {
     exit;
 }
 
-$pdo->prepare('UPDATE properties SET views = views + 1 WHERE id = ?')->execute([$property['id']]);
+if (empty($_SERVER['HTTP_X_LIVE_REFRESH'])) {
+    $pdo->prepare('UPDATE properties SET views = views + 1 WHERE id = ?')->execute([$property['id']]);
+}
 
 $imgStmt = $pdo->prepare('SELECT * FROM property_images WHERE property_id = ? ORDER BY is_primary DESC, sort_order ASC');
 $imgStmt->execute([$property['id']]);
@@ -115,7 +117,7 @@ $mainImg = $mainHasRealPhoto ? imageUrl($images[0]['image_path']) : categoryPlac
         </div>
       <?php endif; ?>
 
-      <div class="detail-header" data-reveal>
+      <div class="detail-header" data-reveal data-live="detail-head">
         <div class="ref mono" style="color:var(--ink-soft);font-size:.8rem"><?= e($property['reference']) ?> · <?= e(propertyCategories()[$property['category']] ?? $property['category']) ?></div>
         <h1 style="margin:6px 0"><?= e($property['title']) ?></h1>
         <div class="detail-location">📍 <?= e($property['commune'] ? $property['commune'] . ', ' : '') . e($property['city']) ?></div>

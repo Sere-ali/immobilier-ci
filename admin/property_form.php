@@ -233,6 +233,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && csrfVerify() && empty($errors)) {
 }
 
 $pageTitle = $property ? "Modifier l'annonce" : 'Nouvelle annonce';
+$liveDisabled = true;
 require_once __DIR__ . '/../includes/admin_header.php';
 ?>
 

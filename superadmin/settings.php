@@ -48,6 +48,7 @@ foreach ($pdo->query('SELECT setting_key, setting_value FROM settings') as $row)
 }
 
 $pageTitle = 'Paramètres du site';
+$liveDisabled = true;
 require_once __DIR__ . '/../includes/admin_header.php';
 ?>
 
