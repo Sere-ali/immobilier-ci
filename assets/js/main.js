@@ -226,3 +226,34 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 });
+
+// Effets lumineux : barre de progression, ombre de l'en-tête, halo qui suit le pointeur sur les cartes.
+(function () {
+  try {
+    var bar = document.createElement('div');
+    bar.className = 'scroll-progress';
+    bar.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(bar);
+    var header = document.querySelector('.site-header');
+    var ticking = false;
+    function update() {
+      var h = document.documentElement;
+      var max = h.scrollHeight - h.clientHeight;
+      bar.style.transform = 'scaleX(' + (max > 0 ? Math.min(1, window.scrollY / max) : 0) + ')';
+      if (header) header.classList.toggle('is-scrolled', window.scrollY > 8);
+      ticking = false;
+    }
+    window.addEventListener('scroll', function () {
+      if (!ticking) { ticking = true; requestAnimationFrame(update); }
+    }, { passive: true });
+    update();
+
+    document.addEventListener('pointermove', function (e) {
+      var card = e.target.closest && e.target.closest('.property-card, .category-card');
+      if (!card) return;
+      var r = card.getBoundingClientRect();
+      card.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+      card.style.setProperty('--my', (e.clientY - r.top) + 'px');
+    }, { passive: true });
+  } catch (err) {}
+})();

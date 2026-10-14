@@ -749,3 +749,104 @@ html.js .main-nav.open a:nth-child(6){transition-delay:.3s}
 .detail-video{margin:22px 0 6px}
 .detail-video h3{font-size:1.05rem;margin:0 0 10px}
 .detail-video video{display:block;width:100%;max-height:520px;border-radius:var(--radius);background:#000;border:1px solid var(--border)}
+
+/* =========================================================
+   Couche "lumière" : site lumineux, reflets et animations douces
+   (ajoutée en dernier pour surcharger proprement ce qui précède)
+   ========================================================= */
+:root{
+  --glow-blue: 0 0 0 1px rgba(29,78,216,.10), 0 18px 44px -16px rgba(29,78,216,.40);
+  --glow-gold: 0 10px 30px -8px rgba(212,160,23,.55);
+  --gradient-sky: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 55%, #1E40AF 100%);
+  --gradient-gold: linear-gradient(135deg, #F8D56B 0%, #D4A017 100%);
+}
+body{
+  background:
+    radial-gradient(900px 500px at 8% -5%, rgba(59,130,246,.10), transparent 60%),
+    radial-gradient(800px 500px at 100% 12%, rgba(240,197,74,.12), transparent 60%),
+    var(--bg);
+  background-attachment:fixed;
+}
+
+/* Barre de progression de lecture, en haut de l'écran */
+.scroll-progress{position:fixed;top:0;left:0;height:3px;width:100%;z-index:80;transform-origin:0 50%;transform:scaleX(0);background:linear-gradient(90deg,#60A5FA,#1D4ED8,#F0C54A);box-shadow:0 0 12px rgba(59,130,246,.8);pointer-events:none}
+
+/* En-tête : verre lumineux, ombre qui s'intensifie au défilement */
+.site-header{transition:box-shadow .3s ease, background .3s ease}
+.site-header.is-scrolled{box-shadow:0 14px 34px -18px rgba(29,78,216,.45)}
+.main-nav a:not(.nav-cta)::after{content:'';position:absolute;left:0;bottom:-2px;height:2px;width:100%;background:var(--gradient-sky);border-radius:2px;transform:scaleX(0);transform-origin:left;transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+.main-nav a:not(.nav-cta):hover::after,.main-nav a.active:not(.nav-cta)::after{transform:scaleX(1)}
+.nav-cta{background:var(--gradient-gold);box-shadow:var(--glow-gold);transition:transform .25s ease, box-shadow .25s ease}
+.nav-cta:hover{transform:translateY(-2px);box-shadow:0 14px 34px -8px rgba(212,160,23,.7)}
+
+/* Hero : halos lumineux qui flottent, reflet doré sur le mot d'accent */
+.hero::before,.hero::after{content:'';position:absolute;border-radius:50%;filter:blur(60px);pointer-events:none;z-index:1}
+.hero::before{width:420px;height:420px;left:-120px;top:-100px;background:rgba(59,130,246,.45);animation:orbFloat 11s ease-in-out infinite}
+.hero::after{width:360px;height:360px;right:-100px;bottom:-120px;background:rgba(240,197,74,.30);animation:orbFloat 13s ease-in-out -4s infinite reverse}
+@keyframes orbFloat{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(40px,28px) scale(1.12)}}
+.hero h1 em{
+  background:linear-gradient(100deg,#F8D56B 0%,#FFF3C4 40%,#D4A017 70%,#F8D56B 100%);
+  background-size:220% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+  animation:goldShine 5s linear infinite;
+}
+@keyframes goldShine{to{background-position:220% center}}
+.hero .eyebrow{box-shadow:0 0 22px rgba(240,197,74,.25)}
+
+/* Barre de recherche : halo bleu au focus, bouton lumineux */
+.search-bar{transition:box-shadow .3s ease, transform .3s ease}
+.search-bar:focus-within{box-shadow:0 28px 70px rgba(29,78,216,.35), 0 0 0 3px rgba(96,165,250,.45);transform:translateY(-2px)}
+.search-bar select:focus,.search-bar input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(29,78,216,.15)}
+.search-bar button{background:var(--gradient-sky);color:#fff;position:relative;overflow:hidden;transition:transform .2s ease, box-shadow .2s ease;box-shadow:0 10px 24px -10px rgba(29,78,216,.8)}
+.search-bar button:hover{background:var(--gradient-sky);transform:translateY(-2px);box-shadow:0 16px 30px -10px rgba(29,78,216,.9)}
+
+/* Boutons : dégradé + reflet qui traverse au survol */
+.btn{position:relative;overflow:hidden;transition:transform .25s cubic-bezier(.2,.8,.2,1), box-shadow .25s ease, background .25s ease, color .25s ease}
+.btn:not(.btn-primary)::after{content:'';position:absolute;top:0;left:-70%;width:45%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.55),transparent);transform:skewX(-20deg);transition:left .6s ease;pointer-events:none}
+.btn:not(.btn-primary):hover::after{left:130%}
+.btn:hover{transform:translateY(-2px)}
+.btn:active{transform:translateY(0) scale(.97)}
+.btn-primary{background:var(--gradient-gold);box-shadow:var(--glow-gold)}
+.btn-primary:hover{background:var(--gradient-gold);box-shadow:0 16px 36px -10px rgba(212,160,23,.75)}
+.btn-outline:hover{background:var(--gradient-sky);border-color:transparent;box-shadow:var(--glow-blue)}
+
+/* Cartes d'annonces : lueur bleue, halo qui suit la souris, prix lumineux */
+.property-card,.category-card{position:relative}
+.property-card::before,.category-card::before{
+  content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:3;opacity:0;transition:opacity .3s ease;
+  background:radial-gradient(260px circle at var(--mx,50%) var(--my,50%), rgba(96,165,250,.20), transparent 65%);
+}
+.property-card:hover::before,.category-card:hover::before{opacity:1}
+.property-card:hover{box-shadow:var(--glow-blue);border-color:rgba(29,78,216,.35)}
+.property-media .price-tag{background:rgba(255,255,255,.92);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);box-shadow:0 6px 18px -6px rgba(11,18,32,.35);transition:transform .3s ease, box-shadow .3s ease}
+.property-card:hover .price-tag{box-shadow:0 10px 24px -6px rgba(29,78,216,.55)}
+.property-media .badge{background:var(--gradient-gold);box-shadow:0 6px 16px -6px rgba(212,160,23,.8)}
+.category-card:hover{box-shadow:var(--glow-blue)}
+
+/* Titres de section : trait lumineux sous le titre */
+.section-head h2{position:relative;display:inline-block}
+.section-head h2::after{content:'';display:block;height:4px;width:54px;margin-top:10px;border-radius:4px;background:linear-gradient(90deg,#1D4ED8,#60A5FA,#F0C54A);background-size:200% 100%;animation:barSlide 4s ease-in-out infinite alternate}
+@keyframes barSlide{to{background-position:100% 0}}
+
+/* Bande de villes et chiffres */
+.cities-strip a{transition:transform .2s ease, background .2s ease, box-shadow .2s ease, color .2s ease}
+.cities-strip a:hover{transform:translateY(-2px);box-shadow:0 10px 20px -10px rgba(29,78,216,.6)}
+.stat-item .num{background:var(--gradient-sky);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+
+/* Bandeau d'appel à l'action : fond qui respire */
+.cta-band{position:relative;overflow:hidden;box-shadow:var(--glow-blue)}
+.cta-band::before{content:'';position:absolute;width:340px;height:340px;right:-90px;top:-130px;border-radius:50%;background:radial-gradient(circle,rgba(96,165,250,.45),transparent 70%);animation:orbFloat 9s ease-in-out infinite;pointer-events:none}
+.cta-band > *{position:relative}
+
+/* Bouton WhatsApp et installation : petit halo pulsé */
+.pwa-install-badge{animation:badgeGlow 2.6s ease-in-out infinite}
+@keyframes badgeGlow{0%,100%{box-shadow:0 0 0 0 rgba(29,78,216,.30)}50%{box-shadow:0 0 0 8px rgba(29,78,216,0)}}
+
+@media (max-width:640px){
+  .hero::before{width:260px;height:260px}
+  .hero::after{width:240px;height:240px}
+  body{background-attachment:scroll}
+}
+@media (prefers-reduced-motion: reduce){
+  .hero::before,.hero::after,.cta-band::before,.hero h1 em,.section-head h2::after,.pwa-install-badge{animation:none !important}
+  .scroll-progress{display:none}
+}
