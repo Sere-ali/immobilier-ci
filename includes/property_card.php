@@ -10,6 +10,7 @@ $img = $hasRealPhoto ? imageUrl($p['image']) : categoryPlaceholderImage($p['cate
   <div class="property-media">
     <img src="<?= e($img) ?>" alt="<?= e($p['title']) ?>" loading="lazy" decoding="async" width="600" height="450">
     <span class="badge <?= $p['listing_type'] === 'location' ? 'location' : '' ?>"><?= $p['listing_type'] === 'location' ? 'À louer' : 'À vendre' ?></span>
+    <?php if (!empty($p['video_path'])): ?><span class="video-badge" title="Visite en vidéo">🎥 Vidéo</span><?php endif; ?>
     <span class="price-tag"><?= formatPrice($p['price']) ?><?= $p['listing_type'] === 'location' ? ' / mois' : '' ?></span>
   </div>
   <div class="property-body">

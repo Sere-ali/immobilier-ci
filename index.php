@@ -5,6 +5,14 @@ require_once __DIR__ . '/includes/header.php';
 $featured = $pdo->query("SELECT p.*, (SELECT image_path FROM property_images WHERE property_id = p.id ORDER BY is_primary DESC, sort_order ASC LIMIT 1) AS image
                           FROM properties p WHERE featured = 1 AND approval_status = 'approuve' ORDER BY created_at DESC LIMIT 6")->fetchAll();
 
+// Dernières annonces approuvées (hors "à la une") : l'accueil n'est jamais vide dès qu'il existe une annonce.
+$featuredIds = array_map('intval', array_column($featured, 'id'));
+$latestSql = "SELECT p.*, (SELECT image_path FROM property_images WHERE property_id = p.id ORDER BY is_primary DESC, sort_order ASC LIMIT 1) AS image
+              FROM properties p WHERE approval_status = 'approuve' AND status = 'disponible'";
+if ($featuredIds) { $latestSql .= ' AND p.id NOT IN (' . implode(',', $featuredIds) . ')'; }
+$latestSql .= ' ORDER BY created_at DESC LIMIT 12';
+$latest = $pdo->query($latestSql)->fetchAll();
+
 $totalProperties = (int)$pdo->query("SELECT COUNT(*) AS n FROM properties WHERE approval_status = 'approuve'")->fetch()['n'];
 $totalCities = (int)$pdo->query("SELECT COUNT(DISTINCT city) AS n FROM properties WHERE approval_status = 'approuve'")->fetch()['n'];
 
@@ -93,7 +101,9 @@ $categories = [
       <a href="annonces" class="link-all">Voir toutes les annonces →</a>
     </div>
 
-    <?php if (empty($featured)): ?>
+    <?php if (empty($featured) && !empty($latest)): ?>
+      <?php /* rien à la une : la section suivante affiche les annonces */ ?>
+    <?php elseif (empty($featured)): ?>
       <div class="empty-state">
         <div class="icon">🏠</div>
         <p>Aucun bien à la une pour le moment. Consultez toutes les annonces disponibles.</p>
@@ -107,6 +117,26 @@ $categories = [
     <?php endif; ?>
   </div>
 </section>
+
+<?php if (!empty($latest)): ?>
+<section class="section" style="padding-top:0" data-live="latest">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow-label">Nouveautés</span>
+        <h2>Dernières annonces</h2>
+        <p>Les biens les plus récemment publiés.</p>
+      </div>
+      <a href="annonces" class="link-all">Voir toutes les annonces →</a>
+    </div>
+    <div class="property-grid" data-reveal-group>
+      <?php foreach ($latest as $p): ?>
+        <?php include __DIR__ . '/includes/property_card.php'; ?>
+      <?php endforeach; ?>
+    </div>
+  </div>
+</section>
+<?php endif; ?>
 
 <section class="section" style="padding-top:0">
   <div class="cta-band" data-reveal>

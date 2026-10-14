@@ -111,9 +111,14 @@ $mainImg = $mainHasRealPhoto ? imageUrl($images[0]['image_path']) : categoryPlac
       <?php if (!empty($property['video_path'])): ?>
         <div class="detail-video">
           <h3>🎥 Visite en vidéo</h3>
-          <video controls playsinline preload="metadata" poster="<?= e($mainImg) ?>" src="<?= e(imageUrl($property['video_path'])) ?>">
+          <?php $vPoster = videoPosterUrl($property['video_path']) ?: $mainImg; ?>
+          <video controls playsinline preload="metadata" poster="<?= e($vPoster) ?>">
+            <?php foreach (videoSources($property['video_path']) as [$vUrl, $vType]): ?>
+              <source src="<?= e($vUrl) ?>" type="<?= e($vType) ?>">
+            <?php endforeach; ?>
             Votre navigateur ne peut pas lire cette vidéo.
           </video>
+          <p class="hint" style="margin-top:6px"><a href="<?= e(imageUrl($property['video_path'])) ?>" target="_blank" rel="noopener">Ouvrir la vidéo dans un nouvel onglet</a></p>
         </div>
       <?php endif; ?>
 

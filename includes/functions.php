@@ -745,6 +745,35 @@ function sanitizePhoneForStorage(string $raw): string
     return ($hasPlus ? '+' : '') . $digits;
 }
 
+/**
+ * Sources de lecture d'une vidéo d'annonce. Pour Cloudinary, on demande une version
+ * MP4/H.264 (lisible par tous les navigateurs, y compris les .mov d'iPhone et les .webm),
+ * avec l'original en secours. Retourne [[url, type], ...].
+ */
+function videoSources(?string $path, string $webPrefix = ''): array
+{
+    if (!$path) return [];
+    $orig = imageUrl($path, $webPrefix);
+    $ext = strtolower(pathinfo(parse_url($orig, PHP_URL_PATH) ?: '', PATHINFO_EXTENSION));
+    $mimes = ['mp4' => 'video/mp4', 'm4v' => 'video/mp4', 'mov' => 'video/quicktime', 'webm' => 'video/webm'];
+    $out = [];
+    if (preg_match('#^https://res\.cloudinary\.com/[^/]+/video/upload/#', $orig)) {
+        $mp4 = preg_replace('#/video/upload/#', '/video/upload/f_mp4,vc_h264,ac_aac,q_auto/', $orig, 1);
+        $mp4 = preg_replace('#\.[A-Za-z0-9]+$#', '', $mp4) . '.mp4';
+        $out[] = [$mp4, 'video/mp4'];
+    }
+    $out[] = [$orig, $mimes[$ext] ?? 'video/mp4'];
+    return $out;
+}
+
+/** Image d'aperçu d'une vidéo Cloudinary (première image), ou chaîne vide. */
+function videoPosterUrl(?string $path): string
+{
+    if (!$path || !preg_match('#^https://res\.cloudinary\.com/[^/]+/video/upload/#', $path)) return '';
+    $u = preg_replace('#/video/upload/#', '/video/upload/so_0,w_1200,q_auto/', $path, 1);
+    return preg_replace('#\.[A-Za-z0-9]+$#', '', $u) . '.jpg';
+}
+
 /** Taille maximale d'une vidéo d'annonce (octets) — doit rester sous upload_max_filesize (docker/uploads.ini) */
 const MAX_VIDEO_BYTES = 50 * 1024 * 1024;
 

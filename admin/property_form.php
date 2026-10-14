@@ -343,7 +343,7 @@ require_once __DIR__ . '/../includes/admin_header.php';
           <video id="video-preview" controls playsinline style="display:none;margin-top:10px;width:100%;max-width:420px;border-radius:10px;background:#000"></video>
           <?php if (!empty($property['video_path'])): ?>
             <div class="hint" style="margin-top:10px">Vidéo actuelle :</div>
-            <video src="<?= e(imageUrl($property['video_path'], '../')) ?>" controls playsinline preload="metadata" style="margin-top:6px;width:100%;max-width:420px;border-radius:10px;background:#000"></video>
+            <video controls playsinline preload="metadata" style="margin-top:6px;width:100%;max-width:420px;border-radius:10px;background:#000"><?php foreach (videoSources($property['video_path'], '../') as [$vUrl, $vType]): ?><source src="<?= e($vUrl) ?>" type="<?= e($vType) ?>"><?php endforeach; ?></video>
             <label class="checkbox-row" style="margin-top:8px"><input type="checkbox" name="remove_video" value="1"> Supprimer la vidéo actuelle</label>
           <?php endif; ?>
         </div>

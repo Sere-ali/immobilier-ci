@@ -942,3 +942,5 @@ body{
 @keyframes liveFlash{0%{box-shadow:0 0 0 0 rgba(37,99,235,.45)}100%{box-shadow:0 0 0 14px rgba(37,99,235,0)}}
 .live-flash{animation:liveFlash .9s ease-out}
 .live-swap [data-reveal],.live-swap [data-reveal-group]>*{animation:none!important;opacity:1!important;transform:none!important}
+
+.video-badge{position:absolute;top:12px;right:12px;background:rgba(15,30,69,.78);color:#fff;font-size:.72rem;font-weight:600;padding:4px 9px;border-radius:999px;backdrop-filter:blur(4px);z-index:2}
