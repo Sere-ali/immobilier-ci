@@ -57,7 +57,7 @@ require_once __DIR__ . '/../includes/admin_header.php';
       <tbody>
       <?php foreach ($recentProperties as $p): ?>
         <tr>
-          <td><div class="thumb-cell" style="background-image:url('<?= e($p['image'] ? imageUrl($p['image'], '../') : 'https://placehold.co/100x80/E8DCC8/0F3D3E') ?>')"></div></td>
+          <td><?php $hasImg = $p['image'] && strpos($p['image'], 'placehold.co') === false; ?><div class="thumb-cell"<?= $hasImg ? ' style="background-image:url(\'' . e(imageUrl($p['image'], '../')) . '\')"' : '' ?>><?= $hasImg ? '' : '🏠' ?></div></td>
           <td><?= e($p['title']) ?><br><span class="mono" style="font-size:.72rem;color:var(--ink-soft)"><?= e($p['reference']) ?></span></td>
           <td><?= e($p['city']) ?></td>
           <td class="mono"><?= formatPrice($p['price']) ?></td>

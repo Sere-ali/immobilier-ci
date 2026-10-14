@@ -35,7 +35,8 @@ if (empty($_SERVER['HTTP_X_LIVE_REFRESH'])) {
 
 $imgStmt = $pdo->prepare('SELECT * FROM property_images WHERE property_id = ? ORDER BY is_primary DESC, sort_order ASC');
 $imgStmt->execute([$property['id']]);
-$images = $imgStmt->fetchAll();
+// Les images par défaut (vignettes de démonstration) ne sont jamais affichées : seules les vraies photos comptent.
+$images = array_values(array_filter($imgStmt->fetchAll(), fn($im) => strpos($im['image_path'], 'placehold.co') === false));
 
 $formError = null;
 $formSuccess = false;
@@ -82,8 +83,9 @@ require_once __DIR__ . '/includes/header.php';
 
 // Une vraie photo importée est toujours prioritaire ; à défaut (annonce de démonstration,
 // ou sans photo), on affiche l'illustration de la catégorie du bien.
-$mainHasRealPhoto = !empty($images) && strpos($images[0]['image_path'], 'placehold.co') === false;
-$mainImg = $mainHasRealPhoto ? imageUrl($images[0]['image_path']) : categoryPlaceholderImage($property['category']);
+$mainHasRealPhoto = !empty($images);
+$mainImg = $mainHasRealPhoto ? imageUrl($images[0]['image_path']) : '';
+$hasVideo = !empty($property['video_path']);
 ?>
 <section class="page-hero" style="padding:30px 0">
   <div class="container">
@@ -99,17 +101,8 @@ $mainImg = $mainHasRealPhoto ? imageUrl($images[0]['image_path']) : categoryPlac
   <?php endif; ?>
   <div class="detail-layout">
     <div>
-      <div class="gallery-main" style="background-image:url('<?= e($mainImg) ?>')"></div>
-      <?php if (count($images) > 1): ?>
-        <div class="gallery-thumbs">
-          <?php foreach ($images as $i => $img): ?>
-            <div class="thumb <?= $i === 0 ? 'active' : '' ?>" style="background-image:url('<?= e(imageUrl($img['image_path'])) ?>')" data-full="<?= e(imageUrl($img['image_path'])) ?>"></div>
-          <?php endforeach; ?>
-        </div>
-      <?php endif; ?>
-
       <?php if (!empty($property['video_path'])): ?>
-        <div class="detail-video">
+        <div class="detail-video" style="margin-top:0">
           <h3>🎥 Visite en vidéo</h3>
           <?php $vPoster = videoPosterUrl($property['video_path']) ?: $mainImg; ?>
           <video controls playsinline preload="metadata" poster="<?= e($vPoster) ?>">
@@ -121,6 +114,17 @@ $mainImg = $mainHasRealPhoto ? imageUrl($images[0]['image_path']) : categoryPlac
           <p class="hint" style="margin-top:6px"><a href="<?= e(imageUrl($property['video_path'])) ?>" target="_blank" rel="noopener">Ouvrir la vidéo dans un nouvel onglet</a></p>
         </div>
       <?php endif; ?>
+      <?php if ($mainImg): ?>
+      <div class="gallery-main" style="background-image:url('<?= e($mainImg) ?>')"></div>
+      <?php endif; ?>
+      <?php if (count($images) > 1): ?>
+        <div class="gallery-thumbs">
+          <?php foreach ($images as $i => $img): ?>
+            <div class="thumb <?= $i === 0 ? 'active' : '' ?>" style="background-image:url('<?= e(imageUrl($img['image_path'])) ?>')" data-full="<?= e(imageUrl($img['image_path'])) ?>"></div>
+          <?php endforeach; ?>
+        </div>
+      <?php endif; ?>
+
 
       <div class="detail-header" data-reveal data-live="detail-head">
         <div class="ref mono" style="color:var(--ink-soft);font-size:.8rem"><?= e($property['reference']) ?> · <?= e(propertyCategories()[$property['category']] ?? $property['category']) ?></div>
