@@ -9,6 +9,9 @@ $user = currentUser();
 $currentScript = basename($_SERVER['SCRIPT_NAME']);
 $inSuperAdmin = strpos($_SERVER['SCRIPT_NAME'], '/superadmin/') !== false;
 
+$chatUnread = 0;
+try { $chatUnread = (int) getPDO()->query('SELECT COALESCE(SUM(unread_admin),0) FROM chat_conversations')->fetchColumn(); } catch (Exception $e) {}
+
 function navActive(string $file, string $current): string
 {
     return $file === $current ? 'active' : '';
@@ -42,6 +45,7 @@ function navActive(string $file, string $current): string
       <a href="<?= e($root) ?>admin/dashboard" class="<?= navActive('dashboard.php', $currentScript) === 'active' && !$inSuperAdmin ? 'active' : '' ?>">📊 Tableau de bord</a>
       <a href="<?= e($root) ?>admin/properties" class="<?= in_array($currentScript, ['properties.php','property_form.php']) && !$inSuperAdmin ? 'active' : '' ?>">🏠 Annonces</a>
       <a href="<?= e($root) ?>admin/messages" class="<?= navActive('messages.php', $currentScript) === 'active' && !$inSuperAdmin ? 'active' : '' ?>">✉️ Messages</a>
+      <a href="<?= e($root) ?>admin/chat" class="<?= navActive('chat.php', $currentScript) ?>">💬 Chat visiteurs<?php if ($chatUnread > 0): ?><span class="nav-badge"><?= $chatUnread > 99 ? '99+' : $chatUnread ?></span><?php endif; ?></a>
       <a href="<?= e($root) ?>admin/profile" class="<?= navActive('profile.php', $currentScript) === 'active' ? 'active' : '' ?>">👤 Mon profil</a>
 
       <?php if ($user['role'] === 'superadmin'): ?>

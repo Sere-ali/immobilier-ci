@@ -319,7 +319,7 @@ function sendSecurityHeaders(): void
     header('X-Content-Type-Options: nosniff');
     header('X-Frame-Options: SAMEORIGIN');
     header('Referrer-Policy: strict-origin-when-cross-origin');
-    header('Permissions-Policy: geolocation=(), microphone=(), camera=()');
+    header('Permissions-Policy: geolocation=(), microphone=(self), camera=()');
     if (isHttps()) {
         header('Strict-Transport-Security: max-age=31536000; includeSubDomains');
     }
@@ -505,6 +505,45 @@ function ensureSchemaUpToDate(PDO $pdo): void
             }
         } catch (Exception $e) {
             error_log('Migration v7 (video annonce) error: ' . $e->getMessage());
+        }
+    }
+
+    // v8 : chat public (visiteurs <-> équipe). Une conversation par visiteur
+    // (identifiée par un jeton aléatoire gardé dans son navigateur) et ses messages
+    // (texte, vocal ou pièce jointe).
+    if ($version < 8) {
+        try {
+            $pdo->exec("CREATE TABLE IF NOT EXISTS chat_conversations (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                token CHAR(40) NOT NULL UNIQUE,
+                visitor_name VARCHAR(120) DEFAULT NULL,
+                visitor_phone VARCHAR(30) DEFAULT NULL,
+                ip VARCHAR(45) DEFAULT NULL,
+                unread_admin INT NOT NULL DEFAULT 0,
+                created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                last_message_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                INDEX idx_last (last_message_at)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+            $pdo->exec("CREATE TABLE IF NOT EXISTS chat_messages (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                conversation_id INT NOT NULL,
+                sender ENUM('visitor','agent') NOT NULL,
+                body TEXT DEFAULT NULL,
+                attachment_path VARCHAR(255) DEFAULT NULL,
+                attachment_name VARCHAR(160) DEFAULT NULL,
+                attachment_kind ENUM('file','image','audio') DEFAULT NULL,
+                created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                INDEX idx_conv (conversation_id, id),
+                CONSTRAINT fk_chat_conv FOREIGN KEY (conversation_id) REFERENCES chat_conversations(id) ON DELETE CASCADE
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+            $ok = (bool) $pdo->query("SHOW TABLES LIKE 'chat_messages'")->fetch();
+            if ($ok) {
+                $pdo->prepare("INSERT INTO settings (setting_key, setting_value) VALUES ('schema_version', '8') ON DUPLICATE KEY UPDATE setting_value = '8'")->execute();
+            } else {
+                error_log('Migration v8 (chat) : table introuvable après CREATE TABLE.');
+            }
+        } catch (Exception $e) {
+            error_log('Migration v8 (chat) error: ' . $e->getMessage());
         }
     }
 }
@@ -916,4 +955,88 @@ function paginationLinks(array $pagination): string
     }
     $html .= '</nav>';
     return $html;
+}
+
+// ---------------------------------------------------------------------------
+// Chat public
+// ---------------------------------------------------------------------------
+const CHAT_MAX_FILE_BYTES = 10 * 1024 * 1024;
+
+/** Extensions de pièces jointes acceptées dans le chat, avec leur nature. */
+function chatAllowedExtensions(): array
+{
+    return [
+        'jpg' => 'image', 'jpeg' => 'image', 'png' => 'image', 'webp' => 'image', 'gif' => 'image',
+        'webm' => 'audio', 'ogg' => 'audio', 'oga' => 'audio', 'mp3' => 'audio', 'm4a' => 'audio', 'wav' => 'audio', 'aac' => 'audio',
+        'pdf' => 'file', 'doc' => 'file', 'docx' => 'file', 'xls' => 'file', 'xlsx' => 'file', 'txt' => 'file', 'zip' => 'file',
+    ];
+}
+
+/** URL d'affichage d'une pièce jointe du chat (Cloudinary ou dossier local). */
+function chatFileUrl(?string $path, string $webPrefix = ''): string
+{
+    if (!$path) return '';
+    if (preg_match('#^https?://#i', $path)) return $path;
+    return $webPrefix . 'uploads/chat/' . rawurlencode(basename($path));
+}
+
+/**
+ * Enregistre une pièce jointe de chat (Cloudinary si configuré, sinon disque local).
+ * Renvoie [chemin_ou_url, nom, nature] ou une chaîne d'erreur.
+ */
+function chatStoreAttachment(array $file, bool $isVoice)
+{
+    if (($file['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) return null;
+    if ($file['error'] !== UPLOAD_ERR_OK) return 'Le fichier n\'a pas pu être envoyé (trop volumineux ?).';
+    if ($file['size'] > CHAT_MAX_FILE_BYTES) return 'Fichier trop lourd (10 Mo maximum).';
+    $ext = strtolower(pathinfo($file['name'] ?? '', PATHINFO_EXTENSION));
+    if ($isVoice && $ext === '') $ext = 'webm';
+    $allowed = chatAllowedExtensions();
+    if (!isset($allowed[$ext])) return 'Type de fichier non accepté.';
+    $kind = $isVoice ? 'audio' : $allowed[$ext];
+    if ($kind === 'image' && @getimagesize($file['tmp_name']) === false) return 'Image invalide.';
+
+    $display = preg_replace('/[^\p{L}\p{N}._ -]/u', '_', basename($file['name'] ?: ('message-vocal.' . $ext)));
+    $display = mb_substr($display, 0, 120);
+
+    $resource = $kind === 'image' ? 'image' : ($kind === 'audio' ? 'video' : 'raw');
+    $url = cloudinaryUpload($file['tmp_name'], $display, $resource, 90, 'application/octet-stream');
+    if ($url) return [$url, $display, $kind];
+
+    $dir = __DIR__ . '/../uploads/chat/';
+    if (!is_dir($dir)) @mkdir($dir, 0755, true);
+    $name = uniqid('chat_', true) . '.' . $ext;
+    if (!@move_uploaded_file($file['tmp_name'], $dir . $name)) return 'Impossible d\'enregistrer le fichier.';
+    return [$name, $display, $kind];
+}
+
+/** Message de chat prêt à être renvoyé en JSON. */
+function chatFormatMessage(array $m, string $webPrefix = ''): array
+{
+    return [
+        'id'     => (int)$m['id'],
+        'sender' => $m['sender'],
+        'body'   => (string)($m['body'] ?? ''),
+        'file'   => $m['attachment_path'] ? [
+            'url'  => chatFileUrl($m['attachment_path'], $webPrefix),
+            'name' => $m['attachment_name'],
+            'kind' => $m['attachment_kind'],
+        ] : null,
+        'at'     => $m['created_at'],
+    ];
+}
+
+/** Supprime les fichiers locaux d'une conversation avant sa suppression. */
+function chatDeleteConversationFiles(PDO $pdo, int $conversationId): void
+{
+    try {
+        $st = $pdo->prepare('SELECT attachment_path FROM chat_messages WHERE conversation_id = ? AND attachment_path IS NOT NULL');
+        $st->execute([$conversationId]);
+        foreach ($st->fetchAll(PDO::FETCH_COLUMN) as $path) {
+            if (!preg_match('#^https?://#i', $path)) {
+                $f = __DIR__ . '/../uploads/chat/' . basename($path);
+                if (is_file($f)) @unlink($f);
+            }
+        }
+    } catch (Exception $e) {}
 }

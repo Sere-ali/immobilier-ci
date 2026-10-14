@@ -31,6 +31,8 @@
     </div>
   </div>
 </footer>
+<?php require __DIR__ . '/chat_widget.php'; ?>
 <script src="assets/js/main.js?v=<?= assetVersion('assets/js/main.js') ?>" defer></script>
+<script src="assets/js/chat.js?v=<?= assetVersion('assets/js/chat.js') ?>" defer></script>
 </body>
 </html>
