@@ -132,7 +132,7 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;line-height:1.15;margin
 .hero{
   position:relative;overflow:hidden;
   background:
-    radial-gradient(ellipse 90% 75% at 50% 15%, rgba(30,58,102,.55) 0%, rgba(6,9,16,.82) 70%, rgba(6,9,16,.92) 100%),
+    radial-gradient(ellipse 90% 75% at 50% 15%, rgba(37,99,235,.18) 0%, rgba(15,30,60,.32) 70%, rgba(10,20,40,.45) 100%),
     url('https://res.cloudinary.com/epxlbn9z/image/upload/v1790706695/r9tbfmdgcsjhneoec1zp.jpg') center/cover no-repeat;
   color:#fff;
   padding:80px 0 60px;
@@ -144,9 +144,9 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;line-height:1.15;margin
   background:rgba(212,160,23,.16);border:1px solid rgba(212,160,23,.45);
   padding:6px 14px;border-radius:999px;margin-bottom:22px;color:var(--gold-light);
 }
-.hero h1{font-size:clamp(1.7rem,5vw,3.4rem);color:#fff}
+.hero h1{font-size:clamp(1.7rem,5vw,3.4rem);color:#fff;text-shadow:0 2px 18px rgba(0,0,0,.55)}
 .hero h1 em{font-style:italic;color:var(--laterite)}
-.hero p{font-size:clamp(.95rem,2vw,1.1rem);color:rgba(255,255,255,.85);max-width:560px;margin:14px auto 36px}
+.hero p{font-size:clamp(.95rem,2vw,1.1rem);color:#fff;text-shadow:0 1px 12px rgba(0,0,0,.6);max-width:560px;margin:14px auto 36px}
 
 /* Barre de recherche */
 .search-bar{
