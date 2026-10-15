@@ -962,3 +962,67 @@ body{
 @keyframes homeFade{0%{opacity:0}4%{opacity:1}17%{opacity:1}21%{opacity:0}100%{opacity:0}}
 @keyframes homeDrift{from{transform:scale(1.02) translate3d(-1.5%,0,0)}to{transform:scale(1.14) translate3d(1.5%,-1.5%,0)}}
 @media (prefers-reduced-motion:reduce){.home-bg span{animation:homeFade 48s linear infinite}}
+
+/* =====================================================================
+   HARMONISATION — lisibilité sur le décor animé + cohérence visuelle
+   Principe : le décor reste visible en arrière-plan, mais tout texte
+   repose sur une surface "verre" claire (blanc translucide + flou), avec
+   les mêmes arrondis, bordures et ombres partout.
+   ===================================================================== */
+:root{
+  --glass: rgba(255,255,255,.86);
+  --glass-strong: rgba(255,255,255,.94);
+  --glass-border: rgba(29,78,216,.14);
+  --ink-soft: #424C61;           /* gris plus foncé : contraste AA sur fond clair */
+  --gold-text: #8A6508;          /* or foncé pour le TEXTE (l'or clair reste pour les boutons) */
+  --r-card: 20px;
+  --shadow-soft: 0 12px 34px -14px rgba(11,18,32,.28);
+}
+.home-bg::after{background:linear-gradient(180deg,rgba(247,250,255,.90),rgba(247,250,255,.94))}
+.home-bg--home::after{background:linear-gradient(180deg,rgba(247,250,255,.50),rgba(247,250,255,.74))}
+
+/* Surfaces en verre */
+.section-head,.cities-strip,.stats-band,.page-hero,.empty-state,.cta-band{
+  -webkit-backdrop-filter:blur(14px) saturate(1.2);backdrop-filter:blur(14px) saturate(1.2);
+}
+.section-head{
+  background:var(--glass);border:1px solid var(--glass-border);border-radius:var(--r-card);
+  padding:22px 28px;box-shadow:var(--shadow-soft);align-items:center;
+}
+.section-head h2{color:var(--ink);font-weight:700}
+.section-head .eyebrow-label{color:var(--gold-text);font-weight:600}
+.section-head p{color:var(--ink-soft)}
+.link-all{color:var(--blue);border-bottom-color:var(--laterite);font-weight:700}
+.link-all:hover{color:var(--blue-dark)}
+
+.cities-strip{background:var(--glass);border-color:var(--glass-border)}
+.cities-strip a{background:var(--glass-strong);color:var(--ink);font-weight:600}
+.stats-band{background:var(--glass);border-top:1px solid var(--glass-border);border-bottom:1px solid var(--glass-border)}
+.stat-item .num{color:var(--blue-dark)}
+.stat-item .label{color:var(--ink-soft);font-weight:600}
+.page-hero{background:var(--glass);border-bottom:1px solid var(--glass-border)}
+.cta-band{background:var(--glass-strong);border:1px solid var(--glass-border);box-shadow:var(--shadow-soft)}
+.empty-state{background:var(--glass);border:1px solid var(--glass-border);border-radius:var(--r-card);padding:34px 24px;color:var(--ink)}
+
+/* Cartes : même arrondi, même ombre, texte pleinement contrasté */
+.property-card,.category-card{background:var(--glass-strong);border:1px solid var(--glass-border);border-radius:var(--r-card);box-shadow:var(--shadow-soft)}
+.property-card:hover,.category-card:hover{box-shadow:0 22px 44px -16px rgba(29,78,216,.38)}
+.property-body h3{color:var(--ink)}
+.property-body .location-line,.property-specs{color:var(--ink-soft)}
+.category-card .name{color:var(--ink);font-weight:700}
+
+/* Pied de page : verre aussi, pour finir proprement */
+.site-footer{background:linear-gradient(165deg,rgba(238,242,248,.94),rgba(207,219,234,.96));-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+
+/* Hero : texte plus net, transition douce vers le contenu */
+.hero{box-shadow:0 30px 60px -40px rgba(11,18,32,.6)}
+.hero .eyebrow{background:rgba(11,18,32,.45);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);color:#F8D56B;font-weight:700}
+.hero h1{text-shadow:0 2px 22px rgba(0,0,0,.65)}
+
+/* Focus clavier visible partout */
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--blue);outline-offset:2px;border-radius:8px}
+
+@media (max-width:640px){
+  .section-head{padding:18px 18px}
+  .section{padding:44px 0}
+}
