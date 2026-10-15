@@ -10,6 +10,7 @@
         <a href="index">Accueil</a>
         <a href="annonces">Toutes les annonces</a>
         <a href="contact">Contact</a>
+        <a href="conditions">Conditions d'utilisation</a>
         <a href="confidentialite">Politique de confidentialité</a>
       </div>
       <div>
