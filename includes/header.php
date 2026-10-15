@@ -42,10 +42,17 @@ function navLinkClass(string $script, string $currentScript, ?string $listingTyp
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<link rel="preconnect" href="https://res.cloudinary.com" crossorigin>
+<?php if (basename($_SERVER['SCRIPT_NAME'] ?? '', '.php') === 'index'): ?><link rel="preload" as="image" href="https://res.cloudinary.com/epxlbn9z/image/upload/w_1400,q_auto,f_auto/v1790706695/r9tbfmdgcsjhneoec1zp.jpg"><?php endif; ?>
 <link rel="stylesheet" href="assets/css/style.css?v=<?= assetVersion('assets/css/style.css') ?>">
 </head>
 <body>
-<div class="home-bg<?= basename($_SERVER['SCRIPT_NAME'] ?? '', '.php') === 'index' ? ' home-bg--home' : '' ?>" aria-hidden="true"><span style="background-image:url(https://res.cloudinary.com/epxlbn9z/image/upload/w_1600,q_auto,f_auto/v1792066154/immobilier-ci/bg/villa-piscine.jpg)"></span><span style="background-image:url(https://res.cloudinary.com/epxlbn9z/image/upload/w_1600,q_auto,f_auto/v1792066170/immobilier-ci/bg/maison-tropicale.jpg)"></span><span style="background-image:url(https://res.cloudinary.com/epxlbn9z/image/upload/w_1600,q_auto,f_auto/v1790706695/r9tbfmdgcsjhneoec1zp.jpg)"></span><span style="background-image:url(https://res.cloudinary.com/epxlbn9z/image/upload/w_1600,q_auto,f_auto/v1790577148/chaptarif/immo-3.jpg)"></span><span style="background-image:url(https://res.cloudinary.com/epxlbn9z/image/upload/w_1600,q_auto,f_auto/v1790577145/chaptarif/immo-2.jpg)"></span><span style="background-image:url(https://res.cloudinary.com/epxlbn9z/image/upload/w_1600,q_auto,f_auto/v1790577153/chaptarif/immo-4.jpg)"></span></div>
+<div class="home-bg<?= basename($_SERVER['SCRIPT_NAME'] ?? '', '.php') === 'index' ? ' home-bg--home' : '' ?>" aria-hidden="true"><span style="background-image:url(https://res.cloudinary.com/epxlbn9z/image/upload/w_1280,q_auto:eco,f_auto/v1792066154/immobilier-ci/bg/villa-piscine.jpg)"></span><span data-bg="https://res.cloudinary.com/epxlbn9z/image/upload/w_1280,q_auto:eco,f_auto/v1792066170/immobilier-ci/bg/maison-tropicale.jpg"></span><span data-bg="https://res.cloudinary.com/epxlbn9z/image/upload/w_1280,q_auto:eco,f_auto/v1790706695/r9tbfmdgcsjhneoec1zp.jpg"></span><span data-bg="https://res.cloudinary.com/epxlbn9z/image/upload/w_1280,q_auto:eco,f_auto/v1790577148/chaptarif/immo-3.jpg"></span><span data-bg="https://res.cloudinary.com/epxlbn9z/image/upload/w_1280,q_auto:eco,f_auto/v1790577145/chaptarif/immo-2.jpg"></span><span data-bg="https://res.cloudinary.com/epxlbn9z/image/upload/w_1280,q_auto:eco,f_auto/v1790577153/chaptarif/immo-4.jpg"></span></div>
+<script>
+/* Les photos du décor se chargent APRÈS l'affichage de la page (une à une), pour ne jamais ralentir l'arrivée sur le site. */
+window.addEventListener('load',function(){var l=document.querySelectorAll('.home-bg span[data-bg]'),i=0;
+(function n(){if(i>=l.length)return;var s=l[i++],im=new Image();im.onload=im.onerror=function(){s.style.backgroundImage='url('+s.dataset.bg+')';setTimeout(n,1200)};im.src=s.dataset.bg})()});
+</script>
 <header class="site-header">
   <div class="container">
     <div class="header-brand">

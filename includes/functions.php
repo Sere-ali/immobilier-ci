@@ -577,10 +577,15 @@ function ensureSchemaUpToDate(PDO $pdo): void
  * localement (nom de fichier) ou sur un stockage externe comme Cloudinary
  * (URL complète déjà stockée telle quelle en base).
  */
-function imageUrl(?string $path, string $webPrefix = ''): string
+function imageUrl(?string $path, string $webPrefix = '', int $width = 0): string
 {
     if (!$path) return '';
     if (preg_match('#^https?://#i', $path)) {
+        // Cloudinary : on demande une version redimensionnée, compressée, au meilleur format (WebP/AVIF)
+        // au lieu de l'original (souvent plusieurs Mo) — le gain de vitesse est considérable.
+        if ($width > 0 && preg_match('#^https://res\.cloudinary\.com/[^/]+/image/upload/v\d+/#', $path)) {
+            return preg_replace('#/image/upload/#', '/image/upload/w_' . $width . ',c_limit,q_auto,f_auto/', $path, 1);
+        }
         return $path;
     }
     return $webPrefix . UPLOAD_URL . $path;

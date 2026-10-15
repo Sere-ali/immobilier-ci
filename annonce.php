@@ -84,7 +84,7 @@ require_once __DIR__ . '/includes/header.php';
 // Une vraie photo importée est toujours prioritaire ; à défaut (annonce de démonstration,
 // ou sans photo), on affiche l'illustration de la catégorie du bien.
 $mainHasRealPhoto = !empty($images);
-$mainImg = $mainHasRealPhoto ? imageUrl($images[0]['image_path']) : '';
+$mainImg = $mainHasRealPhoto ? imageUrl($images[0]['image_path'], '', 1200) : '';
 $hasVideo = !empty($property['video_path']);
 ?>
 <section class="page-hero" style="padding:30px 0">
@@ -120,7 +120,7 @@ $hasVideo = !empty($property['video_path']);
       <?php if (count($images) > 1): ?>
         <div class="gallery-thumbs">
           <?php foreach ($images as $i => $img): ?>
-            <div class="thumb <?= $i === 0 ? 'active' : '' ?>" style="background-image:url('<?= e(imageUrl($img['image_path'])) ?>')" data-full="<?= e(imageUrl($img['image_path'])) ?>"></div>
+            <div class="thumb <?= $i === 0 ? 'active' : '' ?>" style="background-image:url('<?= e(imageUrl($img['image_path'], '', 240)) ?>')" data-full="<?= e(imageUrl($img['image_path'], '', 1200)) ?>"></div>
           <?php endforeach; ?>
         </div>
       <?php endif; ?>

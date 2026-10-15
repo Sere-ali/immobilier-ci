@@ -4,7 +4,7 @@
    ou annonce créée sans photo), on affiche l'illustration de la catégorie du bien plutôt
    qu'une vignette de couleur unie sans repère. */
 $hasRealPhoto = !empty($p['image']) && strpos($p['image'], 'placehold.co') === false;
-$img = $hasRealPhoto ? imageUrl($p['image']) : '';
+$img = $hasRealPhoto ? imageUrl($p['image'], '', 640) : '';
 $cardVideo = !$hasRealPhoto && !empty($p['video_path']) ? videoSources($p['video_path']) : [];
 ?>
 <a href="annonce?slug=<?= e($p['slug']) ?>" class="property-card">
