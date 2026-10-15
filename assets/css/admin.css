@@ -535,3 +535,9 @@ body{
 .live-swap [data-reveal],.live-swap [data-reveal-group]>*{animation:none!important;opacity:1!important;transform:none!important}
 
 .thumb-cell{display:flex;align-items:center;justify-content:center;font-size:1.4rem;background-color:#EAF1FF}
+
+/* Connexion / création de compte */
+.login-tabs{display:flex;gap:6px;background:rgba(29,78,216,.08);padding:5px;border-radius:14px;margin-bottom:18px}
+.login-tabs a{flex:1;text-align:center;padding:10px 12px;border-radius:10px;font-weight:700;font-size:.92rem;color:var(--ink);text-decoration:none;transition:all .2s}
+.login-tabs a.active{background:#fff;color:var(--lagune);box-shadow:0 4px 14px -6px rgba(29,78,216,.4)}
+.login-tabs a:not(.active):hover{background:rgba(255,255,255,.6)}

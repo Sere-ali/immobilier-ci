@@ -1,12 +1,14 @@
 <?php
 /**
  * Chat avec les visiteurs du site : liste des conversations + réponse
- * (texte, vocal, fichier). Accessible à tous les administrateurs connectés.
+ * (texte, vocal, fichier). Réservé aux super administrateurs : les comptes
+ * administrateurs pouvant être créés librement, les conversations privées des
+ * visiteurs ne leur sont pas ouvertes.
  */
 require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../includes/functions.php';
 require_once __DIR__ . '/../includes/auth.php';
-requireLogin();
+requireSuperAdmin();
 $pdo = getPDO();
 $user = currentUser();
 $webRoot = '../';

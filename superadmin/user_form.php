@@ -51,6 +51,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && csrfVerify()) {
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'Adresse e-mail invalide.';
     if ($phone !== '' && !isValidLocalIvoryCoastPhone($phone)) $errors[] = 'Numéro de téléphone invalide : 10 chiffres, sans l\'indicatif (ajouté automatiquement).';
     if (!in_array($role, ['admin','superadmin'])) $errors[] = 'Rôle invalide.';
+    // Seul le super administrateur PRINCIPAL peut nommer un super administrateur
+    // (création d'un compte ou promotion d'un administrateur existant).
+    $wasSuper = $editUser && $editUser['role'] === 'superadmin';
+    if ($role === 'superadmin' && !$wasSuper && empty($currentAdmin['is_principal'])) {
+        $errors[] = 'Seul le super administrateur principal peut nommer un super administrateur.';
+    }
     if (!$editUser && strlen($password) < 8) $errors[] = 'Le mot de passe doit contenir au moins 8 caractères.';
     if ($password !== '' && strlen($password) < 8) $errors[] = 'Le mot de passe doit contenir au moins 8 caractères.';
 
@@ -120,8 +126,11 @@ require_once __DIR__ . '/../includes/admin_header.php';
           <?php else: ?>
             <select name="role" required>
               <option value="admin" <?= (($editUser['role'] ?? 'admin') === 'admin') ? 'selected' : '' ?>>Administrateur</option>
-              <option value="superadmin" <?= (($editUser['role'] ?? '') === 'superadmin') ? 'selected' : '' ?>>Super Administrateur</option>
+              <?php if (!empty($currentAdmin['is_principal'])): ?>
+                <option value="superadmin" <?= (($editUser['role'] ?? '') === 'superadmin') ? 'selected' : '' ?>>Super Administrateur</option>
+              <?php endif; ?>
             </select>
+            <?php if (empty($currentAdmin['is_principal'])): ?><div class="hint">Seul le super administrateur principal peut nommer un super administrateur.</div><?php endif; ?>
           <?php endif; ?>
         </div>
         <div class="field full">
