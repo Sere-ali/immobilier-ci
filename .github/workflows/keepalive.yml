@@ -1,0 +1,22 @@
+# Garde le site « éveillé » : Render met les services gratuits en veille après 15 min
+# sans visite (écran « Chargement de l'application »). Ce ping toutes les 5 minutes évite ça.
+name: Garder le site éveillé
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+permissions: {}
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Ping du site
+        run: |
+          for i in 1 2 3; do
+            code=$(curl -s -o /dev/null -m 60 -w "%{http_code}" https://immobilier-ci-y33s.onrender.com/live_ping || echo 000)
+            echo "tentative $i : HTTP $code"
+            [ "$code" = "200" ] && exit 0
+            sleep 20
+          done
+          exit 0
