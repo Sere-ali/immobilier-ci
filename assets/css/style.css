@@ -946,3 +946,19 @@ body{
 .video-badge{position:absolute;top:12px;right:12px;background:rgba(15,30,69,.78);color:#fff;font-size:.72rem;font-weight:600;padding:4px 9px;border-radius:999px;backdrop-filter:blur(4px);z-index:2}
 
 .media-empty{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:3rem;background:linear-gradient(135deg,#EAF1FF,#F7FAFF)}
+
+/* Décor animé de l'accueil : belles maisons en fondu enchaîné, zoom lent,
+   derrière le contenu (voile clair pour garder les textes lisibles). */
+.home-bg{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;background:#eaf1fb}
+.home-bg span{position:absolute;inset:-6%;background-size:cover;background-position:center;opacity:0;
+  animation:homeFade 48s linear infinite,homeDrift 24s ease-in-out infinite alternate;will-change:opacity,transform}
+.home-bg span:nth-child(1){animation-delay:0s,0s}
+.home-bg span:nth-child(2){animation-delay:8s,-4s}
+.home-bg span:nth-child(3){animation-delay:16s,-8s}
+.home-bg span:nth-child(4){animation-delay:24s,-12s}
+.home-bg span:nth-child(5){animation-delay:32s,-16s}
+.home-bg span:nth-child(6){animation-delay:40s,-20s}
+.home-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(246,249,255,.55),rgba(246,249,255,.78))}
+@keyframes homeFade{0%{opacity:0}4%{opacity:1}17%{opacity:1}21%{opacity:0}100%{opacity:0}}
+@keyframes homeDrift{from{transform:scale(1.02) translate3d(-1.5%,0,0)}to{transform:scale(1.14) translate3d(1.5%,-1.5%,0)}}
+@media (prefers-reduced-motion:reduce){.home-bg span{animation:homeFade 48s linear infinite}}

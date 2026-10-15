@@ -25,6 +25,7 @@ $categories = [
     'immeuble'    => 'Immeubles',
 ];
 ?>
+<div class="home-bg" aria-hidden="true"><span style="background-image:url(https://res.cloudinary.com/epxlbn9z/image/upload/w_1600,q_auto,f_auto/v1792066154/immobilier-ci/bg/villa-piscine.jpg)"></span><span style="background-image:url(https://res.cloudinary.com/epxlbn9z/image/upload/w_1600,q_auto,f_auto/v1792066170/immobilier-ci/bg/maison-tropicale.jpg)"></span><span style="background-image:url(https://res.cloudinary.com/epxlbn9z/image/upload/w_1600,q_auto,f_auto/v1790706695/r9tbfmdgcsjhneoec1zp.jpg)"></span><span style="background-image:url(https://res.cloudinary.com/epxlbn9z/image/upload/w_1600,q_auto,f_auto/v1790577148/chaptarif/immo-3.jpg)"></span><span style="background-image:url(https://res.cloudinary.com/epxlbn9z/image/upload/w_1600,q_auto,f_auto/v1790577145/chaptarif/immo-2.jpg)"></span><span style="background-image:url(https://res.cloudinary.com/epxlbn9z/image/upload/w_1600,q_auto,f_auto/v1790577153/chaptarif/immo-4.jpg)"></span></div>
 <section class="hero">
   <div class="skyline"></div>
   <div class="container hero-inner">
