@@ -6,6 +6,7 @@ requireSuperAdmin();
 $pdo = getPDO();
 $currentAdmin = currentUser();
 
+csrfGetGuard('users');
 $id = (int)($_GET['id'] ?? 0);
 
 if ($id === (int)$currentAdmin['id']) {

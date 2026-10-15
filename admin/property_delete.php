@@ -6,6 +6,7 @@ requireLogin();
 $pdo = getPDO();
 $user = currentUser();
 
+csrfGetGuard('properties');
 $id = (int)($_GET['id'] ?? 0);
 $stmt = $pdo->prepare('SELECT * FROM properties WHERE id = ?');
 $stmt->execute([$id]);

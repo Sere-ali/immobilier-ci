@@ -249,6 +249,28 @@ function csrfVerify(): bool
         && hash_equals($_SESSION['csrf_token'], $_POST['csrf_token']);
 }
 
+/** Jeton pour les liens d'action (GET) qui modifient des données : à joindre à l'URL (&t=...). */
+function csrfQuery(): string
+{
+    return 't=' . rawurlencode(csrfToken());
+}
+
+/** Vérifie le jeton d'un lien d'action (GET). */
+function csrfGetVerify(): bool
+{
+    return isset($_GET['t'], $_SESSION['csrf_token']) && is_string($_GET['t'])
+        && hash_equals($_SESSION['csrf_token'], $_GET['t']);
+}
+
+/** Refuse une action GET sans jeton valide (protection contre les liens piégés). */
+function csrfGetGuard(string $redirectTo): void
+{
+    if (!csrfGetVerify()) {
+        flash('error', 'Lien expiré ou invalide. Merci de réessayer depuis la page.');
+        redirect($redirectTo);
+    }
+}
+
 /** Renvoie true si la requête est servie en HTTPS, y compris derrière un proxy comme celui de Render */
 function isHttps(): bool
 {
@@ -320,6 +342,8 @@ function sendSecurityHeaders(): void
     header('X-Frame-Options: SAMEORIGIN');
     header('Referrer-Policy: strict-origin-when-cross-origin');
     header('Permissions-Policy: geolocation=(), microphone=(self), camera=()');
+    header('Cross-Origin-Opener-Policy: same-origin');
+    header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; media-src 'self' blob: https:; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'");
     if (isHttps()) {
         header('Strict-Transport-Security: max-age=31536000; includeSubDomains');
     }

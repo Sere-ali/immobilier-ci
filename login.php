@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['form'] ?? '') === 'registe
         $email = trim($_POST['email'] ?? '');
         $password = $_POST['password'] ?? '';
 
-        if ($email !== '' && countRecentLoginFailures($pdo, $email) >= 5) {
+        if (($email !== '' && countRecentLoginFailures($pdo, $email) >= 5) || countRecentSubmissions($pdo, 'login_fail_ip', clientIp(), 15) >= 20) {
             $locked = true;
             $error = 'Trop de tentatives échouées. Merci de réessayer dans 15 minutes.';
         } else {
@@ -77,6 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['form'] ?? '') === 'registe
             if ($email !== '') {
                 recordLoginFailure($pdo, $email);
             }
+            recordSubmission($pdo, 'login_fail_ip', clientIp());
             $error = 'Identifiants incorrects ou compte désactivé.';
         }
     }

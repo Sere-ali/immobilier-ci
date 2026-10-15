@@ -7,6 +7,7 @@ $pdo = getPDO();
 $user = currentUser();
 
 if (isset($_GET['toggle'], $_GET['id'])) {
+    csrfGetGuard('users');
     $targetId = (int)$_GET['id'];
     if ($targetId !== (int)$user['id']) {
         $stmt = $pdo->prepare('SELECT status, role FROM users WHERE id = ?');
@@ -60,8 +61,8 @@ require_once __DIR__ . '/../includes/admin_header.php';
             <?php else: ?>
               <a href="user_form?id=<?= $u['id'] ?>" class="btn btn-outline btn-sm">Modifier</a>
               <?php if ($u['id'] != $user['id']): ?>
-                <a href="?toggle=1&id=<?= $u['id'] ?>" class="btn btn-outline btn-sm" data-confirm="<?= $u['status']==='actif' ? 'Désactiver' : 'Activer' ?> ce compte ?"><?= $u['status']==='actif' ? 'Désactiver' : 'Activer' ?></a>
-                <a href="user_delete?id=<?= $u['id'] ?>" class="btn btn-danger btn-sm" data-confirm="Supprimer définitivement ce compte ? Ses annonces resteront visibles mais sans propriétaire.">Suppr.</a>
+                <a href="?toggle=1&id=<?= $u['id'] ?>&<?= csrfQuery() ?>" class="btn btn-outline btn-sm" data-confirm="<?= $u['status']==='actif' ? 'Désactiver' : 'Activer' ?> ce compte ?"><?= $u['status']==='actif' ? 'Désactiver' : 'Activer' ?></a>
+                <a href="user_delete?id=<?= $u['id'] ?>&<?= csrfQuery() ?>" class="btn btn-danger btn-sm" data-confirm="Supprimer définitivement ce compte ? Ses annonces resteront visibles mais sans propriétaire.">Suppr.</a>
               <?php endif; ?>
             <?php endif; ?>
           </td>

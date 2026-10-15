@@ -20,6 +20,7 @@ if (isset($_GET['id'])) {
     if (!$canView) { flash('error', 'Message introuvable.'); redirect('messages'); }
 
     if (isset($_GET['delete'])) {
+        csrfGetGuard('messages?id=' . $mid);
         // Seul le Super Admin peut supprimer un message reçu.
         if (!$isSuper) {
             flash('error', "Seul le Super Administrateur peut supprimer un message.");
@@ -32,7 +33,10 @@ if (isset($_GET['id'])) {
     }
 
     if (isset($_GET['mark'])) {
-        $pdo->prepare('UPDATE messages SET status = ? WHERE id = ?')->execute([$_GET['mark'], $mid]);
+        csrfGetGuard('messages?id=' . $mid);
+        if (in_array($_GET['mark'], ['nouveau', 'lu', 'traite'], true)) {
+            $pdo->prepare('UPDATE messages SET status = ? WHERE id = ?')->execute([$_GET['mark'], $mid]);
+        }
         redirect('messages?id=' . $mid);
     }
     if ($message['status'] === 'nouveau') {
@@ -66,9 +70,9 @@ if (isset($_GET['id'])) {
             </a>
           <?php endif; ?>
           <a href="mailto:<?= e($message['email']) ?>" class="btn btn-outline">Répondre par e-mail</a>
-          <a href="?id=<?= $mid ?>&mark=traite" class="btn btn-outline">Marquer comme traité</a>
+          <a href="?id=<?= $mid ?>&mark=traite&<?= csrfQuery() ?>" class="btn btn-outline">Marquer comme traité</a>
           <?php if ($isSuper): ?>
-            <a href="?id=<?= $mid ?>&delete=1" class="btn btn-danger" data-confirm="Supprimer définitivement ce message ? Cette action est irréversible.">🗑️ Supprimer</a>
+            <a href="?id=<?= $mid ?>&delete=1&<?= csrfQuery() ?>" class="btn btn-danger" data-confirm="Supprimer définitivement ce message ? Cette action est irréversible.">🗑️ Supprimer</a>
           <?php endif; ?>
         </div>
       </div>
@@ -128,7 +132,7 @@ require_once __DIR__ . '/../includes/admin_header.php';
               <a href="<?= e(waLink($m['phone'], "Bonjour {$m['full_name']}, merci pour votre message.")) ?>" target="_blank" rel="noopener" class="btn-whatsapp" style="padding:6px 10px;font-size:.78rem">💬</a>
             <?php endif; ?>
             <?php if ($isSuper): ?>
-              <a href="?id=<?= $m['id'] ?>&delete=1" class="btn btn-danger btn-sm" data-confirm="Supprimer définitivement ce message de <?= e($m['full_name']) ?> ?">🗑️</a>
+              <a href="?id=<?= $m['id'] ?>&delete=1&<?= csrfQuery() ?>" class="btn btn-danger btn-sm" data-confirm="Supprimer définitivement ce message de <?= e($m['full_name']) ?> ?">🗑️</a>
             <?php endif; ?>
           </td>
         </tr>

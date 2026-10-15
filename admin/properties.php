@@ -8,6 +8,7 @@ $user = currentUser();
 $isSuper = isSuperAdmin();
 
 if (isset($_GET['toggle_status'], $_GET['id'])) {
+    csrfGetGuard('properties');
     $stmt = $pdo->prepare('SELECT * FROM properties WHERE id = ?');
     $stmt->execute([(int)$_GET['id']]);
     $prop = $stmt->fetch();
@@ -24,6 +25,7 @@ if (isset($_GET['toggle_status'], $_GET['id'])) {
 // devient visible sur le site public ; rejetée, elle reste masquée et
 // l'administrateur qui l'a créée voit pourquoi sur sa fiche.
 if (isset($_GET['approve'], $_GET['id']) && $isSuper) {
+    csrfGetGuard('properties');
     $stmt = $pdo->prepare('SELECT id, title FROM properties WHERE id = ?');
     $stmt->execute([(int)$_GET['id']]);
     if ($prop = $stmt->fetch()) {
@@ -34,6 +36,7 @@ if (isset($_GET['approve'], $_GET['id']) && $isSuper) {
     redirect('properties');
 }
 if (isset($_GET['reject'], $_GET['id']) && $isSuper) {
+    csrfGetGuard('properties');
     $stmt = $pdo->prepare('SELECT id, title FROM properties WHERE id = ?');
     $stmt->execute([(int)$_GET['id']]);
     if ($prop = $stmt->fetch()) {
@@ -120,7 +123,7 @@ require_once __DIR__ . '/../includes/admin_header.php';
           <td class="mono"><?= formatPrice($p['price']) ?></td>
           <?php if ($isSuper): ?><td style="font-size:.82rem"><?= e($p['owner_name'] ?? '—') ?></td><?php endif; ?>
           <td>
-            <a href="?toggle_status=1&id=<?= $p['id'] ?>" class="badge badge-<?= $p['status']==='disponible'?'success':($p['status']==='reserve'?'warning':'neutral') ?>" title="Cliquer pour changer le statut" style="cursor:pointer">
+            <a href="?toggle_status=1&id=<?= $p['id'] ?>&<?= csrfQuery() ?>" class="badge badge-<?= $p['status']==='disponible'?'success':($p['status']==='reserve'?'warning':'neutral') ?>" title="Cliquer pour changer le statut" style="cursor:pointer">
               <?= propertyStatuses()[$p['status']] ?>
             </a>
           </td>
@@ -132,14 +135,14 @@ require_once __DIR__ . '/../includes/admin_header.php';
           <td class="mono"><?= (int)$p['views'] ?></td>
           <td class="actions-cell" style="justify-content:flex-end">
             <?php if ($isSuper && $p['approval_status'] !== 'approuve'): ?>
-              <a href="?approve=1&id=<?= $p['id'] ?>" class="btn btn-primary btn-sm" data-confirm="Approuver cette annonce et la publier sur le site public ?">Approuver</a>
+              <a href="?approve=1&id=<?= $p['id'] ?>&<?= csrfQuery() ?>" class="btn btn-primary btn-sm" data-confirm="Approuver cette annonce et la publier sur le site public ?">Approuver</a>
             <?php endif; ?>
             <?php if ($isSuper && $p['approval_status'] !== 'rejete'): ?>
-              <a href="?reject=1&id=<?= $p['id'] ?>" class="btn btn-outline btn-sm" data-confirm="Rejeter cette annonce ? Elle restera masquée du site public.">Rejeter</a>
+              <a href="?reject=1&id=<?= $p['id'] ?>&<?= csrfQuery() ?>" class="btn btn-outline btn-sm" data-confirm="Rejeter cette annonce ? Elle restera masquée du site public.">Rejeter</a>
             <?php endif; ?>
             <a href="../annonce?slug=<?= e($p['slug']) ?>" target="_blank" class="btn btn-outline btn-sm">Voir</a>
             <a href="property_form?id=<?= $p['id'] ?>" class="btn btn-outline btn-sm">Modifier</a>
-            <a href="property_delete?id=<?= $p['id'] ?>" class="btn btn-danger btn-sm" data-confirm="Supprimer définitivement cette annonce ?">Suppr.</a>
+            <a href="property_delete?id=<?= $p['id'] ?>&<?= csrfQuery() ?>" class="btn btn-danger btn-sm" data-confirm="Supprimer définitivement cette annonce ?">Suppr.</a>
           </td>
         </tr>
       <?php endforeach; ?>

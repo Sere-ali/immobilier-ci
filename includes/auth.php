@@ -100,7 +100,9 @@ function attemptLogin(PDO $pdo, string $email, string $password): ?array
     $pdo->prepare('UPDATE users SET last_login = NOW() WHERE id = ?')->execute([$user['id']]);
 
     unset($user['password']);
+    session_regenerate_id(true); // évite la fixation de session
     $_SESSION['user'] = $user;
+    unset($_SESSION['csrf_token']);
     return $user;
 }
 
