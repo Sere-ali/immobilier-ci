@@ -57,7 +57,7 @@ $categories = [
 
 <div class="cities-strip">
   <div class="container">
-    <?php foreach (['Abidjan','Bouaké','Yamoussoukro','San-Pédro','Grand-Bassam','Bingerville','Korhogo','Assinie'] as $city): ?>
+    <?php foreach (['Abidjan','Bouaké','Yamoussoukro','San-Pédro','Grand-Bassam','Bingerville','Korhogo','Assinie','Bonoua'] as $city): ?>
       <a href="annonces?city=<?= urlencode($city) ?>"><?= e($city) ?></a>
     <?php endforeach; ?>
   </div>

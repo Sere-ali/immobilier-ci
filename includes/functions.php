@@ -181,7 +181,7 @@ function ivoryCoastCities(): array
         'Abidjan', 'Abengourou', 'Abobo', 'Aboisso', 'Adiaké', 'Adjamé',
         'Adzopé', 'Agboville', 'Agnibilékrou', 'Akoupé', 'Alépé', 'Anyama',
         'Arrah', 'Assinie', 'Attécoubé', 'Ayamé', 'Bangolo', 'Béoumi',
-        'Biankouma', 'Bingerville', 'Bocanda', 'Bondoukou', 'Bonon', 'Bouaflé',
+        'Biankouma', 'Bingerville', 'Bocanda', 'Bondoukou', 'Bonon', 'Bonoua', 'Bouaflé',
         'Bouaké', 'Bouna', 'Boundiali', 'Brobo', 'Buyo', 'Cocody',
         'Dabakala', 'Dabou', 'Daloa', 'Danané', 'Daoukro', 'Dimbokro',
         'Divo', 'Duékoué', 'Facobly', 'Ferkessédougou', 'Fresco', 'Gagnoa',
