@@ -1,8 +1,11 @@
 # Immobilier CI — image de l'application web (PHP + Apache) pour Render
-FROM php:8.2-apache
+# PHP 8.2.35 minimum : correctif des failles critiques PHP2Shell (CVE-2026-109618 / 109619).
+FROM php:8.2.35-apache
 
 # Extensions PHP nécessaires (PDO MySQL + mysqli + curl pour l'upload vers Cloudinary)
-RUN apt-get update && apt-get install -y --no-install-recommends libcurl4-openssl-dev \
+# ca-certificates : magasin de certificats à jour (compromission eMudhra) ; upgrade = correctifs système
+RUN apt-get update && apt-get -y upgrade && apt-get install -y --no-install-recommends libcurl4-openssl-dev ca-certificates \
+    && update-ca-certificates \
     && docker-php-ext-install pdo pdo_mysql mysqli curl \
     && rm -rf /var/lib/apt/lists/*
 
